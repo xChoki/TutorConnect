@@ -1,3 +1,10 @@
+/*
+
+    ESTE ARCHIVO NO ESTÁ EN USO, DA PROBLEMAS POR LO QUE SE MOVIÓ A PortalPage,
+    Más adelante se trabaja con esto
+
+*/
+
 import { Link, useParams } from "react-router-dom";
 import { Icon_Alumnos, Icon_Cursos, Icon_Home, Icon_Logout, Icon_Mensajes } from "../assets/Icons";
 import axios from "axios";

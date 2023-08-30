@@ -32,9 +32,14 @@ export default function PortalPage() {
     }
 
     async function logout() {
-        await axios.post('/logout')
-        setRedirect('/')
-        setUser(null)
+        var result = confirm("¿Seguro que desea cerrar sesión?");
+        if (result == true) {
+            await axios.post('/logout')
+            setRedirect('/')
+            setUser(null)
+        } else {
+            return
+        }
     }
 
     if (redirect) {
@@ -50,7 +55,7 @@ export default function PortalPage() {
                 <div className="h-full px-3 py-4 pt-32 overflow-y-auto bg-gray-50 dark:bg-gray-800">
                     <ul className="space-y-2 font-medium">
                         <li>
-                            <Link to={'/portal'} className={linkClasses('inicio')}>
+                            <Link to={'/portal'} className={linkClasses('portal')}>
                                 <Icon_Home />
                                 <span className="flex-1 ml-3 whitespace-nowrap">Inicio</span>
                             </Link>
