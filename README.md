@@ -40,3 +40,22 @@ cd api
 ```sh
 nodemon index.js
 ```
+## Dependencias
+
+- Client:
+  - react
+  - react-dom
+  - standard
+  - tailwindcss
+  - flowbite
+  - react-router-dom
+  - axios
+
+- API:
+  - express
+  - cors
+  - mongoose
+  - dotenv
+  - bcryptjs
+  - jsonwebtoken
+  - cookie-parser
