@@ -1,17 +1,11 @@
 # TutorConnect
-## Tabla de contenidos
 
-- [TODO](#todo)
-- [Instalar](#instalacion)
-  
 <hr>
 
 ## TODO
 - [x] Registro de usuarios
 - [x] Inicio de sesión de usuarios
 - [ ] Subir cursos
-
-<hr>
 
 ## Instalacion
 
