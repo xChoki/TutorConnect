@@ -21,7 +21,7 @@ const COM_NavBar = () => {
                         <span className="self-center text-2xl font-semibold whitespace-nowrap">TutorConnect</span>
                     </Link>
                     
-                    <Link to={user ? '/account' : '/login'} className="flex px-6 rounded-lg border border-gray-200 py-1 items-center bg-gray-50 hover:border-slate-400">
+                    <Link to={user ? '/portal' : '/login'} className="flex px-6 rounded-lg border border-gray-200 py-1 items-center bg-gray-50 hover:border-slate-400">
                         {!!user && (
                             <section className="pl-10 pr-5 text-right">
                                 <p className="text-lg">
