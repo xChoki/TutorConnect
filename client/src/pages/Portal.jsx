@@ -12,6 +12,7 @@ import COM_Side_Bar from "../components/COM_Side_Bar";
 export default function PortalPage() {
     const [redirect, setRedirect] = useState(null)
     const { ready, user, setUser } = useContext(UserContext)
+ 
     //const [open, setOpen] = useState(true);
 
     let { subpage } = useParams()
@@ -36,11 +37,10 @@ export default function PortalPage() {
 
     
 
-
     return (
         <div className="flex">
 
-                <COM_Side_Bar>
+                <COM_Side_Bar >
                 
 
                 </COM_Side_Bar>
