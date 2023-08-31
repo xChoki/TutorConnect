@@ -8,7 +8,8 @@ import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
 import axios from 'axios'
 //import PortalPage from './pages/PortalPage'
-import Portal from './pages/Portal'
+import Portal from './pages/PortalPage'
+import PortalPage from './pages/PortalPage'
 
 axios.defaults.baseURL = 'http://localhost:4000'
 axios.defaults.withCredentials = true
@@ -21,8 +22,6 @@ function App() {
           <Route index element={<IndexPage />} />
           <Route path='/login' element={<LoginPage />} />
           <Route path='/register' element={<RegisterPage />} />
-          {/** <Route path='/portal/:subpage?' element={<PortalPage />} />*/}
-          <Route path='/portal/:subpage?' element={<Portal />} /> 
           <Route path='/portal/:subpage?' element={<PortalPage />} />
           <Route path='/portal/:subpage/:action' element={<PortalPage />} />
 
