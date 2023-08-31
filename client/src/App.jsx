@@ -23,6 +23,8 @@ function App() {
           <Route path='/register' element={<RegisterPage />} />
           {/** <Route path='/portal/:subpage?' element={<PortalPage />} />*/}
           <Route path='/portal/:subpage?' element={<Portal />} /> 
+          <Route path='/portal/:subpage?' element={<PortalPage />} />
+          <Route path='/portal/:subpage/:action' element={<PortalPage />} />
 
         </Route>
       </Routes>

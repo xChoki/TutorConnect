@@ -21,6 +21,7 @@ require('dotenv').config()
 mongoose.connect(process.env.MONGO_URL)
 // Mongoose models
 const User = require('./models/User')
+const Course = require('./models/Course')
 
 // BCRYPTJS
 const bcrypt = require('bcryptjs')
@@ -110,6 +111,34 @@ app.get('/profile', (req, res) => {
 
 app.post('/logout', (req, res) => {
     res.cookie('token', '').json(true)
+})
+
+app.post('/cursos', (req, res) => {
+    const { token } = req.cookies
+    const { course_name, course_description, course_category, course_extrainfo, course_neurodiv } = req.body
+
+    /*
+    course_tutor_id: {type:mongoose.Schema.Types.ObjectId, ref:'User'},
+    course_tutor_name: {type:mongoose.Schema.Types.ObjectId, ref:'User'},
+    course_name: String,
+    course_students: [String],
+    course_description: String,
+    course_category: String,
+    course_extrainfo: String,
+    course_neurodiv: String, */
+    jwt.verify(token, jwtSecret, {}, async (err, userData) => {
+        if (err) throw err
+        await Course.create({
+            course_tutor_id: userData.id,
+            course_tutor_name: userData.name,
+            course_name,
+            course_description,
+            course_category,
+            course_extrainfo,
+            course_neurodiv,
+        })
+    })
+
 })
 
 app.listen(4000)
