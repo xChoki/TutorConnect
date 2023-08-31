@@ -8,7 +8,7 @@ import { Icon_Alumnos, Icon_Cursos, Icon_Home, Icon_Logout, Icon_Mensajes, Arrow
 import axios from "axios";
 
 
-export default function COM_Side_Bar() {
+export default function PortalPage() {
     const [redirect, setRedirect] = useState(null)
     const { ready, user, setUser } = useContext(UserContext)
     const [open, setOpen] = useState(true);
@@ -79,7 +79,7 @@ export default function COM_Side_Bar() {
                 </div>
                 
                 <ul className="pt-6 py-5">
-
+                   
                         <li>
                             <Link to={'/portal'} className={link_Classes('portal')}>
                                 <Icon_Home/>
@@ -117,6 +117,15 @@ export default function COM_Side_Bar() {
 
 
             </aside>
+
+
+                <section className="">
+                    {subpage === 'portal' && (
+                        <div className="p-7  font-semibold flex-1 h-screen ">
+                            <span> Hola {user.name}!</span>
+                        </div>
+                    )}
+                </section>
 
             </div>
     )
