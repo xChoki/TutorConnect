@@ -4,6 +4,7 @@ import { Link, Navigate, useParams } from "react-router-dom"
 
 import { Icon_Alumnos, Icon_Cursos, Icon_Home, Icon_Logout, Icon_Mensajes } from "../assets/Icons";
 import axios from "axios";
+import CoursesPage from "./CoursesPage";
 
 export default function PortalPage() {
     const [redirect, setRedirect] = useState(null)
@@ -90,9 +91,12 @@ export default function PortalPage() {
 
             <section className="p-4 sm:ml-64">
                 {subpage === 'portal' && (
-                    <div className="">
+                    <div className="text-center max-w-lg mx-auto">
                         <span> Hola {user.name}!</span>
                     </div>
+                )}
+                {subpage === 'cursos' && (
+                    <CoursesPage/>
                 )}
             </section>
         </>

@@ -33,7 +33,7 @@ export default function LoginPage() {
             <div className=" mb-64">
                 <h1 className="text-4xl text-center mb-16">Inicio de sesión</h1>
 
-                <form className="max-w-md mx-auto" onSubmit={LoginSubmit}>
+                <form className="" onSubmit={LoginSubmit}>
                     <input type="email"
                         placeholder="mail@mail.com"
                         value={email}

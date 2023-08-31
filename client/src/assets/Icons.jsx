@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 
 export default function Icon_User() {
     return (
@@ -52,6 +53,37 @@ export function Icon_Logout() {
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-6 h-6">
             <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9" />
         </svg>
+    )
+}
 
+export function Icon_Plus() {
+    return (
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-8 h-8">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+    )
+}
+
+export function Arrow_Control({ onClick, open }) {
+    return (
+        <svg fill="currentColor" viewBox="0 0 16 16" height="1em" width="1em" onClick={onClick} className={`w-6 h-6 ${open ? "" : "rotate-180"}`}>
+            <path
+                fillRule="evenodd"
+                d="M1 8a7 7 0 1014 0A7 7 0 001 8zm15 0A8 8 0 110 8a8 8 0 0116 0zm-4.5-.5a.5.5 0 010 1H5.707l2.147 2.146a.5.5 0 01-.708.708l-3-3a.5.5 0 010-.708l3-3a.5.5 0 11.708.708L5.707 7.5H11.5z"
+            />
+        </svg>
+    );
+}
+
+Arrow_Control.propTypes = {
+    onClick: PropTypes.func.isRequired,
+    open: PropTypes.bool.isRequired
+};
+
+export function Icon_Cancel() {
+    return (
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-8 h-8">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
     )
 }

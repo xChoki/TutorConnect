@@ -3,6 +3,8 @@ import COM_NavBar from "./COM_NavBar";
 
 export default function Layout() {
 
+    
+
     return (
         <>
             {/* NavBar */}
@@ -13,6 +15,7 @@ export default function Layout() {
             {/* Filler */}
 
             {/* Footer */}
+           
 
 
 
