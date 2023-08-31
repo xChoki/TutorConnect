@@ -47,7 +47,7 @@ export default function PortalPage() {
 
                 <section className="">
                     {subpage === 'portal' && (
-                        <div className="p-7  font-semibold flex-1 h-screen ">
+                        <div className="p-4 flex-1 h-screen ">
                             <span> Hola {user.name}!</span>
                         </div>
                     )}
