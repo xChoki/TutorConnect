@@ -1,64 +1,40 @@
-import { useContext, useState } from "react"
+import React, { useContext, useState } from "react"
 import { UserContext } from "../UserContext"
-import {  Navigate, useParams } from "react-router-dom"
+import { Navigate, useParams } from "react-router-dom"
 
-
-
-//import { Icon_Alumnos, Icon_Cursos, Icon_Home, Icon_Logout, Icon_Mensajes, Arrow_Control } from "../assets/Icons";
-//import axios from "axios";
-import COM_Side_Bar from "../components/COM_Side_Bar";
-import CoursesPage from "../pages/CoursesPage";
-
-
+import COM_Side_Bar from "../components/COM_Side_Bar"
 
 export default function PortalPage() {
-    const [redirect, setRedirect] = useState(null)
-    const { ready, user, setUser } = useContext(UserContext)
- 
-    //const [open, setOpen] = useState(true);
+  const [redirect, setRedirect] = useState(null)
+  const { ready, user, setUser } = useContext(UserContext)
 
-    let { subpage } = useParams()
+  let { subpage } = useParams()
 
-    if (subpage === undefined) {
-        subpage = 'portal'
-    }
+  if (subpage === undefined) {
+    subpage = "portal"
+  }
 
-    if (!ready) {
-        return 'Cargando...'
-    }
+  if (!ready) {
+    return "Cargando..."
+  }
 
-    if (ready && !user) {
-        return <Navigate to={'/login'} />
-    }
-    
-    if (redirect) {
-        return <Navigate to={redirect} />
-    }
+  if (ready && !user) {
+    return <Navigate to={"/login"} />
+  }
 
-    //const {subpage} = useParams()
+  if (redirect) {
+    return <Navigate to={redirect} />
+  }
 
-    
+  return (
+    <>
+      <div className="ml-72 mt-5 h-screen">
+        <COM_Side_Bar />
 
-    return (
-        <div className="flex">
-
-                <COM_Side_Bar />
-
-                <>
-                    {subpage === 'portal' && (
-                        <section className="p-4 flex-1 h-screen ">
-                            <span> Hola {user.name}!</span>
-                        </section>
-                    )}
-                    {subpage === 'cursos' && (
-                        <section className="p-4 flex-1 h-screen ">
-                            <CoursesPage/>
-                        </section>
-                    )}
-                </>
-                
-
-            </div>
-    )
+        <section className="flex p-4 flex-1">
+          <span> Hola {user.name}!</span>
+        </section>
+      </div>
+    </>
+  )
 }
-
