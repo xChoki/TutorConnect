@@ -5,7 +5,10 @@
 ## TODO
 - [x] Registro de usuarios
 - [x] Inicio de sesión de usuarios
-- [ ] Subir cursos
+- [X] Subir cursos
+- [ ] Mostrar cursos
+- [ ] Eliminar cursos
+- [ ] Añadir roles a cuentas
 
 ## Instalacion
 
@@ -16,30 +19,20 @@ gh repo clone xChoki/TutorConnect
 ```
 Instalar [node.js](https://nodejs.org/dist/v18.17.1/node-v18.17.1-x64.msi):
 
-Instalamos dependencias en Client y API
+Instalar [Docker Desktop](https://www.docker.com/products/docker-desktop/):
+
+En el directorio padre para iniciar se ejecuta
 
 ```sh
-npm i
-```
-Iniciamos servidor client
-
-```sh
-cd client
-```
-```sh
-npm run dev
+docker-compose -f docker-compose-dev.yml up
 ```
 
-Iniciamos servidor API
+En el directorio padre para cerrar se ejecuta
+
 ```sh
-npm install -g nodemon
+docker-compose -f docker-compose-dev.yml down
 ```
-```sh
-cd api
-```
-```sh
-nodemon index.js
-```
+
 ## Dependencias
 
 - Client:
