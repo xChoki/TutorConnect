@@ -6,7 +6,9 @@
 - [x] Registro de usuarios
 - [x] Inicio de sesión de usuarios
 - [X] Subir cursos
-- [ ] Mostrar cursos
+- [X] Mostrar cursos
+- [ ] Página de cursos
+- [ ] Editar cursos
 - [ ] Eliminar cursos
 - [ ] Añadir roles a cuentas
 
