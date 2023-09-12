@@ -115,10 +115,14 @@ app.get("/profile", (req, res) => {
   }
 })
 
+/* *************************
+            Logout */
 app.post("/logout", (req, res) => {
   res.cookie("token", "").json(true)
 })
 
+/* *************************
+            POST Cursos */
 app.post("/cursos", (req, res) => {
   const { token } = req.cookies
   const {
@@ -143,6 +147,8 @@ app.post("/cursos", (req, res) => {
   })
 })
 
+/* *************************
+            GET Cursos */
 app.get("/cursos", (req, res) => {
   const { token } = req.cookies
 
@@ -150,6 +156,47 @@ app.get("/cursos", (req, res) => {
     const { id } = userData
 
     res.json(await Course.find({ course_tutor_id: id }))
+  })
+})
+
+/* *************************
+            GET Cursos:id */
+app.get("/cursos/:id", async (req, res) => {
+  const { id } = req.params
+  res.json(await Course.findById(id))
+})
+
+/* *************************
+            PUT Cursos */
+app.put("/cursos", async (req, res) => {
+  const { token } = req.cookies
+  const {
+    id,
+    course_name,
+    course_description,
+    course_category,
+    course_extrainfo,
+    course_neurodiv,
+  } = req.body
+
+  jwt.verify(token, jwtSecret, {}, async (err, userData) => {
+    if (err) throw err
+    
+    const courseDoc = await Course.findById(id)
+    
+    if (userData.id === courseDoc.course_tutor_id.toString()) {
+
+      courseDoc.set({
+        course_name,
+        course_description,
+        course_category,
+        course_extrainfo,
+        course_neurodiv,
+      })
+      await courseDoc.save()
+
+      res.json("Actualización completada")
+    }
   })
 })
 

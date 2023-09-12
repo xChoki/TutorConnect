@@ -1,40 +1,79 @@
 import axios from "axios"
-import { useState } from "react"
-import { Link, Navigate } from "react-router-dom"
+import { useEffect, useState } from "react"
+import { Link, Navigate, useParams } from "react-router-dom"
 import { Icon_Cancel } from "../assets/Icons"
 import COM_Side_Bar from "../components/COM_Side_Bar"
 
 export default function PortalFormPage() {
+  /* ----------------------------------- 
+    Form section */
+
+  // Form variables
   const [course_name, setCourse_name] = useState("")
   const [course_description, setCourse_description] = useState("")
   const [course_extrainfo, setCourse_extrainfo] = useState("")
   const [course_neurodiv, setCourse_neurodiv] = useState(false)
 
+  // Redirection
   const [redirect, setRedirect] = useState(false)
 
+  // Function to handle neurodiv checkbox
   function handleCbClick(ev) {
     setCourse_neurodiv(ev.target.checked)
     console.log(ev.target.checked)
   }
 
-  async function addCourse(ev) {
+  /* ----------------------------------- 
+    Editing form section */
+
+  const { id } = useParams() // Course id
+
+  // Retrieving data from the course with corresponding id
+  useEffect(() => {
+    if (!id) {
+      return
+    }
+
+    axios.get("/cursos/" + id).then((response) => {
+      const { data } = response
+      setCourse_name(data.course_name)
+      setCourse_description(data.course_description)
+      setCourse_extrainfo(data.course_extrainfo)
+      setCourse_neurodiv(data.course_neurodiv)
+    })
+  }, [id])
+
+  // Functions to add or update a new course by using the form
+  async function saveCourse(ev) {
     ev.preventDefault()
+
+    const courseData = {
+      course_name,
+      course_description,
+      course_extrainfo,
+      course_neurodiv,
+    }
+
     try {
-      alert("Curso creado exitosamente!")
-      setRedirect(true)
-      await axios.post("/cursos", {
-        course_name,
-        course_description,
-        course_extrainfo,
-        course_neurodiv,
-      })
+      if (id) {
+        // update
+        await axios.put("/cursos", {
+          id,
+          ...courseData,
+        })
+        setRedirect(true)
+      } else {
+        // new place
+        await axios.post("/cursos", courseData)
+        setRedirect(true)
+      }
     } catch (error) {
-      alert("Ha ocurrido un error, por favor intente nuevamente")
+      alert("Ha ocurrido un error, por favor intente nuevamente. " + error)
     }
   }
 
   if (redirect) {
-    return <Navigate to={'/portal/cursos'}/>
+    return <Navigate to={"/portal/cursos"} />
   }
 
   return (
@@ -53,7 +92,7 @@ export default function PortalFormPage() {
             </Link>
           </div>
 
-          <form onSubmit={addCourse}>
+          <form onSubmit={saveCourse}>
             <div className="relative z-0 w-full mb-6 group">
               <label
                 htmlFor="course_name"
@@ -114,6 +153,7 @@ export default function PortalFormPage() {
                 name="course_neurodiv"
                 onChange={handleCbClick}
                 className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                checked={!!course_neurodiv}
               />
               <label
                 htmlFor="course_neurodiv"
