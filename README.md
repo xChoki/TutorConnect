@@ -7,8 +7,8 @@
 - [x] Inicio de sesión de usuarios
 - [X] Subir cursos
 - [X] Mostrar cursos
-- [ ] Página de cursos
-- [ ] Editar cursos
+- [X] Página de cursos
+- [X] Editar cursos
 - [ ] Eliminar cursos
 - [ ] Añadir roles a cuentas
 
