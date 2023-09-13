@@ -75,7 +75,7 @@ Instalar [Docker Desktop](https://www.docker.com/products/docker-desktop/):
 En el directorio padre para iniciar se ejecuta
 
 ```sh
-docker-compose -f docker-compose-dev.yml up --build
+docker-compose -f docker-compose-dev.yml up
 ```
 
 En el directorio padre para cerrar se ejecuta
