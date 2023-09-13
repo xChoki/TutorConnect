@@ -5,7 +5,12 @@
 ## TODO
 - [x] Registro de usuarios
 - [x] Inicio de sesión de usuarios
-- [ ] Subir cursos
+- [X] Subir cursos
+- [X] Mostrar cursos
+- [X] Página de cursos
+- [X] Editar cursos
+- [ ] Eliminar cursos
+- [ ] Añadir roles a cuentas
 
 ## Instalacion
 
