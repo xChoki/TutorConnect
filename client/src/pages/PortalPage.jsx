@@ -1,40 +1,22 @@
-import React, { useContext, useState } from "react"
-import { UserContext } from "../UserContext"
-import { Navigate, useParams } from "react-router-dom"
+import  { useContext, useState } from "react";
+import { UserContext } from "../UserContext";
+import COM_Side_Bar from "../components/COM_Side_Bar"; // Asegúrate de importar correctamente el componente del sidebar
 
-import COM_Side_Bar from "../components/COM_Side_Bar"
-
-export default function PortalPage() {
-  const [redirect, setRedirect] = useState(null)
-  const { ready, user, setUser } = useContext(UserContext)
-
-  let { subpage } = useParams()
-
-  if (subpage === undefined) {
-    subpage = "portal"
-  }
-
-  if (!ready) {
-    return "Cargando..."
-  }
-
-  if (ready && !user) {
-    return <Navigate to={"/login"} />
-  }
-
-  if (redirect) {
-    return <Navigate to={redirect} />
-  }
+export default function MainComponent() {
+  const { user } = useContext(UserContext);
+  const [open, setOpen] = useState(true);
 
   return (
-    <>
-      <div className="ml-72 mt-5 h-screen">
-        <COM_Side_Bar />
+    <div className="grid grid-cols-[auto,1fr]">
+      <COM_Side_Bar open={open} setOpen={setOpen} />
 
-        <section className="flex p-4 flex-1">
-          <span> Hola {user.name}!</span>
-        </section>
-      </div>
-    </>
-  )
+      <section
+        className={`${
+          open ? "ml-72" : "ml-20"
+        } p-7 font-semibold`}
+      >
+        <span> Hola {user.name}!</span>
+      </section>
+    </div>
+  );
 }
