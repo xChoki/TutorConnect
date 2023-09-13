@@ -5,6 +5,10 @@ import { Icon_Cancel } from "../assets/Icons"
 import COM_Side_Bar from "../components/COM_Side_Bar"
 
 export default function PortalFormPage() {
+  const [open, setOpen] = useState(true)
+
+  const [courseId, setCourseId] = useState(null)
+
   /* ----------------------------------- 
     Form section */
 
@@ -57,18 +61,35 @@ export default function PortalFormPage() {
     try {
       if (id) {
         // update
+        setRedirect(true)
         await axios.put("/cursos", {
           id,
           ...courseData,
         })
-        setRedirect(true)
       } else {
         // new place
-        await axios.post("/cursos", courseData)
         setRedirect(true)
+        await axios.post("/cursos", courseData)
       }
     } catch (error) {
       alert("Ha ocurrido un error, por favor intente nuevamente. " + error)
+    }
+  }
+
+  // Function to handle course deletion
+  async function deleteCourse() {
+    try {
+      if (id) {
+        var result = window.confirm(
+          `¿Seguro que desea eliminar el curso ${course_name}?`
+        )
+        if (result === true) {
+          await axios.delete("/cursos-eliminar/" + id)
+          setRedirect(true)
+        }
+      }
+    } catch (error) {
+      alert("Ha ocurrido un error al eliminar el curso. " + error)
     }
   }
 
@@ -78,10 +99,10 @@ export default function PortalFormPage() {
 
   return (
     <>
-      <div className="flex ml-72 mt-5 h-screen">
-        <COM_Side_Bar />
+      <div className="grid grid-cols-[auto,1fr]">
+        <COM_Side_Bar open={open} setOpen={setOpen} />
 
-        <section className="flex-1 p-4 overflow-y-auto">
+        <section className={`${open ? "ml-72" : "ml-20"} `}>
           <div className="text-center mb-10">
             <Link
               className="inline-flex py-16 px-20 rounded-lg text-lg border hover:bg-gray-100"
@@ -165,10 +186,20 @@ export default function PortalFormPage() {
 
             <button
               type="submit"
-              className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+              className="mx-2 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
             >
-              Crear curso
+              Enviar
             </button>
+
+            {id && (
+              <button
+                type="button"
+                onClick={deleteCourse}
+                className="mx-2 text-white bg-red-400 hover:bg-red-500 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+              >
+                <span className="pl-2">Eliminar Curso</span>
+              </button>
+            )}
           </form>
         </section>
       </div>

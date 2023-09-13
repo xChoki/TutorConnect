@@ -1,6 +1,7 @@
 /* --------------------------------------------
             IMPORTS AND DECLARATIONS */
-
+// Node schedule
+const schedule = require("node-schedule")
 // ExpressJS
 const express = require("express")
 const app = express()
@@ -18,7 +19,7 @@ app.use(
 
 // Mongo connection
 // WdiVlejzjG8dwuBt
-const { default: mongoose } = require("mongoose")
+const { default: mongoose, Mongoose } = require("mongoose")
 require("dotenv").config()
 mongoose.connect(process.env.MONGO_URL)
 // Mongoose models
@@ -181,11 +182,10 @@ app.put("/cursos", async (req, res) => {
 
   jwt.verify(token, jwtSecret, {}, async (err, userData) => {
     if (err) throw err
-    
-    const courseDoc = await Course.findById(id)
-    
-    if (userData.id === courseDoc.course_tutor_id.toString()) {
 
+    const courseDoc = await Course.findById(id)
+
+    if (userData.id === courseDoc.course_tutor_id.toString()) {
       courseDoc.set({
         course_name,
         course_description,
@@ -198,6 +198,68 @@ app.put("/cursos", async (req, res) => {
       res.json("Actualización completada")
     }
   })
+})
+
+/* *************************
+          DELETE cursos-eliminar:id */
+app.delete("/cursos-eliminar/:id", async (req, res) => {
+  const { token } = req.cookies
+  const { id } = req.params
+
+  jwt.verify(token, jwtSecret, {}, async (err, userData) => {
+    if (err) throw err
+
+    try {
+      const courseDoc = await Course.findById(id)
+
+      if (!courseDoc) {
+        return res.status(404).json({ error: "El curso no se encuentra" })
+      }
+
+      if (userData.id === courseDoc.course_tutor_id.toString()) {
+        await Course.findByIdAndDelete(id)
+        res.json({ message: "Curso eliminado exitosamente!" })
+      } else {
+        res
+          .status(403)
+          .json({ error: "No cuentas con los permisos para borrar este curos" })
+      }
+    } catch (error) {
+      console.error(error)
+      res.status(500).json({ error: "Error interno de servidor" })
+    }
+  })
+})
+
+/* *************************
+          Scheduled count */
+const job = schedule.scheduleJob("0 12 * * *", async function () {
+  console.log("Contando usuarios y cursos...")
+
+  try {
+    //const tutorCount = await User.countDocuments({ role: "tutor" });
+    const userCount = await User.countDocuments({})
+    const cursosCount = await Course.countDocuments({})
+    console.log("Usuarios totales:", userCount)
+    console.log("Cursos totales:", cursosCount)
+  } catch (err) {
+    console.error(err)
+  }
+})
+
+/* *************************
+          DELETE cuenta-datos */
+app.get("/cuenta-datos", async (req, res) => {
+  try {
+    //const tutorCount = await User.countDocuments({ role: "tutor" });
+    const userCount = await User.countDocuments({})
+    const cursoCount = await Course.countDocuments({})
+
+    res.json({ totalUsers: userCount, totalCursos: cursoCount })
+  } catch (err) {
+    console.error(err)
+    res.status(500).json({ error: "Internal server error" })
+  }
 })
 
 app.listen(4000)
