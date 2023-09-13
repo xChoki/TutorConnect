@@ -4,6 +4,8 @@ import { Link, useParams } from "react-router-dom"
 import COM_Side_Bar from "../components/COM_Side_Bar"
 
 export default function CourseInfoPage() {
+  const [open, setOpen] = useState(true)
+
   const { id } = useParams()
 
   const [course_name, setCourse_name] = useState("")
@@ -27,11 +29,12 @@ export default function CourseInfoPage() {
 
   return (
     <>
-      <div className="flex ml-72 mt-5 h-screen">
-        <COM_Side_Bar />
+      <div className="grid grid-cols-[auto,1fr]">
+        <COM_Side_Bar open={open} setOpen={setOpen} />
 
-        <section className="flex p-4 justify-between w-full">
+        <section className={`${open ? "ml-72" : "ml-20"} p-10`}>
           <p>Página de curso {course_name}</p>
+
           <aside className="float-right">
             <Link
               to={"/portal/cursos/editar/" + id}
