@@ -1,48 +1,108 @@
 import axios from "axios"
-import { useState } from "react"
-import { Link, Navigate } from "react-router-dom"
+import { useEffect, useState } from "react"
+import { Link, Navigate, useParams } from "react-router-dom"
 import { Icon_Cancel } from "../assets/Icons"
 import COM_Side_Bar from "../components/COM_Side_Bar"
 
 export default function PortalFormPage() {
+  const [open, setOpen] = useState(true)
+
+  const [courseId, setCourseId] = useState(null)
+
+  /* ----------------------------------- 
+    Form section */
+
+  // Form variables
   const [course_name, setCourse_name] = useState("")
   const [course_description, setCourse_description] = useState("")
   const [course_extrainfo, setCourse_extrainfo] = useState("")
   const [course_neurodiv, setCourse_neurodiv] = useState(false)
 
+  // Redirection
   const [redirect, setRedirect] = useState(false)
 
+  // Function to handle neurodiv checkbox
   function handleCbClick(ev) {
     setCourse_neurodiv(ev.target.checked)
     console.log(ev.target.checked)
   }
 
-  async function addCourse(ev) {
+  /* ----------------------------------- 
+    Editing form section */
+
+  const { id } = useParams() // Course id
+
+  // Retrieving data from the course with corresponding id
+  useEffect(() => {
+    if (!id) {
+      return
+    }
+
+    axios.get("/cursos/" + id).then((response) => {
+      const { data } = response
+      setCourse_name(data.course_name)
+      setCourse_description(data.course_description)
+      setCourse_extrainfo(data.course_extrainfo)
+      setCourse_neurodiv(data.course_neurodiv)
+    })
+  }, [id])
+
+  // Functions to add or update a new course by using the form
+  async function saveCourse(ev) {
     ev.preventDefault()
+
+    const courseData = {
+      course_name,
+      course_description,
+      course_extrainfo,
+      course_neurodiv,
+    }
+
     try {
-      alert("Curso creado exitosamente!")
-      setRedirect(true)
-      await axios.post("/cursos", {
-        course_name,
-        course_description,
-        course_extrainfo,
-        course_neurodiv,
-      })
+      if (id) {
+        // update
+        setRedirect(true)
+        await axios.put("/cursos", {
+          id,
+          ...courseData,
+        })
+      } else {
+        // new place
+        setRedirect(true)
+        await axios.post("/cursos", courseData)
+      }
     } catch (error) {
-      alert("Ha ocurrido un error, por favor intente nuevamente")
+      alert("Ha ocurrido un error, por favor intente nuevamente. " + error)
+    }
+  }
+
+  // Function to handle course deletion
+  async function deleteCourse() {
+    try {
+      if (id) {
+        var result = window.confirm(
+          `¿Seguro que desea eliminar el curso ${course_name}?`
+        )
+        if (result === true) {
+          await axios.delete("/cursos-eliminar/" + id)
+          setRedirect(true)
+        }
+      }
+    } catch (error) {
+      alert("Ha ocurrido un error al eliminar el curso. " + error)
     }
   }
 
   if (redirect) {
-    return <Navigate to={'/portal/cursos'}/>
+    return <Navigate to={"/portal/cursos"} />
   }
 
   return (
     <>
-      <div className="flex ml-72 mt-5 h-screen">
-        <COM_Side_Bar />
+      <div className="grid grid-cols-[auto,1fr]">
+        <COM_Side_Bar open={open} setOpen={setOpen} />
 
-        <section className="flex-1 p-4 overflow-y-auto">
+        <section className={`${open ? "ml-72" : "ml-20"} `}>
           <div className="text-center mb-10">
             <Link
               className="inline-flex py-16 px-20 rounded-lg text-lg border hover:bg-gray-100"
@@ -53,7 +113,7 @@ export default function PortalFormPage() {
             </Link>
           </div>
 
-          <form onSubmit={addCourse}>
+          <form onSubmit={saveCourse}>
             <div className="relative z-0 w-full mb-6 group">
               <label
                 htmlFor="course_name"
@@ -114,6 +174,7 @@ export default function PortalFormPage() {
                 name="course_neurodiv"
                 onChange={handleCbClick}
                 className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                checked={!!course_neurodiv}
               />
               <label
                 htmlFor="course_neurodiv"
@@ -125,10 +186,20 @@ export default function PortalFormPage() {
 
             <button
               type="submit"
-              className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+              className="mx-2 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
             >
-              Crear curso
+              Enviar
             </button>
+
+            {id && (
+              <button
+                type="button"
+                onClick={deleteCourse}
+                className="mx-2 text-white bg-red-400 hover:bg-red-500 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+              >
+                <span className="pl-2">Eliminar Curso</span>
+              </button>
+            )}
           </form>
         </section>
       </div>

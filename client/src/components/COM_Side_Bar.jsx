@@ -70,8 +70,6 @@ export default function COM_Side_Bar({ open, setOpen }) {
       await axios.post("/logout")
       setRedirect("/")
       setUser(null)
-    } else {
-      return
     }
   }
 

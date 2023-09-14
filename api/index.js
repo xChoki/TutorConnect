@@ -1,6 +1,7 @@
 /* --------------------------------------------
             IMPORTS AND DECLARATIONS */
-
+// Node schedule
+const schedule = require("node-schedule")
 // ExpressJS
 const express = require("express")
 const app = express()
@@ -18,7 +19,7 @@ app.use(
 
 // Mongo connection
 // WdiVlejzjG8dwuBt
-const { default: mongoose } = require("mongoose")
+const { default: mongoose, Mongoose } = require("mongoose")
 require("dotenv").config()
 mongoose.connect(process.env.MONGO_URL)
 // Mongoose models
@@ -115,10 +116,14 @@ app.get("/profile", (req, res) => {
   }
 })
 
+/* *************************
+            Logout */
 app.post("/logout", (req, res) => {
   res.cookie("token", "").json(true)
 })
 
+/* *************************
+            POST Cursos */
 app.post("/cursos", (req, res) => {
   const { token } = req.cookies
   const {
@@ -143,6 +148,8 @@ app.post("/cursos", (req, res) => {
   })
 })
 
+/* *************************
+            GET Cursos */
 app.get("/cursos", (req, res) => {
   const { token } = req.cookies
 
@@ -151,6 +158,108 @@ app.get("/cursos", (req, res) => {
 
     res.json(await Course.find({ course_tutor_id: id }))
   })
+})
+
+/* *************************
+            GET Cursos:id */
+app.get("/cursos/:id", async (req, res) => {
+  const { id } = req.params
+  res.json(await Course.findById(id))
+})
+
+/* *************************
+            PUT Cursos */
+app.put("/cursos", async (req, res) => {
+  const { token } = req.cookies
+  const {
+    id,
+    course_name,
+    course_description,
+    course_category,
+    course_extrainfo,
+    course_neurodiv,
+  } = req.body
+
+  jwt.verify(token, jwtSecret, {}, async (err, userData) => {
+    if (err) throw err
+
+    const courseDoc = await Course.findById(id)
+
+    if (userData.id === courseDoc.course_tutor_id.toString()) {
+      courseDoc.set({
+        course_name,
+        course_description,
+        course_category,
+        course_extrainfo,
+        course_neurodiv,
+      })
+      await courseDoc.save()
+
+      res.json("Actualización completada")
+    }
+  })
+})
+
+/* *************************
+          DELETE cursos-eliminar:id */
+app.delete("/cursos-eliminar/:id", async (req, res) => {
+  const { token } = req.cookies
+  const { id } = req.params
+
+  jwt.verify(token, jwtSecret, {}, async (err, userData) => {
+    if (err) throw err
+
+    try {
+      const courseDoc = await Course.findById(id)
+
+      if (!courseDoc) {
+        return res.status(404).json({ error: "El curso no se encuentra" })
+      }
+
+      if (userData.id === courseDoc.course_tutor_id.toString()) {
+        await Course.findByIdAndDelete(id)
+        res.json({ message: "Curso eliminado exitosamente!" })
+      } else {
+        res
+          .status(403)
+          .json({ error: "No cuentas con los permisos para borrar este curos" })
+      }
+    } catch (error) {
+      console.error(error)
+      res.status(500).json({ error: "Error interno de servidor" })
+    }
+  })
+})
+
+/* *************************
+          Scheduled count */
+const job = schedule.scheduleJob("0 12 * * *", async function () {
+  console.log("Contando usuarios y cursos...")
+
+  try {
+    //const tutorCount = await User.countDocuments({ role: "tutor" });
+    const userCount = await User.countDocuments({})
+    const cursosCount = await Course.countDocuments({})
+    console.log("Usuarios totales:", userCount)
+    console.log("Cursos totales:", cursosCount)
+  } catch (err) {
+    console.error(err)
+  }
+})
+
+/* *************************
+          DELETE cuenta-datos */
+app.get("/cuenta-datos", async (req, res) => {
+  try {
+    //const tutorCount = await User.countDocuments({ role: "tutor" });
+    const userCount = await User.countDocuments({})
+    const cursoCount = await Course.countDocuments({})
+
+    res.json({ totalUsers: userCount, totalCursos: cursoCount })
+  } catch (err) {
+    console.error(err)
+    res.status(500).json({ error: "Internal server error" })
+  }
 })
 
 app.listen(4000)
