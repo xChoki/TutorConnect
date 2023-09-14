@@ -14,7 +14,7 @@ export default function CoursesPage() {
     })
   }, [])
   return (
-    <div className="grid grid-cols-[auto,1fr]">
+    <div className="grid grid-cols-[auto,1fr] pt-6">
       <COM_Side_Bar open={open} setOpen={setOpen} />
 
       <section className={`${open ? "ml-72" : "ml-20"} `}>

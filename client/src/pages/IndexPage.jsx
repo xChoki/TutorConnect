@@ -17,7 +17,7 @@ export default function IndexPage() {
         console.error("Error fetching counts:", error)
       })
   }, [])
-
+ 
   return (
     <div className="flex flex-col items-center h-screen bg-gray-100">
       <div className="w-full h-[70vh] mt-0 relative">
