@@ -233,7 +233,7 @@ app.delete("/cursos-eliminar/:id", async (req, res) => {
 
 /* *************************
           Scheduled count */
-const job = schedule.scheduleJob("0 12 * * *", async function () {
+const job = schedule.scheduleJob("* 12 * * *", async function () {
   console.log("Contando usuarios y cursos...")
 
   try {
@@ -248,7 +248,7 @@ const job = schedule.scheduleJob("0 12 * * *", async function () {
 })
 
 /* *************************
-          DELETE cuenta-datos */
+          GET cuenta-datos */
 app.get("/cuenta-datos", async (req, res) => {
   try {
     //const tutorCount = await User.countDocuments({ role: "tutor" });
