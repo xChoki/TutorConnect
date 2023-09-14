@@ -14,26 +14,26 @@ export default function CoursesPage() {
     })
   }, [])
   return (
-    <div className="grid grid-cols-[auto,1fr] pt-6">
+    <div className={`${open ? "ml-72" : "ml-20"} pt-6`}>
       <COM_Side_Bar open={open} setOpen={setOpen} />
 
-      <section className={`${open ? "ml-72" : "ml-20"} `}>
+      <section className="m-10">
         <Link
-          className="inline-flex py-16 px-20 w-max rounded-lg text-lg border hover:bg-gray-100"
-          to={"/portal/cursos/nuevo"}
+              className="inline-flex py-16 px-20 rounded-lg text-lg border hover:bg-gray-100"
+              to={"/portal/cursos/nuevo"}
         >
           <Icon_Plus />
           <span className="pl-2">Agregar curso</span>
         </Link>
       </section>
 
-      <section className={`${open ? "ml-72" : "ml-20"} grid grid-cols-1 gap-4 px-5`}>
+      <section className={`flex grid-cols-3 gap-4 px-5`}>
         {courses.length > 0 &&
           courses.map((course) => (
             <Link
               key={course._id}
               to={"/portal/cursos/" + course._id}
-              className="bg-white border rounded-lg border-gray-200 py-7 px-7"
+              className="bg-white border rounded-lg border-gray-200 py-7 px-7 max-w-md"
             >
               <p>
                 <span className="font-medium">Nombre de tutor: </span>
