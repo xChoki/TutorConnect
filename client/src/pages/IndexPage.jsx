@@ -2,8 +2,8 @@
 
 export default function IndexPage() {
     return (
-        <div className="flex flex-col items-center h-screen bg-gray-100">
-            <div className="w-full h-[70vh] mt-0 relative">
+        <div className="flex flex-col items-center h-screen bg-gray-100 px-20">
+            <div className="w-full h-[70vh] mt-0 relative px-12">
                 <img src="./src/assets/head.png" alt="Pencils" className="w-full h-auto mt-0" />
                 <p className="absolute top-1/3 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-4xl font-semibold text-white">
                     ¡Bienvenidos a TutorConnect!
