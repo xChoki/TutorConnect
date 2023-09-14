@@ -16,7 +16,6 @@ import axios from "axios"
 export default function COM_Side_Bar({ open, setOpen }) {
   const [redirect, setRedirect] = useState(null)
   const { ready, user, setUser } = useContext(UserContext)
-  //const [open, setOpen] = useState(true)
 
   let { subpage } = useParams()
 

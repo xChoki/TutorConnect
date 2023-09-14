@@ -103,7 +103,7 @@ export default function PortalFormPage() {
         <COM_Side_Bar open={open} setOpen={setOpen} />
 
         <section className={`${open ? "ml-72" : "ml-20"} `}>
-          <div className="text-center mb-10">
+          <div className="m-10">
             <Link
               className="inline-flex py-16 px-20 rounded-lg text-lg border hover:bg-gray-100"
               to={"/portal/cursos"}
@@ -113,7 +113,7 @@ export default function PortalFormPage() {
             </Link>
           </div>
 
-          <form onSubmit={saveCourse}>
+          <form onSubmit={saveCourse} className="max-w-7xl px-10 justify-center">
             <div className="relative z-0 w-full mb-6 group">
               <label
                 htmlFor="course_name"
