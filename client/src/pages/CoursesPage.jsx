@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from "react"
-import { Link } from "react-router-dom"
+import React, { useContext, useEffect, useState } from "react"
+import { UserContext } from "../context/UserContext"
+import { Link, Navigate } from "react-router-dom"
 import { Icon_Plus } from "../assets/Icons/"
 import COM_Side_Bar from "../components/COM_Side_Bar"
 import axios from "axios"
@@ -7,12 +8,22 @@ import axios from "axios"
 export default function CoursesPage() {
   const [courses, setCourses] = useState([])
   const [open, setOpen] = useState(true)
+  const { ready, user } = useContext(UserContext)
+
+  if (!ready) {
+    return "Cargando..."
+  }
+
+  if (ready && !user) {
+    return <Navigate to={"/login"} />
+  }
 
   useEffect(() => {
     axios.get("/cursos").then(({ data }) => {
       setCourses(data)
     })
   }, [])
+
   return (
     <div className={`${open ? "ml-72" : "ml-20"} pt-6`}>
       <COM_Side_Bar open={open} setOpen={setOpen} />

@@ -1,7 +1,7 @@
 import axios from "axios"
-import { useContext, useState } from "react"
+import { useState } from "react"
 import { Link, Navigate } from "react-router-dom"
-import { UserContext } from "../UserContext"
+import useAuth from "../hooks/useAuth"
 
 export default function LoginPage() {
     // VARIABLES
@@ -10,7 +10,7 @@ export default function LoginPage() {
 
     const [redirect, setRedirect] = useState(false)
 
-    const { setUser } = useContext(UserContext)
+    const { setUser } = useAuth()
 
     async function LoginSubmit(ev) {
         ev.preventDefault()

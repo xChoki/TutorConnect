@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import Icon_User from '../assets/Icons';
 import { useContext } from 'react';
-import { UserContext } from '../UserContext';
+import { UserContext } from '../context/UserContext';
 
 const COM_NavBar = () => {
   const { user } = useContext(UserContext);
