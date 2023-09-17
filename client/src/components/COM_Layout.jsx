@@ -1,7 +1,7 @@
 import { Outlet } from "react-router-dom"
 import COM_NavBar from "./COM_NavBar"
 import { useContext } from "react"
-import { UserContext } from "../UserContext"
+import { UserContext } from "../context/UserContext"
 import COM_Side_Bar from "./COM_Side_Bar"
 
 export default function Layout() {

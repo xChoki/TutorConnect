@@ -1,6 +1,6 @@
 import "./App.css"
 import { Route, Routes } from "react-router-dom"
-import { UserContextProvider } from "./UserContext"
+import { UserContextProvider } from "./context/UserContext"
 import axios from "axios"
 
 import IndexPage from "./pages/IndexPage"
@@ -21,13 +21,23 @@ function App() {
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route index element={<IndexPage />} />
+          {/* Public routes */}
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
+
+          {/* Protected routes
+           * Tutores, alumnos, profesores y administradores */}
           <Route path="/portal" element={<PortalPage />} />
           <Route path="/portal/cursos" element={<CoursesPage />} />
+
+          {/* Protected routes
+           * Tutores y administradores */}
           <Route path="/portal/cursos/nuevo" element={<CoursesFormPage />} />
           <Route path="/portal/cursos/:id" element={<CourseInfoPage />} />
-          <Route path="/portal/cursos/editar/:id" element={<CoursesFormPage />} />
+          <Route
+            path="/portal/cursos/editar/:id"
+            element={<CoursesFormPage />}
+          />
         </Route>
       </Routes>
     </UserContextProvider>

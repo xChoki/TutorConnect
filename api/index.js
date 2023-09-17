@@ -1,117 +1,154 @@
 /* --------------------------------------------
-            IMPORTS AND DECLARATIONS */
-// Node schedule
-const schedule = require("node-schedule")
-// ExpressJS
-const express = require("express")
-const app = express()
-// Parse json
-app.use(express.json())
+ *    IMPORTS AND DECLARATIONS
+ *    These are the imports and declaration of every dependency used in the backend */
 
-// CORS
-const cors = require("cors")
+/* Node schedule
+ * This is needed to execute a certain job at a certain interval of time */
+const schedule = require("node-schedule") // import
+
+/* EXPRESSJS
+ * This is what we are using to code the API */
+const express = require("express") // import
+const app = express() // This is to create an instance of the express app
+app.use(express.json()) // This is used to parse every JSON for express usage
+
+/* CORS: Cross-Origin Resource Sharing
+ * Used to give security and control access to our app*/
+const cors = require("cors") // import
 app.use(
   cors({
     credentials: true,
-    origin: "http://localhost:5173",
+    origin: "http://localhost:5173", // This is the origin that we are allowing access
   })
 )
 
-// Mongo connection
-// WdiVlejzjG8dwuBt
-const { default: mongoose, Mongoose } = require("mongoose")
+/* Dotenv
+ * Dependency used to read .env files, in NODE v20.6.0 it is integrated, but we are using v18.17.1LTS and it is not */
 require("dotenv").config()
-mongoose.connect(process.env.MONGO_URL)
+
+/* Mongoose
+ * It is used to connect to a MongoDB database
+ * the password is WdiVlejzjG8dwuBt */
+const { default: mongoose } = require("mongoose") // import
+mongoose.connect(process.env.MONGO_URL) // .env file that has access token to MongoDB Atlas
 // Mongoose models
-const User = require("./models/User")
-const Course = require("./models/Course")
+const User = require("./models/User") // Model for Users
+const Course = require("./models/Course") // Model for Courses
 
-// BCRYPTJS
-const bcrypt = require("bcryptjs")
-const bcryptSalt = bcrypt.genSaltSync(10)
-const jwtSecret = "AOi3ejk34io"
+/* BCRYPTJS
+ * It is used to give encrypted tokens to later use in cookies, etc. */
+const bcrypt = require("bcryptjs") // import
+const bcryptSalt = bcrypt.genSaltSync(10) // Generate salt with a length of 10
 
-// Jsonwebtoken
-const jwt = require("jsonwebtoken")
+/* JSONWebToken
+ * Self-contained way for securely transmitting information between parties as a JSON object*/
+const jwt = require("jsonwebtoken") // import
+const jwtSecret = "AOi3ejk34io" // jwt secret token, it is randomly typed
 
-// cookieparser
-const cookieParser = require("cookie-parser")
-app.use(cookieParser())
+/* Cookieparser
+ * Parse and handle HTTP cookies that are sent between the client and the server.  */
+const cookieParser = require("cookie-parser") // import
+app.use(cookieParser()) // This is to create an instance of the cookieparser
 
 /* --------------------------------------------
-                ENDPOINTS TO API */
+ *     ENDPOINTS TO API
+ *     These correspond to every endpoint that is going to be accessed later in front-end
+ *       - get to obtain data
+ *       - post to insert or send data
+ *       - put to update data
+ *       - delete to delete data */
 
 /* *************************
-            Test */
+ *     /test
+ *     This endpoint is to test the connection, if it is up it shows "test ok" */
 app.get("/test", (req, res) => {
   res.json("test ok")
 })
 
 /* *************************
-            Register */
+ *     /register
+ *     This endpoint handles the register form, validates information and uses post */
 app.post("/register", async (req, res) => {
-  const { name, email, password } = req.body
+  // we listen to /register with an async post function
+  const { name, email, password } = req.body // We require from the form the name, email and password sent by the user
 
   try {
+    // We try the connection
     const userDoc = await User.create({
       name,
       email,
       password: bcrypt.hashSync(password, bcryptSalt),
-    })
+    }) // This creates a User using the User mongoose model defined beforehand
 
-    res.json(userDoc)
+    res.json(userDoc) // This gives as a response the parsed json with the user information
   } catch (e) {
-    res.status(422).json(e)
+    // in case of an error it send an error message
+    res.status(422).json(e) // Error message corresponds to status 422, it means "The request was well-formed but was unable to be followed due to semantic errors."
   }
 })
 
 /* *************************
-            Login */
+ *     /login
+ *     This endpoint handles the login form, validates information and uses post*/
 app.post("/login", async (req, res) => {
-  // Variables
-  const { email, password } = req.body
-  // Look for email in DB
-  const userDoc = await User.findOne({ email })
+  // We listen to /login with an async post funcion
+  const { email, password } = req.body // We require from the form the name, email and password sent by the user
+
+  const userDoc = await User.findOne({ email }) // This searches for an existing User using findOne function by their email
 
   if (userDoc) {
-    // if email exists it checks password
-    const passOk = bcrypt.compareSync(password, userDoc.password)
+    // If email is found it checks for a password
+    const passOk = bcrypt.compareSync(password, userDoc.password) // Using bcrypt we decrypt the password stored in order to compare for validity (form_pasword, stored_password)
     if (passOk) {
-      // if password is correct it creates cookie, etc
+      // If password is correct it follows through
       jwt.sign(
+        // we use the sign function from JSONWebToken
         {
           email: userDoc.email,
           id: userDoc._id,
           name: userDoc.name,
-        },
-        jwtSecret,
-        {},
+        }, // User payload: string | Buffer | object,
+        jwtSecret, // secretOrPrivateKey: Secret
+        {}, // Empty parameters, options: SignOptions
         (err, token) => {
-          if (err) throw err
-          res.cookie("token", token).json(userDoc)
-        }
+          // We catch error and the session token
+          if (err) throw err // If there's an error we send it
+          res.cookie("token", token).json(userDoc) // If it goes through we create the session cookie with the corresponding token
+        } // callback: SignCallback
       )
     } else {
-      // if password is correct it shows message
+      // If password is correct it shows message
       res.status(422).json("Contraseña incorrecta")
     }
   } else {
-    // if email doesn't exists it shows message
+    // If email doesn't exists it shows message
     res.json("Correo no existe")
   }
 })
 
 /* *************************
-            Profile */
+ *     /profile
+ *     This endpoint handles the profile redirection from the login when it succeedes, validates information and uses get*/
 app.get("/profile", (req, res) => {
-  const { token } = req.cookies
+  // We listen to /profile with a get function
+  const { token } = req.cookies // We require from the session the cookies
   if (token) {
-    jwt.verify(token, jwtSecret, {}, async (err, userData) => {
-      if (err) throw err
-      const { name, email, id } = await User.findById(userData.id)
-      res.json({ name, email, id })
-    })
+    // If the token is retreived correctly we go through
+    jwt.verify(
+      // We verify the jwt
+      token, //token: string
+      jwtSecret, // secretOrPublicKey: Secret | GetPublicKeyOrSecret
+      {}, // options?: VerifyOptions & { complete?: false }
+      async (err, userData) => {
+        // callback?: VerifyCallback<JwtPayload | string>
+        // We catch error and the user data
+        if (err) throw err // If there's an error we send it
+        const { name, email, id } = await User.findById(userData.id) // We retrive the name, email and id from the database by finding it by id
+        res.json({ name, email, id }) // We give as a response the name, email and id
+      }
+    )
   } else {
+    // If not we send an error
     res.json(null)
   }
 })
