@@ -67,7 +67,7 @@ app.get("/test", (req, res) => {
 
 /* *************************
  *     /register
- *     This endpoint handles the register form, validates information and uses post */
+ *     This endpoint handles register form, validates the information and uses post */
 app.post("/register", async (req, res) => {
   // we listen to /register with an async post function
   const { name, email, password } = req.body // We require from the form the name, email and password sent by the user
@@ -89,7 +89,7 @@ app.post("/register", async (req, res) => {
 
 /* *************************
  *     /login
- *     This endpoint handles the login form, validates information and uses post*/
+ *     This endpoint handles login form, validates the information and uses post*/
 app.post("/login", async (req, res) => {
   // We listen to /login with an async post funcion
   const { email, password } = req.body // We require from the form the name, email and password sent by the user
@@ -128,7 +128,7 @@ app.post("/login", async (req, res) => {
 
 /* *************************
  *     /profile
- *     This endpoint handles the profile redirection from the login when it succeedes, validates information and uses get*/
+ *     This endpoint handles profile redirection from the login when it succeeded, validates the information and uses get*/
 app.get("/profile", (req, res) => {
   // We listen to /profile with a get function
   const { token } = req.cookies // We require from the session the cookies
@@ -154,60 +154,86 @@ app.get("/profile", (req, res) => {
 })
 
 /* *************************
-            Logout */
+ *     /logout
+ *     This endpoint handles logout from the sidebar, when it succeeded, validates the information and uses post*/
 app.post("/logout", (req, res) => {
-  res.cookie("token", "").json(true)
+  // We listen to /logout with a post function
+  res.cookie("token", "").json(true) // Set the stored token to an empty one
 })
 
 /* *************************
-            POST Cursos */
+ *     /cursos
+ *     This endpoint handles cursos from the form, when it succeeded, validates the information and uses post*/
 app.post("/cursos", (req, res) => {
-  const { token } = req.cookies
+  // We listen to /cursos with a post function
+  const { token } = req.cookies // We require from the session the token cookie
   const {
     course_name,
     course_description,
     course_category,
     course_extrainfo,
     course_neurodiv,
-  } = req.body
+  } = req.body // We require from the form the course_name, course_description, course_category, course_extrainfo and course_neurodiv sent by the user
 
-  jwt.verify(token, jwtSecret, {}, async (err, userData) => {
-    if (err) throw err
-    await Course.create({
-      course_tutor_id: userData.id,
-      course_tutor_name: userData.name,
-      course_name,
-      course_description,
-      course_category,
-      course_extrainfo,
-      course_neurodiv,
-    })
-  })
+  jwt.verify(
+    // We verify the jwt
+    token, // token: string,
+    jwtSecret, // secretOrPublicKey: Secret | GetPublicKeyOrSecret,
+    {}, // options?: VerifyOptions & { complete?: false },
+    async (err, userData) => {
+      // callback?: VerifyCallback<JwtPayload | string>,
+      // We catch error and the user data
+      if (err) throw err // If there's an error we send it
+      await Course.create({
+        course_tutor_id: userData.id,
+        course_tutor_name: userData.name,
+        course_name,
+        course_description,
+        course_category,
+        course_extrainfo,
+        course_neurodiv,
+      }) // We create a course using the Course model by inserting the data sent by user and data from the user (id and name)
+    }
+  )
 })
 
 /* *************************
-            GET Cursos */
+ *     /cursos
+ *     This endpoint handles cursos, when it succeeded, validates the information and uses get to */
 app.get("/cursos", (req, res) => {
-  const { token } = req.cookies
+  // We listen to /cursos with a get function
+  const { token } = req.cookies // We require from the session the token cookie
 
-  jwt.verify(token, jwtSecret, {}, async (err, userData) => {
-    const { id } = userData
+  jwt.verify(
+    // We verify the jwt
+    token, // token: string,
+    jwtSecret, // secretOrPublicKey: Secret | GetPublicKeyOrSecret,
+    {}, // options?: VerifyOptions & { complete?: false },
+    async (err, userData) => {
+      // callback?: VerifyCallback<JwtPayload | string>,
+      if (err) throw err // If there's an error we send it
+      const { id } = userData // We retreive from userData the id of the logged in user
 
-    res.json(await Course.find({ course_tutor_id: id }))
-  })
+      res.json(await Course.find({ course_tutor_id: id })) // We find the courses created by the logged in tutor
+    }
+  )
 })
 
 /* *************************
-            GET Cursos:id */
+ *     /cursos:id
+ *     This endpoint handles cursos with the id info, when it succeeded, validates the information and uses get to obtain the detailed information */
 app.get("/cursos/:id", async (req, res) => {
-  const { id } = req.params
-  res.json(await Course.findById(id))
+  // We listen to /cursos with an async get function
+  const { id } = req.params // We require the id parameter
+  res.json(await Course.findById(id)) // We find the data from the Course model with the specific id
 })
 
 /* *************************
-            PUT Cursos */
+ *     /cursos
+ *     This endpoint handles cursos with the id info, when it succeeded, validates the information and uses put to update the information */
 app.put("/cursos", async (req, res) => {
-  const { token } = req.cookies
+  // We listen to /cursos with an async put function
+  const { token } = req.cookies // We require from the session the token cookie
   const {
     id,
     course_name,
@@ -215,85 +241,120 @@ app.put("/cursos", async (req, res) => {
     course_category,
     course_extrainfo,
     course_neurodiv,
-  } = req.body
+  } = req.body // We require from the form the id, course_name, course_description, course_category, course_extrainfo and course_neurodiv sent by the user
 
-  jwt.verify(token, jwtSecret, {}, async (err, userData) => {
-    if (err) throw err
+  jwt.verify(
+    // We verify the jwt
+    token, // token: string,
+    jwtSecret, // secretOrPublicKey: Secret | GetPublicKeyOrSecret,
+    {}, // options?: VerifyOptions & { complete?: false },
+    async (err, userData) => {
+      // callback?: VerifyCallback<JwtPayload | string>,
+      if (err) throw err // If there's an error we send it
 
-    const courseDoc = await Course.findById(id)
-
-    if (userData.id === courseDoc.course_tutor_id.toString()) {
-      courseDoc.set({
-        course_name,
-        course_description,
-        course_category,
-        course_extrainfo,
-        course_neurodiv,
-      })
-      await courseDoc.save()
-
-      res.json("Actualización completada")
-    }
-  })
-})
-
-/* *************************
-          DELETE cursos-eliminar:id */
-app.delete("/cursos-eliminar/:id", async (req, res) => {
-  const { token } = req.cookies
-  const { id } = req.params
-
-  jwt.verify(token, jwtSecret, {}, async (err, userData) => {
-    if (err) throw err
-
-    try {
-      const courseDoc = await Course.findById(id)
-
-      if (!courseDoc) {
-        return res.status(404).json({ error: "El curso no se encuentra" })
-      }
+      const courseDoc = await Course.findById(id) // We find by id the course in the Course model
 
       if (userData.id === courseDoc.course_tutor_id.toString()) {
-        await Course.findByIdAndDelete(id)
-        res.json({ message: "Curso eliminado exitosamente!" })
+        // We are comparing the logged in user with the tutor id registered in the course
+        // If it is true (the id is the same) we set the new values
+        courseDoc.set({
+          course_name,
+          course_description,
+          course_category,
+          course_extrainfo,
+          course_neurodiv,
+        })
+        await courseDoc.save() // We save the new data
+
+        res.json("Actualización completada") // We send a response
       } else {
-        res
-          .status(403)
-          .json({ error: "No cuentas con los permisos para borrar este curos" })
+        // If it is false (the id is not the same) we send a message
+        res.json("Actualización ha fallado, no posees los permisos necesarios")
       }
-    } catch (error) {
-      console.error(error)
-      res.status(500).json({ error: "Error interno de servidor" })
     }
-  })
+  )
 })
 
 /* *************************
-          Scheduled count */
+ *     /cursos-eliminar:id
+ *     This endpoint handles the deletion of courses with the id, when it succeeded, validates the information and uses delete to erase from database the information */
+app.delete("/cursos-eliminar/:id", async (req, res) => {
+  // We listen to /cursos-eliminar specific by the course id with an async put function
+  const { token } = req.cookies // We require from the session the token cookie
+  const { id } = req.params // We require the courseid parameter
+
+  jwt.verify(
+    // We verify the jwt
+    token, //  token: string,
+    jwtSecret, // secretOrPublicKey: Secret | GetPublicKeyOrSecret,
+    {}, // options?: VerifyOptions & { complete?: false },
+    async (err, userData) => {
+      // callback?: VerifyCallback<JwtPayload | string>,
+      if (err) throw err // If there's an error we send it
+
+      try {
+        // If the connection goes trough we enter and delete the course
+
+        const courseDoc = await Course.findById(id) // We find the course by id sent by the user
+
+        if (!courseDoc) {
+          // If there's no course by that id we send an error
+          return res.status(404).json({ error: "El curso no se encuentra" })
+        }
+
+        if (userData.id === courseDoc.course_tutor_id.toString()) {
+          // We are comparing the logged in user with the tutor id registered in the course
+          // If it is true (the id is the same) we delete the course
+          await Course.findByIdAndDelete(id) // We find by id and delete the course
+          res.json({ message: "Curso eliminado exitosamente!" }) // Message
+        } else {
+          // If it is false (the id is not the same) we send an error message
+          res.status(403).json({
+            error: "No cuentas con los permisos para borrar este curso",
+          })
+        }
+      } catch (error) {
+        // If the connection doesn't go trough we send an error
+        console.error(error)
+        res.status(500).json({ error: "Error interno de servidor" })
+      }
+    }
+  )
+})
+
+/* *************************
+ *   Scheduled function to count the number of registered users and courses
+ *   This job is executed every 12 hours */
 const job = schedule.scheduleJob("* 12 * * *", async function () {
+  // We send to the server console that the job is executing
   console.log("Contando usuarios y cursos...")
 
   try {
     //const tutorCount = await User.countDocuments({ role: "tutor" });
-    const userCount = await User.countDocuments({})
-    const cursosCount = await Course.countDocuments({})
+    const userCount = await User.countDocuments({}) // We count the registered users in the User model
+    const cursosCount = await Course.countDocuments({}) // We count the registered courses in the Course model
+    // We send to the server console the numbers
     console.log("Usuarios totales:", userCount)
     console.log("Cursos totales:", cursosCount)
   } catch (err) {
+    // if there's an error we send it
     console.error(err)
   }
 })
 
 /* *************************
-          GET cuenta-datos */
+ *     /cuenta-datos
+ *     This endpoint handles the count of users and courses with the id, when it succeeded, validates the information and uses get to send the information */
 app.get("/cuenta-datos", async (req, res) => {
+  // We listen to /cuenta-datos with an async get function
   try {
     //const tutorCount = await User.countDocuments({ role: "tutor" });
-    const userCount = await User.countDocuments({})
-    const cursoCount = await Course.countDocuments({})
+    const userCount = await User.countDocuments({}) // We count the registered users in the User model
+    const cursoCount = await Course.countDocuments({}) // We count the registered courses in the Course model
 
-    res.json({ totalUsers: userCount, totalCursos: cursoCount })
+    res.json({ totalUsers: userCount, totalCursos: cursoCount }) // We send a response with the data
   } catch (err) {
+    // if there's an error we send it
     console.error(err)
     res.status(500).json({ error: "Internal server error" })
   }
