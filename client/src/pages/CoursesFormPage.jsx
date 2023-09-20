@@ -2,12 +2,10 @@ import axios from "axios"
 import { useEffect, useState } from "react"
 import { Link, Navigate, useParams } from "react-router-dom"
 import { Icon_Cancel } from "../assets/Icons"
-import COM_Side_Bar from "../components/COM_Side_Bar"
+import SideBar from "../components/SideBar"
 
-export default function PortalFormPage() {
+export default function CoursesFormPage() {
   const [open, setOpen] = useState(true)
-
-  const [courseId, setCourseId] = useState(null)
 
   /* ----------------------------------- 
     Form section */
@@ -100,7 +98,7 @@ export default function PortalFormPage() {
   return (
     <>
       <div className="grid grid-cols-[auto,1fr]">
-        <COM_Side_Bar open={open} setOpen={setOpen} />
+        <SideBar open={open} setOpen={setOpen} />
 
         <section className={`${open ? "ml-72" : "ml-20"} `}>
           <div className="m-10">

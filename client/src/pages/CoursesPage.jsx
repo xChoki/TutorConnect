@@ -1,37 +1,42 @@
-import React, { useContext, useEffect, useState } from "react"
-import { UserContext } from "../context/UserContext"
+import { useEffect, useState } from "react"
 import { Link, Navigate } from "react-router-dom"
 import { Icon_Plus } from "../assets/Icons/"
-import COM_Side_Bar from "../components/COM_Side_Bar"
+import SideBar from "../components/SideBar"
 import axios from "axios"
+
+import useAuth from "../hooks/useAuth"
 
 export default function CoursesPage() {
   const [courses, setCourses] = useState([])
   const [open, setOpen] = useState(true)
-  const { ready, user } = useContext(UserContext)
+  const { ready, auth } = useAuth()
+
+  useEffect(() => {
+    axios.get("/cursos").then(({ data }) => {
+      if (Array.isArray(data)) {
+        setCourses(data)
+      } else {
+        console.error("API response is not an array:", data)
+      }
+    })
+  }, [])
 
   if (!ready) {
     return "Cargando..."
   }
 
-  if (ready && !user) {
+  if (ready && !auth) {
     return <Navigate to={"/login"} />
   }
 
-  useEffect(() => {
-    axios.get("/cursos").then(({ data }) => {
-      setCourses(data)
-    })
-  }, [])
-
   return (
     <div className={`${open ? "ml-72" : "ml-20"} pt-6`}>
-      <COM_Side_Bar open={open} setOpen={setOpen} />
+      <SideBar open={open} setOpen={setOpen} />
 
       <section className="m-10">
         <Link
-              className="inline-flex py-16 px-20 rounded-lg text-lg border hover:bg-gray-100"
-              to={"/portal/cursos/nuevo"}
+          className="inline-flex py-16 px-20 rounded-lg text-lg border hover:bg-gray-100"
+          to={"/portal/cursos/nuevo"}
         >
           <Icon_Plus />
           <span className="pl-2">Agregar curso</span>
