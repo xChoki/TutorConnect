@@ -10,6 +10,7 @@ const schedule = require("node-schedule") // import
  * This is what we are using to code the API */
 const express = require("express") // import
 const app = express() // This is to create an instance of the express app
+const port = process.env.PORT || 4000; // Specify desired port
 app.use(express.json()) // This is used to parse every JSON for express usage
 
 /* CORS: Cross-Origin Resource Sharing
@@ -70,17 +71,26 @@ app.get("/test", (req, res) => {
  *     This endpoint handles register form, validates the information and uses post */
 app.post("/register", async (req, res) => {
   // we listen to /register with an async post function
-  const { name, email, password } = req.body // We require from the form the name, email and password sent by the user
+  const { userName, userEmail, userPassword } = req.body // We require from the form the name, email and password sent by the user
+  console.log("Received registration request with:")
+  console.log("Name:", userName)
+  console.log("Email:", userEmail)
+
+  // We verify for duplicated email
+  const duplicate = await User.findOne({ userEmail: userEmail }).exec()
+  if (duplicate) return res.sendStatus(409)
 
   try {
     // We try the connection
     const userDoc = await User.create({
-      name,
-      email,
-      password: bcrypt.hashSync(password, bcryptSalt),
+      userName,
+      userEmail,
+      userPassword: bcrypt.hashSync(userPassword, bcryptSalt),
     }) // This creates a User using the User mongoose model defined beforehand
 
-    res.json(userDoc) // This gives as a response the parsed json with the user information
+    res
+      .status(201)
+      .json({ success: `El usuario ${userDoc.user_name} ha sido creado!` }) // This gives as a response the parsed json
   } catch (e) {
     // in case of an error it send an error message
     res.status(422).json(e) // Error message corresponds to status 422, it means "The request was well-formed but was unable to be followed due to semantic errors."
@@ -92,37 +102,45 @@ app.post("/register", async (req, res) => {
  *     This endpoint handles login form, validates the information and uses post*/
 app.post("/login", async (req, res) => {
   // We listen to /login with an async post funcion
-  const { email, password } = req.body // We require from the form the name, email and password sent by the user
+  const { userEmail, userPassword } = req.body // We require from the form the name, email and password sent by the user
 
-  const userDoc = await User.findOne({ email }) // This searches for an existing User using findOne function by their email
+  const userDoc = await User.findOne({ userEmail }) // This searches for an existing User using findOne function by their email
+  console.log("userDoc:", userDoc);
 
   if (userDoc) {
     // If email is found it checks for a password
-    const passOk = bcrypt.compareSync(password, userDoc.password) // Using bcrypt we decrypt the password stored in order to compare for validity (form_pasword, stored_password)
+    const passOk = bcrypt.compareSync(userPassword, userDoc.userPassword) // Using bcrypt we decrypt the password stored in order to compare for validity (form_pasword, stored_password)
     if (passOk) {
       // If password is correct it follows through
       jwt.sign(
         // we use the sign function from JSONWebToken
         {
-          email: userDoc.email,
+          userEmail: userDoc.userEmail,
           id: userDoc._id,
-          name: userDoc.name,
+          userName: userDoc.userName,
         }, // User payload: string | Buffer | object,
         jwtSecret, // secretOrPrivateKey: Secret
         {}, // Empty parameters, options: SignOptions
         (err, token) => {
           // We catch error and the session token
           if (err) throw err // If there's an error we send it
-          res.cookie("token", token).json(userDoc) // If it goes through we create the session cookie with the corresponding token
+          res.cookie("token", token, { httpOnly: true }).json({
+            userEmail: userDoc.userEmail,
+            id: userDoc._id,
+            userName: userDoc.userName,
+            userRoles: userDoc.userRoles
+          }) // If it goes through we create the session cookie with the corresponding token
         } // callback: SignCallback
       )
     } else {
       // If password is correct it shows message
+      console.log("User with email does not exist:", userEmail)
       res.status(422).json("Contraseña incorrecta")
     }
   } else {
     // If email doesn't exists it shows message
-    res.json("Correo no existe")
+    console.log("Usuario no encontrado para el correo:", userEmail)
+    return res.status(422).json("Correo no existe")
   }
 })
 
@@ -143,8 +161,8 @@ app.get("/profile", (req, res) => {
         // callback?: VerifyCallback<JwtPayload | string>
         // We catch error and the user data
         if (err) throw err // If there's an error we send it
-        const { name, email, id } = await User.findById(userData.id) // We retrive the name, email and id from the database by finding it by id
-        res.json({ name, email, id }) // We give as a response the name, email and id
+        const { userName, userEmail, id, userRoles } = await User.findById(userData.id) // We retrive the name, email and id from the database by finding it by id
+        res.json({ userName, userEmail, id, userRoles }) // We give as a response the name, email and id
       }
     )
   } else {
@@ -360,4 +378,6 @@ app.get("/cuenta-datos", async (req, res) => {
   }
 })
 
-app.listen(4000)
+app.listen(port, () => {
+  console.log(`Server is running on port ${port}`);
+});
