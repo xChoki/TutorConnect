@@ -28,7 +28,7 @@ function App() {
            * Tutores, alumnos, profesores y administradores */}
           <Route path="/portal" element={<PortalPage />} />
           <Route path="/portal/cursos" element={<CoursesPage />} />
-
+        
           {/* Protected routes
            * Tutores y administradores */}
           <Route path="/portal/cursos/nuevo" element={<CoursesFormPage />} />

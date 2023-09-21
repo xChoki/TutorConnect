@@ -10,7 +10,7 @@ const schedule = require("node-schedule") // import
  * This is what we are using to code the API */
 const express = require("express") // import
 const app = express() // This is to create an instance of the express app
-const port = process.env.PORT || 4000; // Specify desired port
+const port = process.env.PORT || 4000 // Specify desired port
 app.use(express.json()) // This is used to parse every JSON for express usage
 
 /* CORS: Cross-Origin Resource Sharing
@@ -72,9 +72,9 @@ app.get("/test", (req, res) => {
 app.post("/register", async (req, res) => {
   // we listen to /register with an async post function
   const { userName, userEmail, userPassword } = req.body // We require from the form the name, email and password sent by the user
-  console.log("Received registration request with:")
-  console.log("Name:", userName)
-  console.log("Email:", userEmail)
+  // console.log("Received registration request with:")
+  // console.log("Name:", userName)
+  // console.log("Email:", userEmail)
 
   // We verify for duplicated email
   const duplicate = await User.findOne({ userEmail: userEmail }).exec()
@@ -105,7 +105,7 @@ app.post("/login", async (req, res) => {
   const { userEmail, userPassword } = req.body // We require from the form the name, email and password sent by the user
 
   const userDoc = await User.findOne({ userEmail }) // This searches for an existing User using findOne function by their email
-  console.log("userDoc:", userDoc);
+  // console.log("userDoc:", userDoc)
 
   if (userDoc) {
     // If email is found it checks for a password
@@ -128,7 +128,7 @@ app.post("/login", async (req, res) => {
             userEmail: userDoc.userEmail,
             id: userDoc._id,
             userName: userDoc.userName,
-            userRoles: userDoc.userRoles
+            userRoles: userDoc.userRoles,
           }) // If it goes through we create the session cookie with the corresponding token
         } // callback: SignCallback
       )
@@ -161,7 +161,9 @@ app.get("/profile", (req, res) => {
         // callback?: VerifyCallback<JwtPayload | string>
         // We catch error and the user data
         if (err) throw err // If there's an error we send it
-        const { userName, userEmail, id, userRoles } = await User.findById(userData.id) // We retrive the name, email and id from the database by finding it by id
+        const { userName, userEmail, id, userRoles } = await User.findById(
+          userData.id
+        ) // We retrive the name, email and id from the database by finding it by id
         res.json({ userName, userEmail, id, userRoles }) // We give as a response the name, email and id
       }
     )
@@ -379,5 +381,5 @@ app.get("/cuenta-datos", async (req, res) => {
 })
 
 app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
-});
+  console.log(`Server is running on port ${port}`)
+})
