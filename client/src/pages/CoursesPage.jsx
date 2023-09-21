@@ -1,25 +1,41 @@
-import React, { useEffect, useState } from "react"
-import { Link } from "react-router-dom"
+import { useEffect, useState } from "react"
+import { Link, Navigate } from "react-router-dom"
 import { Icon_Plus } from "../assets/Icons/"
-import COM_Side_Bar from "../components/COM_Side_Bar"
+import SideBar from "../components/SideBar"
 import axios from "axios"
+
+import useAuth from "../hooks/useAuth"
 
 export default function CoursesPage() {
   const [courses, setCourses] = useState([])
   const [open, setOpen] = useState(true)
+  const { ready, auth } = useAuth()
 
   useEffect(() => {
     axios.get("/cursos").then(({ data }) => {
-      setCourses(data)
+      if (Array.isArray(data)) {
+        setCourses(data)
+      } else {
+        console.error("API response is not an array:", data)
+      }
     })
   }, [])
-  return (
-    <div className="grid grid-cols-[auto,1fr] pt-6">
-      <COM_Side_Bar open={open} setOpen={setOpen} />
 
-      <section className={`${open ? "ml-72" : "ml-20"} `}>
+  if (!ready) {
+    return "Cargando..."
+  }
+
+  if (ready && !auth) {
+    return <Navigate to={"/login"} />
+  }
+
+  return (
+    <div className={`${open ? "ml-72" : "ml-20"} pt-6`}>
+      <SideBar open={open} setOpen={setOpen} />
+
+      <section className="m-10">
         <Link
-          className="inline-flex py-16 px-20 w-max rounded-lg text-lg border hover:bg-gray-100"
+          className="inline-flex py-16 px-20 rounded-lg text-lg border hover:bg-gray-100"
           to={"/portal/cursos/nuevo"}
         >
           <Icon_Plus />
@@ -27,13 +43,13 @@ export default function CoursesPage() {
         </Link>
       </section>
 
-      <section className={`${open ? "ml-72" : "ml-20"} grid grid-cols-1 gap-4 px-5`}>
+      <section className={`flex grid-cols-3 gap-4 px-5`}>
         {courses.length > 0 &&
           courses.map((course) => (
             <Link
               key={course._id}
               to={"/portal/cursos/" + course._id}
-              className="bg-white border rounded-lg border-gray-200 py-7 px-7"
+              className="bg-white border rounded-lg border-gray-200 py-7 px-7 max-w-md"
             >
               <p>
                 <span className="font-medium">Nombre de tutor: </span>

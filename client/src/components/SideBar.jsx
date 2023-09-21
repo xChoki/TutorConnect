@@ -1,6 +1,6 @@
-import { useContext, useState } from "react"
-import { UserContext } from "../UserContext"
+import { useState } from "react"
 import { NavLink, Navigate, useParams } from "react-router-dom"
+import useAuth from "../hooks/useAuth"
 
 import {
   Icon_Alumnos,
@@ -13,10 +13,9 @@ import {
 
 import axios from "axios"
 
-export default function COM_Side_Bar({ open, setOpen }) {
+export default function SideBar({ open, setOpen }) {
   const [redirect, setRedirect] = useState(null)
-  const { ready, user, setUser } = useContext(UserContext)
-  //const [open, setOpen] = useState(true)
+  const { ready, auth, setAuth } = useAuth()
 
   let { subpage } = useParams()
 
@@ -28,7 +27,7 @@ export default function COM_Side_Bar({ open, setOpen }) {
     return "Cargando..."
   }
 
-  if (ready && !user) {
+  if (ready && !auth) {
     return <Navigate to={"/login"} />
   }
 
@@ -69,7 +68,7 @@ export default function COM_Side_Bar({ open, setOpen }) {
     if (result === true) {
       await axios.post("/logout")
       setRedirect("/")
-      setUser(null)
+      setAuth(null)
     }
   }
 
@@ -112,7 +111,7 @@ export default function COM_Side_Bar({ open, setOpen }) {
                 </span>
               </NavLink>
             </li>
-
+            
             <li>
               <NavLink
                 to={"/portal/alumnos"}
@@ -170,7 +169,6 @@ export default function COM_Side_Bar({ open, setOpen }) {
             </li>
           </ul>
         </aside>
-
       </div>
     </>
   )
