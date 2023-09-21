@@ -19,10 +19,10 @@ export default function RequireAuth({ allowedRoles }) {
     hasRolesObject &&
     Object.values(userRoles).some((role) => allowedRoles.includes(role))
 
-  console.log("Datos usuario: " + auth)
-  console.log("Roles permitidos: " + allowedRoles)
-  console.log("Tiene roles: " + hasRolesObject)
-  console.log("Tiene los roles requeridos: " + hasRequiredRole)
+  // console.log("Datos usuario: " + auth.userName + " " + auth.userEmail)
+  // console.log("Roles permitidos: " + allowedRoles)
+  // console.log("Tiene roles: " + hasRolesObject)
+  // console.log("Tiene los roles requeridos: " + hasRequiredRole)
 
   return hasRequiredRole ? (
     <Outlet />

@@ -111,7 +111,7 @@ export default function SideBar({ open, setOpen }) {
                 </span>
               </NavLink>
             </li>
-
+            
             <li>
               <NavLink
                 to={"/portal/alumnos"}
