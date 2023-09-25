@@ -87,6 +87,13 @@ En el directorio padre para cerrar se ejecuta
 ```sh
 docker-compose -f docker-compose-dev.yml down
 ```
+
+Si desean limpiar su docker, ejecutar esto para eliminarlo todo
+
+```sh
+docker system prune -a --volumes
+```
+
 </details>
 
 <!-- DEPENDENCIAS INSTALADAS-->
