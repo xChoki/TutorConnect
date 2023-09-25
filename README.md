@@ -31,13 +31,17 @@ En una terminal en la carpeta clonada nos dirigimos a la carpeta client
 ```sh
 cd client
 ```
+Instalamos pnpm
+```sh
+npm install -g pnpm
+```
 Instalamos dependencias
 ```sh
-npm i
+pnpm i
 ```
 Iniciamos servidor React+Vite
 ```sh
-npm run dev
+pnpm run dev
 ```
 ****
 En una terminal nueva en la carpeta clonada nos dirigimos a la carpeta api
