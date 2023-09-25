@@ -20,18 +20,18 @@ export default function IndexPage() {
  
   return (
     <div className="flex flex-col items-center h-screen bg-gray-100">
-      <div className="w-full h-[70vh] mt-0 relative">
+      <div className="w-full max-w-7xl h-[70vh] mt-0 relative">
         <img
           src="./src/assets/head.png"
           alt="Pencils"
-          className="w-full h-auto mt-0"
+          className="w-full h-60 mt-0"
         />
         <p className="absolute top-1/3 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-4xl font-semibold text-white">
           ¡Bienvenidos a TutorConnect!
         </p>
       </div>
 
-      <div className="flex justify-between w-11/12 mt-6">
+      <div className="flex justify-between w-11/12 mt-6 max-w-7xl">
         <div className="bg-white rounded-lg p-4 flex-1 mr-4 flex flex-col items-center">
           <h2 className="text-lg font-semibold mb-2">{totalTutores}</h2>
           <p className="text-lg">Tutores registrados.</p>
@@ -46,7 +46,7 @@ export default function IndexPage() {
         </div>
       </div>
 
-      <div className="bg-white rounded-lg p-6 mt-6 w-11/12 flex flex-col items-center justify-center">
+      <div className="bg-white rounded-lg p-6 mt-6 w-11/12 flex flex-col items-center justify-center max-w-screen-md">
         <h2 className="text-2xl font-semibold mb-4">Sobre nosotros</h2>
         <p>
           Lorem ipsum, dolor sit amet consectetur adipisicing elit. Quidem cum
@@ -68,7 +68,7 @@ export default function IndexPage() {
       <div className="mb-8"></div>
 
       {/* Footer */}
-      <footer className="bg-gray-400 text-white p-4 text-center w-full">
+      <footer className="bg-gray-400 text-white p-4 text-center w-full max-w-7xl">
         Este es el pie de página. Coloca aquí tus enlaces y contenido
         relacionado.
       </footer>
