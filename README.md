@@ -81,6 +81,7 @@ En el directorio padre para iniciar se ejecuta
 ```sh
 docker-compose -f docker-compose-dev.yml up
 ```
+Nota: La primera vez puede tardar de 2 a 3 minutos, instalará muchas dependencias
 
 En el directorio padre para cerrar se ejecuta
 
