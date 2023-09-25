@@ -11,7 +11,7 @@ import CoursesFormPage from "./pages/CoursesFormPage"
 import CourseInfoPage from "./pages/CourseInfoPage"
 import RequireAuth from "./components/RequireAuth"
 
-axios.defaults.baseURL = "http://localhost:4000"
+axios.defaults.baseURL = "http://localhost:4000/api/"
 axios.defaults.withCredentials = true
 
 function App() {

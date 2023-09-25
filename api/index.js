@@ -62,14 +62,14 @@ app.use(cookieParser()) // This is to create an instance of the cookieparser
 /* *************************
  *     /test
  *     This endpoint is to test the connection, if it is up it shows "test ok" */
-app.get("/test", (req, res) => {
+app.get("/api/test", (req, res) => {
   res.json("test ok")
 })
 
 /* *************************
  *     /register
  *     This endpoint handles register form, validates the information and uses post */
-app.post("/register", async (req, res) => {
+app.post("/api/register", async (req, res) => {
   // we listen to /register with an async post function
   const { userName, userEmail, userPassword } = req.body // We require from the form the name, email and password sent by the user
   // console.log("Received registration request with:")
@@ -100,7 +100,7 @@ app.post("/register", async (req, res) => {
 /* *************************
  *     /login
  *     This endpoint handles login form, validates the information and uses post*/
-app.post("/login", async (req, res) => {
+app.post("/api/login", async (req, res) => {
   // We listen to /login with an async post funcion
   const { userEmail, userPassword } = req.body // We require from the form the name, email and password sent by the user
 
@@ -147,7 +147,7 @@ app.post("/login", async (req, res) => {
 /* *************************
  *     /profile
  *     This endpoint handles profile redirection from the login when it succeeded, validates the information and uses get*/
-app.get("/profile", (req, res) => {
+app.get("/api/profile", (req, res) => {
   // We listen to /profile with a get function
   const { token } = req.cookies // We require from the session the cookies
   if (token) {
@@ -176,7 +176,7 @@ app.get("/profile", (req, res) => {
 /* *************************
  *     /logout
  *     This endpoint handles logout from the sidebar, when it succeeded, validates the information and uses post*/
-app.post("/logout", (req, res) => {
+app.post("/api/logout", (req, res) => {
   // We listen to /logout with a post function
   res.cookie("token", "").json(true) // Set the stored token to an empty one
 })
@@ -184,7 +184,7 @@ app.post("/logout", (req, res) => {
 /* *************************
  *     /cursos
  *     This endpoint handles cursos from the form, when it succeeded, validates the information and uses post*/
-app.post("/cursos", (req, res) => {
+app.post("/api/cursos", (req, res) => {
   // We listen to /cursos with a post function
   const { token } = req.cookies // We require from the session the token cookie
   const {
@@ -220,7 +220,7 @@ app.post("/cursos", (req, res) => {
 /* *************************
  *     /cursos
  *     This endpoint handles cursos, when it succeeded, validates the information and uses get to */
-app.get("/cursos", (req, res) => {
+app.get("/api/cursos", (req, res) => {
   // We listen to /cursos with a get function
   const { token } = req.cookies // We require from the session the token cookie
 
@@ -242,7 +242,7 @@ app.get("/cursos", (req, res) => {
 /* *************************
  *     /cursos:id
  *     This endpoint handles cursos with the id info, when it succeeded, validates the information and uses get to obtain the detailed information */
-app.get("/cursos/:id", async (req, res) => {
+app.get("/api/cursos/:id", async (req, res) => {
   // We listen to /cursos with an async get function
   const { id } = req.params // We require the id parameter
   res.json(await Course.findById(id)) // We find the data from the Course model with the specific id
@@ -251,7 +251,7 @@ app.get("/cursos/:id", async (req, res) => {
 /* *************************
  *     /cursos
  *     This endpoint handles cursos with the id info, when it succeeded, validates the information and uses put to update the information */
-app.put("/cursos", async (req, res) => {
+app.put("/api/cursos", async (req, res) => {
   // We listen to /cursos with an async put function
   const { token } = req.cookies // We require from the session the token cookie
   const {
@@ -298,7 +298,7 @@ app.put("/cursos", async (req, res) => {
 /* *************************
  *     /cursos-eliminar:id
  *     This endpoint handles the deletion of courses with the id, when it succeeded, validates the information and uses delete to erase from database the information */
-app.delete("/cursos-eliminar/:id", async (req, res) => {
+app.delete("/api/cursos-eliminar/:id", async (req, res) => {
   // We listen to /cursos-eliminar specific by the course id with an async put function
   const { token } = req.cookies // We require from the session the token cookie
   const { id } = req.params // We require the courseid parameter
@@ -365,7 +365,7 @@ const job = schedule.scheduleJob("* 12 * * *", async function () {
 /* *************************
  *     /cuenta-datos
  *     This endpoint handles the count of users and courses with the id, when it succeeded, validates the information and uses get to send the information */
-app.get("/cuenta-datos", async (req, res) => {
+app.get("/api/cuenta-datos", async (req, res) => {
   // We listen to /cuenta-datos with an async get function
   try {
     //const tutorCount = await User.countDocuments({ role: "tutor" });
