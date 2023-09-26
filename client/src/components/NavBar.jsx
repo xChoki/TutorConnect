@@ -8,7 +8,7 @@ export default function NavBar() {
   return (
     <header className="sticky top-0 z-50 border-b-gray-200">
       <nav className="bg-gray-100 border-gray-200">
-        <div className="flex flex-wrap justify-between items-center mx-auto max-w-screen-xl p-2">
+        <div className="flex justify-between items-center mx-auto max-w-screen-xl p-2">
           <Link to="/" className="items-center">
             <span className="self-center text-2xl font-semibold whitespace-nowrap">
               TutorConnect
@@ -21,7 +21,7 @@ export default function NavBar() {
           >
             {!!auth && (
               <section className="pl-10 pr-5 text-right">
-                <p className="text-lg">{auth.userName}</p>
+                <p className="md:text-lg">{auth.userName}</p>
                 <p className="text-sm">Ver portal</p>
               </section>
             )}
