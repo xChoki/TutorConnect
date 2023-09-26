@@ -27,7 +27,7 @@ const UserSchema = new Schema({
     Teacher: Number,
     Admin: Number
   },
-  refreshToken: String,
+  refreshToken: String
 })
 
 const UserModel = mongoose.model("User", UserSchema)

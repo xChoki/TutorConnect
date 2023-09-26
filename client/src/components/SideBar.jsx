@@ -2,6 +2,8 @@ import { useState } from "react"
 import { NavLink, Navigate, useParams } from "react-router-dom"
 import useAuth from "../hooks/useAuth"
 
+import { validateRoles } from "../scripts/ValidateRoles"
+
 import {
   Icon_Alumnos,
   Icon_Cursos,
@@ -76,6 +78,10 @@ export default function SideBar({ open, setOpen }) {
     return <Navigate to={redirect} />
   }
 
+  const allowedRoles = [2002, 2003, 5001]
+
+  const ValidateResult = validateRoles({ allowedRoles })
+
   return (
     <>
       <div style={{ position: "relative", zIndex: 1 }}>
@@ -111,22 +117,26 @@ export default function SideBar({ open, setOpen }) {
                 </span>
               </NavLink>
             </li>
-            
-            <li>
-              <NavLink
-                to={"/portal/alumnos"}
-                className={link_Classes("alumnos")}
-              >
-                <Icon_Alumnos />
-                <span
-                  className={`${
-                    !open && "hidden"
-                  } origin-left duration-200 flex-1 ml-3`}
+
+            {ValidateResult ? (
+              <li>
+                <NavLink
+                  to={"/portal/alumnos"}
+                  className={link_Classes("alumnos")}
                 >
-                  Alumnos
-                </span>
-              </NavLink>
-            </li>
+                  <Icon_Alumnos />
+                  <span
+                    className={`${
+                      !open && "hidden"
+                    } origin-left duration-200 flex-1 ml-3`}
+                  >
+                    Alumnos
+                  </span>
+                </NavLink>
+              </li>
+            ) : (
+              false
+            )}
 
             <li>
               <NavLink to={"/portal/cursos"} className={link_Classes("cursos")}>
