@@ -19,7 +19,7 @@ export default function LoginPage() {
       if (response.data && response.data.userEmail) {
         // Assuming the server sends a user object in the response
         setAuth(response.data)
-        console.log(response.data)
+        //console.log(response.data)
         setRedirect(true)
       } else {
         alert(
