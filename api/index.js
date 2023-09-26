@@ -72,13 +72,20 @@ app.get("/api/test", (req, res) => {
 app.post("/api/register", async (req, res) => {
   // we listen to /register with an async post function
   const { userName, userEmail, userPassword } = req.body // We require from the form the name, email and password sent by the user
-  // console.log("Received registration request with:")
-  // console.log("Name:", userName)
-  // console.log("Email:", userEmail)
+  console.log("Received registration request with:")
+  console.log("Name:", userName)
+  console.log("Email:", userEmail)
+  
+  // Validate that userEmail is not null or empty
+  if (!userEmail || userEmail.trim() === "") {
+    return res.status(422).json({ error: "Email is required." })
+  }
 
-  // We verify for duplicated email
+  // Check for duplicate email before inserting
   const duplicate = await User.findOne({ userEmail: userEmail }).exec()
-  if (duplicate) return res.sendStatus(409)
+  if (duplicate) {
+    return res.status(409).json({ error: "Email address is already in use." })
+  }
 
   try {
     // We try the connection
@@ -90,10 +97,11 @@ app.post("/api/register", async (req, res) => {
 
     res
       .status(201)
-      .json({ success: `El usuario ${userDoc.user_name} ha sido creado!` }) // This gives as a response the parsed json
+      .json({ success: `El usuario ${userDoc.userName} ha sido creado!` }) // This gives as a response the parsed json
   } catch (e) {
     // in case of an error it send an error message
     res.status(422).json(e) // Error message corresponds to status 422, it means "The request was well-formed but was unable to be followed due to semantic errors."
+    console.log(`Error crear usuario ${userEmail}, con error ${e}`)
   }
 })
 
@@ -134,12 +142,12 @@ app.post("/api/login", async (req, res) => {
       )
     } else {
       // If password is correct it shows message
-      console.log("User with email does not exist:", userEmail)
+      //console.log("Contraseña incorrecta:", userEmail)
       res.status(422).json("Contraseña incorrecta")
     }
   } else {
     // If email doesn't exists it shows message
-    console.log("Usuario no encontrado para el correo:", userEmail)
+    // console.log("Usuario no encontrado para el correo:", userEmail)
     return res.status(422).json("Correo no existe")
   }
 })

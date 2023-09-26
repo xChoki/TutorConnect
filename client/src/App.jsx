@@ -14,6 +14,13 @@ import RequireAuth from "./components/RequireAuth"
 axios.defaults.baseURL = "http://localhost:4000/api/"
 axios.defaults.withCredentials = true
 
+const ROLES = {
+  'User': 2001,
+  'Tutor': 2002,
+  'Teacher': 2003,
+  'Admin': 5001
+}
+
 function App() {
   return (
     <Routes>
@@ -23,12 +30,14 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
 
-        <Route element={<RequireAuth allowedRoles={[2001]} />}>
+        <Route element={<RequireAuth allowedRoles={[ROLES.User]} />}>
           {/* Protected routes
            * Tutores, alumnos, profesores y administradores */}
           <Route path="/portal" element={<PortalPage />} />
           <Route path="/portal/cursos" element={<CoursesPage />} />
-        
+        </Route>
+
+        <Route element={<RequireAuth allowedRoles={[ROLES.Tutor, ROLES.Teacher, ROLES.Admin]} />}>
           {/* Protected routes
            * Tutores y administradores */}
           <Route path="/portal/cursos/nuevo" element={<CoursesFormPage />} />
