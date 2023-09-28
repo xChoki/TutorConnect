@@ -13,19 +13,19 @@ const app = express() // This is to create an instance of the express app
 const port = process.env.PORT || 4000 // Specify desired port
 app.use(express.json()) // This is used to parse every JSON for express usage
 
+/* Dotenv
+ * Dependency used to read .env files, in NODE v20.6.0 it is integrated, but we are using v18.17.1LTS and it is not */
+require("dotenv").config()
+
 /* CORS: Cross-Origin Resource Sharing
  * Used to give security and control access to our app*/
 const cors = require("cors") // import
 app.use(
   cors({
     credentials: true,
-    origin: "http://localhost:5173", // This is the origin that we are allowing access
+    origin: process.env.URL_CORS, // This is the origin that we are allowing access
   })
 )
-
-/* Dotenv
- * Dependency used to read .env files, in NODE v20.6.0 it is integrated, but we are using v18.17.1LTS and it is not */
-require("dotenv").config()
 
 /* Mongoose
  * It is used to connect to a MongoDB database
