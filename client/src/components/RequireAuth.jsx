@@ -7,6 +7,7 @@ export default function RequireAuth({ allowedRoles }) {
   const location = useLocation()
 
   const ValidateResult = validateRoles({ allowedRoles })
+  
   // console.log("resultado: " + ValidateResult)
   // console.log("Datos usuario: " + auth.userName + " " + auth.userEmail)
   // console.log("Roles permitidos: " + allowedRoles)

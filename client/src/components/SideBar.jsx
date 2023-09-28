@@ -118,7 +118,7 @@ export default function SideBar({ open, setOpen }) {
               </NavLink>
             </li>
 
-            {ValidateResult ? (
+            {ValidateResult && (
               <li>
                 <NavLink
                   to={"/portal/alumnos"}
@@ -134,8 +134,6 @@ export default function SideBar({ open, setOpen }) {
                   </span>
                 </NavLink>
               </li>
-            ) : (
-              false
             )}
 
             <li>
