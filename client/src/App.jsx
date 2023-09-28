@@ -11,6 +11,7 @@ import CoursesFormPage from "./pages/CoursesFormPage"
 import CourseInfoPage from "./pages/CourseInfoPage"
 import RequireAuth from "./components/RequireAuth"
 
+// Variable de entorno
 axios.defaults.baseURL = import.meta.env.REACT_APP_API_URL
 axios.defaults.withCredentials = true
 
