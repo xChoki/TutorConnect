@@ -41,7 +41,7 @@ export default function CoursesPage() {
     <div className={`${open ? "ml-72" : "ml-20"} pt-6`}>
       <SideBar open={open} setOpen={setOpen} />
 
-      {ValidateResult ? (
+      {ValidateResult && (
         <section className="m-10">
           <Link
             className="inline-flex py-16 px-20 rounded-lg text-lg border hover:bg-gray-100"
@@ -51,16 +51,14 @@ export default function CoursesPage() {
             <span className="pl-2">Agregar curso</span>
           </Link>
         </section>
-      ) : (
-        false
       )}
 
-      <section className="flex flex-wrap gap-4 px-5">
+      <section className="grid lg:grid-cols-4 md:grid-cols-1 gap-4 px-5">
         {courses.length > 0 &&
           courses.map((course) => (
             <div
               key={course._id}
-              className="w-100 h-60 p-4 md:w-1/2 lg:w-1/3 xl:w-1/4 mb-20"
+              className="w-96 h-60 p-4 mb-20 mr-20"
             >
               <Link to={"/portal/cursos/" + course._id}>
                 <div className="max-w-xl rounded overflow-hidden shadow-lg relative">
@@ -77,12 +75,16 @@ export default function CoursesPage() {
                       </p>
                     </div>
                   ) : (
-                    <></>
+                    false
                   )}
 
                   <section className="px-6 py-4">
                     <span className="font-bold text-xl mb-2">
-                      {course.course_name}
+                      {course.course_name.length < 28 ? (
+                        course.course_name
+                      ):(
+                        course.course_name.slice(0,28) + "..."
+                      )}
                     </span>
                     <p className="text-gray-700 text-base">
                       {course.course_description}
