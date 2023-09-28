@@ -11,7 +11,7 @@ import CoursesFormPage from "./pages/CoursesFormPage"
 import CourseInfoPage from "./pages/CourseInfoPage"
 import RequireAuth from "./components/RequireAuth"
 
-axios.defaults.baseURL = "http://localhost:4000/api/"
+axios.defaults.baseURL = import.meta.env.REACT_APP_API_URL
 axios.defaults.withCredentials = true
 
 const ROLES = {
