@@ -50,11 +50,11 @@ cd api
 ```
 Instalamos dependencias
 ```sh
-npm i
+pnpm i
 ```
 Instalamos nodemon
 ```sh
-npm install -g nodemon
+pnpm install -g nodemon
 ```
 Iniciamos servidor Node
 ```sh
