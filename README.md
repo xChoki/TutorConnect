@@ -31,13 +31,17 @@ En una terminal en la carpeta clonada nos dirigimos a la carpeta client
 ```sh
 cd client
 ```
+Instalamos pnpm
+```sh
+npm install -g pnpm
+```
 Instalamos dependencias
 ```sh
-npm i
+pnpm i
 ```
 Iniciamos servidor React+Vite
 ```sh
-npm run dev
+pnpm run dev
 ```
 ****
 En una terminal nueva en la carpeta clonada nos dirigimos a la carpeta api
@@ -46,11 +50,11 @@ cd api
 ```
 Instalamos dependencias
 ```sh
-npm i
+pnpm i
 ```
 Instalamos nodemon
 ```sh
-npm install -g nodemon
+pnpm install -g nodemon
 ```
 Iniciamos servidor Node
 ```sh
@@ -77,12 +81,20 @@ En el directorio padre para iniciar se ejecuta
 ```sh
 docker-compose -f docker-compose-dev.yml up
 ```
+Nota: La primera vez puede tardar de 2 a 3 minutos, instalará muchas dependencias
 
 En el directorio padre para cerrar se ejecuta
 
 ```sh
 docker-compose -f docker-compose-dev.yml down
 ```
+
+Si desean limpiar su docker, ejecutar esto para eliminarlo todo
+
+```sh
+docker system prune -a --volumes
+```
+
 </details>
 
 <!-- DEPENDENCIAS INSTALADAS-->
