@@ -1,12 +1,12 @@
 import axios from "axios"
 import { useEffect, useState } from "react"
 import { Link, useParams } from "react-router-dom"
-import SideBar from "../components/SideBar"
+import SideBar from "../../components/SideBar"
 
-import { validateRoles } from "../scripts/ValidateRoles"
+import { validateRoles } from "../../scripts/ValidateRoles"
 
 import { Accordion } from "flowbite-react"
-import { Icon_Record } from "../assets/Icons"
+import { Icon_Record } from "../../assets/Icons"
 
 export default function CourseInfoPage() {
   const [open, setOpen] = useState(true)

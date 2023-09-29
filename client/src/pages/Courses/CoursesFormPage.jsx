@@ -1,8 +1,8 @@
 import axios from "axios"
 import { useEffect, useState } from "react"
 import { Link, Navigate, useParams } from "react-router-dom"
-import { Icon_Cancel } from "../assets/Icons"
-import SideBar from "../components/SideBar"
+import { Icon_Cancel } from "../../assets/Icons"
+import SideBar from "../../components/SideBar"
 
 export default function CoursesFormPage() {
   const [open, setOpen] = useState(true)
