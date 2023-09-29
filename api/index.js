@@ -75,7 +75,7 @@ app.post("/api/register", async (req, res) => {
   console.log("Received registration request with:")
   console.log("Name:", userName)
   console.log("Email:", userEmail)
-  
+
   // Validate that userEmail is not null or empty
   if (!userEmail || userEmail.trim() === "") {
     return res.status(422).json({ error: "Email is required." })
@@ -132,12 +132,18 @@ app.post("/api/login", async (req, res) => {
         (err, token) => {
           // We catch error and the session token
           if (err) throw err // If there's an error we send it
-          res.cookie("token", token, { httpOnly: true }).json({
-            userEmail: userDoc.userEmail,
-            id: userDoc._id,
-            userName: userDoc.userName,
-            userRoles: userDoc.userRoles,
-          }) // If it goes through we create the session cookie with the corresponding token
+          res
+            .cookie("token", token, {
+              httpOnly: true,
+              sameSite: "None",
+              secure: true,
+            })
+            .json({
+              userEmail: userDoc.userEmail,
+              id: userDoc._id,
+              userName: userDoc.userName,
+              userRoles: userDoc.userRoles,
+            }) // If it goes through we create the session cookie with the corresponding token
         } // callback: SignCallback
       )
     } else {
