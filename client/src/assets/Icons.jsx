@@ -249,3 +249,60 @@ export function Icon_BookOpen() {
     </svg>
   )
 }
+
+export function Icon_Check() {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      strokeWidth="1.5"
+      stroke="currentColor"
+      className="w-6 h-6"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+      />
+    </svg>
+  )
+}
+
+export function Icon_Upload() {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      strokeWidth="1.5"
+      stroke="currentColor"
+      className="w-6 h-6"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"
+      />
+    </svg>
+  )
+}
+
+export function Icon_UploadCloud() {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      className="w-20 h-w-20 text-gray-600"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      strokeWidth="2"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+      />
+    </svg>
+  )
+}

@@ -2,12 +2,16 @@ import axios from "axios"
 import { useState } from "react"
 import { Link, Navigate } from "react-router-dom"
 import useAuth from "../../hooks/useAuth"
+import Modal from "../../components/Modal"
 
 export default function LoginPage() {
   // VARIABLES
   const [userEmail, setUserEmail] = useState("")
   const [userPassword, setUserPassword] = useState("")
   const [redirect, setRedirect] = useState(false)
+
+  const [open, setOpen] = useState(false)
+  const [status, setStatus] = useState(false)
 
   const { setAuth } = useAuth()
 
@@ -16,23 +20,26 @@ export default function LoginPage() {
     try {
       const response = await axios.post("/login", { userEmail, userPassword })
 
-      if (response.data && response.data.userEmail) {
-        // Assuming the server sends a user object in the response
-        setAuth(response.data)
-        //console.log(response.data)
-        setRedirect(true)
-      } else {
+      if (!response.data && !response.data.userEmail) {
         alert(
           "El inicio de sesión ha fallado. Por favor, verifique sus credenciales."
         )
+        setStatus(false)
+        return
       }
+
+      // Assuming the server sends a user object in the response
+      setAuth(response.data)
+      setStatus(true)
+      //console.log(response.data)
+      setOpen(true)
     } catch (e) {
       alert("El inicio de sesión ha fallado, intentelo nuevamente." + e)
     }
   }
 
   if (redirect) {
-    return <Navigate to={"/"} />
+    return <Navigate to={"/portal"} />
   }
 
   return (
@@ -63,6 +70,36 @@ export default function LoginPage() {
             </Link>
           </div>
         </form>
+
+        {status && (
+          <Modal
+            open={open}
+            onClose={() => setOpen(false)}
+            cancel={true}
+            modalMargin={0}
+          >
+            <div className="flex flex-col items-center justify-center text-center h-full">
+              <div className="mx-auto my-4 w-full h-full">
+                <h3>¡Sesión iniciada correctamente!</h3>
+                <p className="text-sm text-gray-500 mt-2">
+                  Presiona continuar para redireccionar a tu portal.
+                </p>
+              </div>
+
+              <div className="gap-4 mt-7">
+                <button
+                  className="focus:outline-none text-white bg-green-500 hover:bg-green-600 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2"
+                  onClick={() => {
+                    setOpen(false)
+                    setRedirect(true)
+                  }}
+                >
+                  Continuar
+                </button>
+              </div>
+            </div>
+          </Modal>
+        )}
       </div>
     </div>
   )
