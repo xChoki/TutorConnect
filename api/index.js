@@ -51,6 +51,59 @@ const jwtSecret = "AOi3ejk34io" // jwt secret token, it is randomly typed
 const cookieParser = require("cookie-parser") // import
 app.use(cookieParser()) // This is to create an instance of the cookieparser
 
+/* Multer
+ * Handles and helps with file uploading  */
+const multer = require("multer")
+
+// Create a multer instance for the 'uploadvideo' route
+const uploadVideo = multer({
+  storage: multer.diskStorage({
+    destination: (req, file, cb) => {
+      cb(null, "uploads/videos/") // Destination for uploadvideo uploads
+    },
+    filename: (req, file, cb) => {
+      cb(null, Date.now() + "-" + file.originalname)
+    },
+  }),
+})
+
+// Create a multer instance for the 'uploadmaterial' route
+const uploadMaterial = multer({
+  storage: multer.diskStorage({
+    destination: (req, file, cb) => {
+      cb(null, "uploads/material/") // Destination for uploadmaterial uploads
+    },
+    filename: (req, file, cb) => {
+      cb(null, Date.now() + "-" + file.originalname)
+    },
+  }),
+})
+
+// Create a multer instance for the 'uploadhomework' route
+const uploadHomework = multer({
+  storage: multer.diskStorage({
+    destination: (req, file, cb) => {
+      cb(null, "uploads/homework/") // Destination for uploadhomework uploads
+    },
+    filename: (req, file, cb) => {
+      cb(null, Date.now() + "-" + file.originalname)
+    },
+  }),
+})
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "uploads/default/") // Default destination for uploads
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + "-" + file.originalname)
+  },
+})
+
+const upload = multer({
+  storage: storage, // Use the default storage configuration
+})
+
 /* --------------------------------------------
  *     ENDPOINTS TO API
  *     These correspond to every endpoint that is going to be accessed later in front-end
@@ -387,6 +440,64 @@ app.get("/api/cuenta-datos", async (req, res) => {
     const cursoCount = await Course.countDocuments({}) // We count the registered courses in the Course model
 
     res.json({ totalUsers: userCount, totalCursos: cursoCount }) // We send a response with the data
+  } catch (err) {
+    // if there's an error we send it
+    console.error(err)
+    res.status(500).json({ error: "Internal server error" })
+  }
+})
+
+/* *************************
+ *     /uploadfiles
+ *     This endpoint handles the count of users and courses with the id, when it succeeded, validates the information and uses get to send the information */
+app.post("/api/uploadvideo", uploadVideo.single("file"), (req, res) => {
+  // We listen to /uploadfiles with an async get function
+  try {
+    if (!req.file) {
+      return res.status(400).send("No file uploaded.")
+    }
+    res.send("File uploaded successfully.")
+  } catch (err) {
+    // if there's an error we send it
+    console.error(err)
+    res.status(500).json({ error: "Internal server error" })
+  }
+})
+
+app.post("/api/uploadvideo", uploadMaterial.single("file"), (req, res) => {
+  // We listen to /uploadfiles with an async get function
+  try {
+    if (!req.file) {
+      return res.status(400).send("No file uploaded.")
+    }
+    res.send("File uploaded successfully.")
+  } catch (err) {
+    // if there's an error we send it
+    console.error(err)
+    res.status(500).json({ error: "Internal server error" })
+  }
+})
+
+app.post("/api/uploadmaterial", uploadMaterial.single("file"), (req, res) => {
+  // We listen to /uploadfiles with an async get function
+  try {
+    if (!req.file) {
+      return res.status(400).send("No file uploaded.")
+    }
+    res.send("File uploaded successfully.")
+  } catch (err) {
+    // if there's an error we send it
+    console.error(err)
+    res.status(500).json({ error: "Internal server error" })
+  }
+})
+app.post("/api/uploadhomework", uploadHomework.single("file"), (req, res) => {
+  // We listen to /uploadfiles with an async get function
+  try {
+    if (!req.file) {
+      return res.status(400).send("No file uploaded.")
+    }
+    res.send("File uploaded successfully.")
   } catch (err) {
     // if there's an error we send it
     console.error(err)
