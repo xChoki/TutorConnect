@@ -13,19 +13,19 @@ const app = express() // This is to create an instance of the express app
 const port = process.env.PORT || 4000 // Specify desired port
 app.use(express.json()) // This is used to parse every JSON for express usage
 
+/* Dotenv
+ * Dependency used to read .env files, in NODE v20.6.0 it is integrated, but we are using v18.17.1LTS and it is not */
+require("dotenv").config()
+
 /* CORS: Cross-Origin Resource Sharing
  * Used to give security and control access to our app*/
 const cors = require("cors") // import
 app.use(
   cors({
     credentials: true,
-    origin: "http://localhost:5173", // This is the origin that we are allowing access
+    origin: process.env.URL_CORS, // This is the origin that we are allowing access
   })
 )
-
-/* Dotenv
- * Dependency used to read .env files, in NODE v20.6.0 it is integrated, but we are using v18.17.1LTS and it is not */
-require("dotenv").config()
 
 /* Mongoose
  * It is used to connect to a MongoDB database
@@ -51,6 +51,59 @@ const jwtSecret = "AOi3ejk34io" // jwt secret token, it is randomly typed
 const cookieParser = require("cookie-parser") // import
 app.use(cookieParser()) // This is to create an instance of the cookieparser
 
+/* Multer
+ * Handles and helps with file uploading  */
+const multer = require("multer")
+
+// Create a multer instance for the 'uploadvideo' route
+const uploadVideo = multer({
+  storage: multer.diskStorage({
+    destination: (req, file, cb) => {
+      cb(null, "uploads/videos/") // Destination for uploadvideo uploads
+    },
+    filename: (req, file, cb) => {
+      cb(null, Date.now() + "-" + file.originalname)
+    },
+  }),
+})
+
+// Create a multer instance for the 'uploadmaterial' route
+const uploadMaterial = multer({
+  storage: multer.diskStorage({
+    destination: (req, file, cb) => {
+      cb(null, "uploads/material/") // Destination for uploadmaterial uploads
+    },
+    filename: (req, file, cb) => {
+      cb(null, Date.now() + "-" + file.originalname)
+    },
+  }),
+})
+
+// Create a multer instance for the 'uploadhomework' route
+const uploadHomework = multer({
+  storage: multer.diskStorage({
+    destination: (req, file, cb) => {
+      cb(null, "uploads/homework/") // Destination for uploadhomework uploads
+    },
+    filename: (req, file, cb) => {
+      cb(null, Date.now() + "-" + file.originalname)
+    },
+  }),
+})
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "uploads/default/") // Default destination for uploads
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + "-" + file.originalname)
+  },
+})
+
+const upload = multer({
+  storage: storage, // Use the default storage configuration
+})
+
 /* --------------------------------------------
  *     ENDPOINTS TO API
  *     These correspond to every endpoint that is going to be accessed later in front-end
@@ -75,7 +128,7 @@ app.post("/api/register", async (req, res) => {
   console.log("Received registration request with:")
   console.log("Name:", userName)
   console.log("Email:", userEmail)
-  
+
   // Validate that userEmail is not null or empty
   if (!userEmail || userEmail.trim() === "") {
     return res.status(422).json({ error: "Email is required." })
@@ -132,12 +185,18 @@ app.post("/api/login", async (req, res) => {
         (err, token) => {
           // We catch error and the session token
           if (err) throw err // If there's an error we send it
-          res.cookie("token", token, { httpOnly: true }).json({
-            userEmail: userDoc.userEmail,
-            id: userDoc._id,
-            userName: userDoc.userName,
-            userRoles: userDoc.userRoles,
-          }) // If it goes through we create the session cookie with the corresponding token
+          res
+            .cookie("token", token, {
+              httpOnly: true,
+              sameSite: "None",
+              secure: true,
+            })
+            .json({
+              userEmail: userDoc.userEmail,
+              id: userDoc._id,
+              userName: userDoc.userName,
+              userRoles: userDoc.userRoles,
+            }) // If it goes through we create the session cookie with the corresponding token
         } // callback: SignCallback
       )
     } else {
@@ -381,6 +440,64 @@ app.get("/api/cuenta-datos", async (req, res) => {
     const cursoCount = await Course.countDocuments({}) // We count the registered courses in the Course model
 
     res.json({ totalUsers: userCount, totalCursos: cursoCount }) // We send a response with the data
+  } catch (err) {
+    // if there's an error we send it
+    console.error(err)
+    res.status(500).json({ error: "Internal server error" })
+  }
+})
+
+/* *************************
+ *     /uploadfiles
+ *     This endpoint handles the count of users and courses with the id, when it succeeded, validates the information and uses get to send the information */
+app.post("/api/uploadvideo", uploadVideo.single("file"), (req, res) => {
+  // We listen to /uploadfiles with an async get function
+  try {
+    if (!req.file) {
+      return res.status(400).send("No file uploaded.")
+    }
+    res.send("File uploaded successfully.")
+  } catch (err) {
+    // if there's an error we send it
+    console.error(err)
+    res.status(500).json({ error: "Internal server error" })
+  }
+})
+
+app.post("/api/uploadvideo", uploadMaterial.single("file"), (req, res) => {
+  // We listen to /uploadfiles with an async get function
+  try {
+    if (!req.file) {
+      return res.status(400).send("No file uploaded.")
+    }
+    res.send("File uploaded successfully.")
+  } catch (err) {
+    // if there's an error we send it
+    console.error(err)
+    res.status(500).json({ error: "Internal server error" })
+  }
+})
+
+app.post("/api/uploadmaterial", uploadMaterial.single("file"), (req, res) => {
+  // We listen to /uploadfiles with an async get function
+  try {
+    if (!req.file) {
+      return res.status(400).send("No file uploaded.")
+    }
+    res.send("File uploaded successfully.")
+  } catch (err) {
+    // if there's an error we send it
+    console.error(err)
+    res.status(500).json({ error: "Internal server error" })
+  }
+})
+app.post("/api/uploadhomework", uploadHomework.single("file"), (req, res) => {
+  // We listen to /uploadfiles with an async get function
+  try {
+    if (!req.file) {
+      return res.status(400).send("No file uploaded.")
+    }
+    res.send("File uploaded successfully.")
   } catch (err) {
     // if there's an error we send it
     console.error(err)

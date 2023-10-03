@@ -1,8 +1,9 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { NavLink, Navigate, useParams } from "react-router-dom"
 import useAuth from "../hooks/useAuth"
 
 import { validateRoles } from "../scripts/ValidateRoles"
+import useWindowDimensions from "../hooks/useWindowDimensions"
 
 import {
   Icon_Alumnos,
@@ -14,12 +15,24 @@ import {
 } from "../assets/Icons"
 
 import axios from "axios"
+import Modal from "./Modal"
 
 export default function SideBar({ open, setOpen }) {
   const [redirect, setRedirect] = useState(null)
   const { ready, auth, setAuth } = useAuth()
 
+  const [openModal, setOpenModal] = useState(false)
+  const { width } = useWindowDimensions()
+
   let { subpage } = useParams()
+
+  useEffect(() => {
+    if (width < 1000) {
+      setOpen(false)
+    } else {
+      setOpen(true)
+    }
+  }, [width])
 
   if (subpage === undefined) {
     subpage = "portal"
@@ -66,12 +79,13 @@ export default function SideBar({ open, setOpen }) {
   }
 
   async function logout() {
-    var result = window.confirm("¿Seguro que desea cerrar sesión?")
-    if (result === true) {
-      await axios.post("/logout")
-      setRedirect("/")
-      setAuth(null)
-    }
+    // var result = window.confirm("¿Seguro que desea cerrar sesión?")
+    // if (result === true) {
+    await axios.post("/logout")
+    setOpenModal(true)
+    setRedirect("/")
+    setAuth(null)
+    // }
   }
 
   if (redirect) {
@@ -118,7 +132,7 @@ export default function SideBar({ open, setOpen }) {
               </NavLink>
             </li>
 
-            {ValidateResult ? (
+            {ValidateResult && (
               <li>
                 <NavLink
                   to={"/portal/alumnos"}
@@ -134,8 +148,6 @@ export default function SideBar({ open, setOpen }) {
                   </span>
                 </NavLink>
               </li>
-            ) : (
-              false
             )}
 
             <li>
@@ -166,7 +178,10 @@ export default function SideBar({ open, setOpen }) {
               </NavLink>
             </li>
             <li>
-              <NavLink onClick={logout} className={link_Classes("logout")}>
+              <NavLink
+                onClick={() => setOpenModal(true)}
+                className={link_Classes("logout")}
+              >
                 <Icon_Logout />
                 <span
                   className={`${
@@ -180,6 +195,35 @@ export default function SideBar({ open, setOpen }) {
           </ul>
         </aside>
       </div>
+
+      <Modal
+        open={openModal}
+        onClose={() => setOpenModal(false)}
+        cancel={true}
+        modalMargin={open ? "72" : "20"}
+      >
+        <div className="flex flex-col items-center justify-center text-center h-full">
+          <div className="mx-auto my-4 w-full h-full">
+            <h3>¿Seguro que deseas cerrar sesión?</h3>
+            <p className="text-sm text-gray-500 mt-2">
+              Deberás ingresar tus datos nuevamente la siguiente vez que desees
+              entrar.
+            </p>
+          </div>
+
+          <div className="gap-4 mt-7">
+            <button
+              className="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2"
+              onClick={() => {
+                setOpenModal(false)
+                logout()
+              }}
+            >
+              Cerrar sesión
+            </button>
+          </div>
+        </div>
+      </Modal>
     </>
   )
 }

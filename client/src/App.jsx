@@ -3,15 +3,19 @@ import axios from "axios"
 
 import IndexPage from "./pages/IndexPage"
 import Layout from "./components/Layout"
-import LoginPage from "./pages/LoginPage"
-import RegisterPage from "./pages/RegisterPage"
 import PortalPage from "./pages/PortalPage"
-import CoursesPage from "./pages/CoursesPage"
-import CoursesFormPage from "./pages/CoursesFormPage"
-import CourseInfoPage from "./pages/CourseInfoPage"
+
+import LoginPage from "./pages/LoginRegister/LoginPage"
+import RegisterPage from "./pages/LoginRegister/RegisterPage"
+
+import CoursesPage from "./pages/Courses/CoursesPage"
+import CoursesFormPage from "./pages/Courses/CoursesFormPage"
+import CourseInfoPage from "./pages/Courses/CourseInfoPage"
+
 import RequireAuth from "./components/RequireAuth"
 
-axios.defaults.baseURL = "http://localhost:4000/api/"
+// Variable de entorno
+axios.defaults.baseURL = import.meta.env.VITE_API_URL
 axios.defaults.withCredentials = true
 
 const ROLES = {
