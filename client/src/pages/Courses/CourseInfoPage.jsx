@@ -52,40 +52,41 @@ export default function CourseInfoPage() {
   }
 
   async function uploadFile() {
+    
     try {
+      if (!addedFiles){
+        alert("Por favor, seleccione un archivo para subir")
+        return
+      }
+
       const formData = new FormData()
       formData.append("file", addedFiles)
 
+      let endpoint = ""
       switch (fileDiff) {
         case "vid":
-          await axios.post("/uploadvideo", formData, {
-            headers: {
-              "Content-Type": "multipart/form-data",
-            },
-          })
+          endpoint = "/uploadvideo/" + id
           break
         case "mat":
-          await axios.post("/uploadmaterial", formData, {
-            headers: {
-              "Content-Type": "multipart/form-data",
-            },
-          })
+          endpoint = "/uploadmaterial/" + id
           break
         case "hom":
-          await axios.post("/uploadhomework", formData, {
-            headers: {
-              "Content-Type": "multipart/form-data",
-            },
-          })
+          endpoint = "/uploadhomework/" + id
           break
       }
+
+      await axios.post(endpoint, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      })
 
       setUploadedFile(true)
 
       // alert("File uploaded successfully.")
     } catch (error) {
-      console.error("Subiendo el archivo:", error)
-      alert("Subiendo el archivo.")
+      console.error("Error subiendo el archivo:", error)
+      alert("Error subiendo el archivo.")
     }
   }
 
@@ -229,6 +230,8 @@ export default function CourseInfoPage() {
                 onClick={() => {
                   setOpenModal(false)
                   setUploadedFile(false)
+                  setFileName("")
+                  setAddedFiles([])
                 }}
               >
                 Continuar

@@ -12,6 +12,7 @@ const express = require("express") // import
 const app = express() // This is to create an instance of the express app
 const port = process.env.PORT || 4000 // Specify desired port
 app.use(express.json()) // This is used to parse every JSON for express usage
+app.use(express.urlencoded({ extended: true }))
 
 /* Dotenv
  * Dependency used to read .env files, in NODE v20.6.0 it is integrated, but we are using v18.17.1LTS and it is not */
@@ -54,49 +55,19 @@ app.use(cookieParser()) // This is to create an instance of the cookieparser
 /* Multer
  * Handles and helps with file uploading  */
 const multer = require("multer")
-
-// Create a multer instance for the 'uploadvideo' route
-const uploadVideo = multer({
-  storage: multer.diskStorage({
-    destination: (req, file, cb) => {
-      cb(null, "uploads/videos/") // Destination for uploadvideo uploads
-    },
-    filename: (req, file, cb) => {
-      cb(null, Date.now() + "-" + file.originalname)
-    },
-  }),
-})
-
-// Create a multer instance for the 'uploadmaterial' route
-const uploadMaterial = multer({
-  storage: multer.diskStorage({
-    destination: (req, file, cb) => {
-      cb(null, "uploads/material/") // Destination for uploadmaterial uploads
-    },
-    filename: (req, file, cb) => {
-      cb(null, Date.now() + "-" + file.originalname)
-    },
-  }),
-})
-
-// Create a multer instance for the 'uploadhomework' route
-const uploadHomework = multer({
-  storage: multer.diskStorage({
-    destination: (req, file, cb) => {
-      cb(null, "uploads/homework/") // Destination for uploadhomework uploads
-    },
-    filename: (req, file, cb) => {
-      cb(null, Date.now() + "-" + file.originalname)
-    },
-  }),
-})
+const fs = require("fs")
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, "uploads/default/") // Default destination for uploads
   },
   filename: (req, file, cb) => {
-    cb(null, Date.now() + "-" + file.originalname)
+    const courseId = req.body.id || req.query.id
+    if (courseId)
+      cb(
+        null,
+        "prueba " + courseId + "_" + Date.now() + "_" + file.originalname
+      )
   },
 })
 
@@ -450,56 +421,95 @@ app.get("/api/cuenta-datos", async (req, res) => {
 /* *************************
  *     /uploadfiles
  *     This endpoint handles the count of users and courses with the id, when it succeeded, validates the information and uses get to send the information */
-app.post("/api/uploadvideo", uploadVideo.single("file"), (req, res) => {
-  // We listen to /uploadfiles with an async get function
+
+const uploadVideo = multer({ dest: "uploads/videos/" })
+app.post("/api/uploadvideo/:id", uploadVideo.single("file"), (req, res) => {
+  const { id } = req.params
+
   try {
     if (!req.file) {
       return res.status(400).send("No file uploaded.")
     }
-    res.send("File uploaded successfully.")
+
+    const uploadedFiles = []
+    const { path, originalname } = req.file
+
+    const newName = id + "_" + Date.now() + "_" + originalname
+    console.log("Nuevo nombre de archivo: " + newName)
+    
+    // Construct the new path using the newName
+    const newPath = "uploads/videos/" + newName
+    console.log("Nuevo path de archivo: " + newPath)
+    
+    fs.renameSync(path, newPath)
+    uploadedFiles.push(newName)
+
+    console.log("Archivo subido")
+    res.json({ message: "File uploaded successfully.", uploadedFiles })
   } catch (err) {
-    // if there's an error we send it
+    // Handle errors gracefully
     console.error(err)
     res.status(500).json({ error: "Internal server error" })
   }
 })
 
-app.post("/api/uploadvideo", uploadMaterial.single("file"), (req, res) => {
-  // We listen to /uploadfiles with an async get function
+const uploadHomework = multer({ dest: "uploads/homework/" })
+app.post("/api/uploadhomework/:id", uploadHomework.single("file"), (req, res) => {
+  const { id } = req.params
+
   try {
     if (!req.file) {
       return res.status(400).send("No file uploaded.")
     }
-    res.send("File uploaded successfully.")
+
+    const uploadedFiles = []
+    const { path, originalname } = req.file
+
+    const newName = id + "_" + Date.now() + "_" + originalname
+    console.log("Nuevo nombre de archivo: " + newName)
+    
+    // Construct the new path using the newName
+    const newPath = "uploads/homework/" + newName
+    console.log("Nuevo path de archivo: " + newPath)
+    
+    fs.renameSync(path, newPath)
+    uploadedFiles.push(newName)
+
+    console.log("Archivo subido")
+    res.json({ message: "File uploaded successfully.", uploadedFiles })
   } catch (err) {
-    // if there's an error we send it
+    // Handle errors gracefully
     console.error(err)
     res.status(500).json({ error: "Internal server error" })
   }
 })
 
-app.post("/api/uploadmaterial", uploadMaterial.single("file"), (req, res) => {
-  // We listen to /uploadfiles with an async get function
+const uploadMaterial = multer({ dest: "uploads/material/" })
+app.post("/api/uploadmaterial/:id", uploadMaterial.single("file"), (req, res) => {
+  const { id } = req.params
+
   try {
     if (!req.file) {
       return res.status(400).send("No file uploaded.")
     }
-    res.send("File uploaded successfully.")
+
+    const uploadedFiles = []
+    const { path, originalname } = req.file
+
+    const newName = id + "_" + Date.now() + "_" + originalname
+    console.log("Nuevo nombre de archivo: " + newName)
+    
+    // Construct the new path using the newName
+    const newPath = "uploads/material/" + newName
+    console.log("Nuevo path de archivo: " + newPath)
+    
+    fs.renameSync(path, newPath)
+    uploadedFiles.push(newName)
+
+    console.log("Archivo subido")
+    res.json({ message: "File uploaded successfully.", uploadedFiles })
   } catch (err) {
-    // if there's an error we send it
-    console.error(err)
-    res.status(500).json({ error: "Internal server error" })
-  }
-})
-app.post("/api/uploadhomework", uploadHomework.single("file"), (req, res) => {
-  // We listen to /uploadfiles with an async get function
-  try {
-    if (!req.file) {
-      return res.status(400).send("No file uploaded.")
-    }
-    res.send("File uploaded successfully.")
-  } catch (err) {
-    // if there's an error we send it
+    // Handle errors gracefully
     console.error(err)
     res.status(500).json({ error: "Internal server error" })
   }
