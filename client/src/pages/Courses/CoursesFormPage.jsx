@@ -82,7 +82,7 @@ export default function CoursesFormPage() {
           `¿Seguro que desea eliminar el curso ${course_name}?`
         )
         if (result === true) {
-          await axios.delete("/cursos-eliminar/" + id)
+          await axios.delete("/cursos/" + id)
           setRedirect(true)
         }
       }
