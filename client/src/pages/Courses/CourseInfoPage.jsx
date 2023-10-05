@@ -65,13 +65,13 @@ export default function CourseInfoPage() {
       let endpoint = ""
       switch (fileDiff) {
         case "vid":
-          endpoint = "/uploadvideo/" + id
+          endpoint = "/upload/video/" + id
           break
         case "mat":
-          endpoint = "/uploadmaterial/" + id
+          endpoint = "/upload/material/" + id
           break
         case "hom":
-          endpoint = "/uploadhomework/" + id
+          endpoint = "/upload/homework/" + id
           break
       }
 

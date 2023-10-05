@@ -9,7 +9,7 @@ export default function IndexPage() {
 
   useEffect(() => {
     axios
-      .get("/cuenta-datos")
+      .get("/cuenta")
       .then((response) => {
         setTotalTutores(response.data.totalUsers)
         setTotalCursos(response.data.totalCursos)
