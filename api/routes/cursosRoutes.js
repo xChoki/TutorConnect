@@ -36,12 +36,12 @@ router.post("/", (req, res) => {
   // We listen to /cursos with a post function
   const { token } = req.cookies // We require from the session the token cookie
   const {
-    course_name,
-    course_description,
-    course_category,
-    course_extrainfo,
-    course_neurodiv,
-  } = req.body // We require from the form the course_name, course_description, course_category, course_extrainfo and course_neurodiv sent by the user
+    courseName,
+    courseDescription,
+    courseCategory,
+    courseExtrainfo,
+    courseNeurodiv,
+  } = req.body // We require from the form the courseName, courseDescription, courseCategory, courseExtrainfo and courseNeurodiv sent by the user
 
   jwt.verify(
     // We verify the jwt
@@ -53,13 +53,13 @@ router.post("/", (req, res) => {
       // We catch error and the user data
       if (err) throw err // If there's an error we send it
       await Course.create({
-        course_tutor_id: userData.id,
-        course_tutor_name: userData.name,
-        course_name,
-        course_description,
-        course_category,
-        course_extrainfo,
-        course_neurodiv,
+        courseTutorId: userData.id,
+        courseTutorName: userData.name,
+        courseName,
+        courseDescription,
+        courseCategory,
+        courseExtrainfo,
+        courseNeurodiv,
       }) // We create a course using the Course model by inserting the data sent by user and data from the user (id and name)
     }
   )
@@ -80,8 +80,8 @@ router.get("/", (req, res) => {
       // callback?: VerifyCallback<JwtPayload | string>,
       if (err) throw err // If there's an error we send it
       const { id } = userData // We retreive from userData the id of the logged in user
-
-      res.json(await Course.find({ course_tutor_id: id })) // We find the courses created by the logged in tutor
+      
+      res.json(await Course.find({ courseTutorId: id })) // We find the courses created by the logged in tutor
     }
   )
 })
@@ -101,12 +101,12 @@ router.put("/", async (req, res) => {
   const { token } = req.cookies // We require from the session the token cookie
   const {
     id,
-    course_name,
-    course_description,
-    course_category,
-    course_extrainfo,
-    course_neurodiv,
-  } = req.body // We require from the form the id, course_name, course_description, course_category, course_extrainfo and course_neurodiv sent by the user
+    courseName,
+    courseDescription,
+    courseCategory,
+    courseExtrainfo,
+    courseNeurodiv,
+  } = req.body // We require from the form the id, courseName, courseDescription, courseCategory, courseExtrainfo and courseNeurodiv sent by the user
 
   jwt.verify(
     // We verify the jwt
@@ -123,11 +123,11 @@ router.put("/", async (req, res) => {
         // We are comparing the logged in user with the tutor id registered in the course
         // If it is true (the id is the same) we set the new values
         courseDoc.set({
-          course_name,
-          course_description,
-          course_category,
-          course_extrainfo,
-          course_neurodiv,
+          courseName,
+          courseDescription,
+          courseCategory,
+          courseExtrainfo,
+          courseNeurodiv,
         })
         await courseDoc.save() // We save the new data
 

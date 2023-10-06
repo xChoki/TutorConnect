@@ -18,11 +18,8 @@ export default function CoursesPage() {
 
   useEffect(() => {
     axios.get("/cursos").then(({ data }) => {
-      if (Array.isArray(data)) {
-        setCourses(data)
-      } else {
-        console.error("API response is not an array:", data)
-      }
+      setCourses(data)
+      // console.log(courses)
     })
   }, [])
 
@@ -67,7 +64,7 @@ export default function CoursesPage() {
                     alt="Background image of some pencils with a yellow background"
                   />
 
-                  {course.course_neurodiv ? (
+                  {course.courseNeurodiv ? (
                     <div className="absolute left-0 top-0 h-16 w-16">
                       <p className="absolute transform -rotate-45 bg-gray-600 text-center text-white font-semibold py-1 left-[-34px] top-[32px] w-[170px]">
                         Neurodivergente
@@ -79,14 +76,18 @@ export default function CoursesPage() {
 
                   <section className="px-6 py-4">
                     <span className="font-bold text-xl mb-2">
-                      {course.course_name.length < 28
-                        ? course.course_name
+                      {course.courseName.length < 28
+                        ? course.courseName
                         : width > 500
-                        ? course.course_name.slice(0, 28) + "..."
-                        : course.course_name.slice(0, 15) + "..."}
+                        ? course.courseName.slice(0, 28) + "..."
+                        : course.courseName.slice(0, 15) + "..."}
                     </span>
                     <p className="text-gray-700 text-base">
-                      {course.course_description}
+                      {course.courseDescription.length < 28
+                        ? course.courseDescription
+                        : width > 500
+                        ? course.courseDescription.slice(0, 28) + "..."
+                        : course.courseDescription.slice(0, 15) + "..."}
                     </p>
                   </section>
 
