@@ -238,4 +238,66 @@ router.post("/material/:id", uploadMaterial.single("file"), (req, res) => {
   }
 })
 
+// Add a new route for file deletion
+router.delete("/file/:type/:id/:fileName", async (req, res) => {
+  const { id, type, fileName } = req.params
+
+  try {
+    // Construct the path to the file based on the file type
+    let filePath = `uploads/${type}/${fileName}`
+
+    // Check if the file exists
+    if (!fs.existsSync(filePath)) {
+      return res.status(404).json({ message: "File not found" })
+    }
+
+    // Delete the file from your storage system
+    await fs.promises.unlink(filePath)
+
+    // console.log("File deleted locally")
+    // console.log("Deleting file from mongodb")
+    // Find the course document by ID
+    const course = await Course.findById(id)
+
+    if (!course) {
+      return res.status(404).json({ message: "Course not found" })
+    }
+
+    // Determine which array field to remove the file from (e.g., videoFiles, materialFiles, homeworkFiles)
+    let fileArray
+    switch (type) {
+      case "videos":
+        fileArray = course.videoFiles
+        break
+      case "material":
+        fileArray = course.materialFiles
+        break
+      case "homework":
+        fileArray = course.homeworkFiles
+        break
+      default:
+        return res.status(400).json({ message: "Invalid file type" })
+    }
+
+    // Find the index of the file to remove from the array
+    const fileIndex = fileArray.findIndex((file) => file.fileName === fileName)
+
+    if (fileIndex === -1) {
+      return res.status(404).json({ message: "File not found in the course" })
+    }
+
+    // Remove the file from the array
+    fileArray.splice(fileIndex, 1)
+
+    // Save the updated course document
+    await course.save()
+
+    // console.log("check mongodb")
+    return res.json({ message: "File deleted successfully" })
+  } catch (err) {
+    console.error(err)
+    return res.status(500).json({ message: "Internal Server Error" })
+  }
+})
+
 module.exports = router
