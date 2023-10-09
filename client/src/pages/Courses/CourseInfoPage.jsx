@@ -32,6 +32,7 @@ export default function CourseInfoPage() {
 
   const [openModalUpload, setOpenModalUpload] = useState(false)
   const [openModalVideo, setOpenModalVideo] = useState(false)
+  const [openModalDelete, setOpenModalDelete] = useState(false)
 
   const [addedFiles, setAddedFiles] = useState([])
   const [uploadedFile, setUploadedFile] = useState(false)
@@ -143,6 +144,25 @@ export default function CourseInfoPage() {
     }
   }
 
+  async function downloadFile(fileName, fileType) {
+    try {
+      const endpoint = `/upload/download/${fileType}/${fileName}`
+
+      // Create a hidden anchor element for download
+      const link = document.createElement("a")
+      link.href = endpoint
+      link.download = fileName
+
+      // Trigger a click event on the anchor element
+      link.click()
+
+      // You can add additional logic here after successfully triggering the download
+    } catch (error) {
+      console.error("Error downloading the file:", error)
+      // You can handle the error as needed
+    }
+  }
+
   return (
     <>
       <div className="grid grid-cols-[auto,1fr]">
@@ -240,8 +260,9 @@ export default function CourseInfoPage() {
                               className="hover:bg-gray-400 hover:text-white rounded-lg"
                               onClick={() => {
                                 // alert("borrar " + file.fileName)
-                                deleteFile(file.fileName, "videos")
-                                window.location.reload()
+                                setOpenModalDelete(true)
+                                setFileDiff("videos")
+                                setFileName(file.fileName)
                               }}
                             >
                               <Icon_Trashcan margin="2" color="text-red-400" />
@@ -281,7 +302,7 @@ export default function CourseInfoPage() {
                         <div className="flex items-center p-5 text-gray-500 hover:bg-gray-200 hover:cursor-pointer">
                           <div
                             onClick={() => {
-                              alert("tareas")
+                              downloadFile(file.fileName, "homework")
                             }}
                             className="flex-grow"
                           >
@@ -291,7 +312,7 @@ export default function CourseInfoPage() {
                             <div
                               className="hover:bg-gray-400 hover:text-white rounded-lg"
                               onClick={() => {
-                                alert("tareas")
+                                downloadFile(file.fileName, "homework")
                               }}
                             >
                               <Icon_Download margin="2" />
@@ -301,8 +322,9 @@ export default function CourseInfoPage() {
                               className="hover:bg-gray-400 hover:text-white rounded-lg"
                               onClick={() => {
                                 // alert("borrar " + file.fileName)
-                                deleteFile(file.fileName, "homework")
-                                window.location.reload()
+                                setOpenModalDelete(true)
+                                setFileDiff("homework")
+                                setFileName(file.fileName)
                               }}
                             >
                               <Icon_Trashcan margin="2" color="text-red-400" />
@@ -314,6 +336,7 @@ export default function CourseInfoPage() {
                     ))}
                 </Accordion.Content>
               </Accordion.Panel>
+
               <Accordion.Panel>
                 <Accordion.Title className="flex items-center">
                   <span className="text-lg">Material</span>
@@ -341,7 +364,7 @@ export default function CourseInfoPage() {
                         <div className="flex items-center p-5 text-gray-500 hover:bg-gray-200 hover:cursor-pointer">
                           <div
                             onClick={() => {
-                              alert("material")
+                              downloadFile(file.fileName, "material")
                             }}
                             className="flex-grow"
                           >
@@ -351,7 +374,7 @@ export default function CourseInfoPage() {
                             <div
                               className="hover:bg-gray-400 hover:text-white rounded-lg"
                               onClick={() => {
-                                alert("material")
+                                downloadFile(file.fileName, "material")
                               }}
                             >
                               <Icon_Download margin="2" />
@@ -361,8 +384,9 @@ export default function CourseInfoPage() {
                               className="hover:bg-gray-400 hover:text-white rounded-lg"
                               onClick={() => {
                                 // alert("borrar " + file.fileName)
-                                deleteFile(file.fileName, "material")
-                                window.location.reload()
+                                setOpenModalDelete(true)
+                                setFileDiff("material")
+                                setFileName(file.fileName)
                               }}
                             >
                               <Icon_Trashcan margin="2" color="text-red-400" />
@@ -469,6 +493,38 @@ export default function CourseInfoPage() {
             onEnded={() => setOpenModalVideo(false)}
           />
         </>
+      </Modal>
+
+      <Modal
+        open={openModalDelete}
+        onClose={() => {
+          setOpenModalDelete(false)
+          selectedVideoInfo("")
+        }}
+        cancel={true}
+        modalMargin={open ? "72" : "20"}
+      >
+        <div className="flex flex-col items-center justify-center text-center h-full">
+          <div className="mx-auto my-4 w-full h-full">
+            <h3>¿Seguro que deseas eliminar el archivo?</h3>
+            <p className="text-sm text-gray-500 mt-2">
+              La eliminación de este archivo es permantente.
+            </p>
+          </div>
+
+          <div className="gap-4 mt-7">
+            <button
+              className="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2"
+              onClick={() => {
+                setOpenModalDelete(false)
+                deleteFile(fileName, fileDiff)
+                window.location.reload()
+              }}
+            >
+              Eliminar
+            </button>
+          </div>
+        </div>
       </Modal>
     </>
   )
