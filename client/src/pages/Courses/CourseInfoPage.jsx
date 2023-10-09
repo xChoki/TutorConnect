@@ -10,6 +10,7 @@ import { validateRoles } from "../../scripts/ValidateRoles"
 import { Accordion } from "flowbite-react"
 import {
   Icon_PlayButton,
+  Icon_Trashcan,
   Icon_Upload,
   Icon_UploadCloud,
 } from "../../assets/Icons"
@@ -105,6 +106,7 @@ export default function CourseInfoPage() {
       alert("Error subiendo el archivo.")
     }
   }
+
   function selectedVideoInfo(selectedFileName) {
     if (selectedFileName != "") {
       setSelectedVideo(
@@ -124,6 +126,19 @@ export default function CourseInfoPage() {
         return ".doc, .docx, .xls, .xlsx, .txt, .pdf"
       case "hom":
         return ".doc, .docx, .xls, .xlsx, .txt"
+    }
+  }
+
+  async function deleteFile(fileName, fileType) {
+    console.log(fileName + " " + fileType)
+    try {
+      const endpoint = `upload/file/${fileType}/${id}/${fileName}`
+      console.log(endpoint)
+      await axios.delete(endpoint)
+      // You can add additional logic here after successfully deleting the file
+    } catch (error) {
+      console.error("Error deleting the file:", error)
+      // You can handle the error as needed
     }
   }
 
@@ -199,14 +214,37 @@ export default function CourseInfoPage() {
                   {videoFiles.length > 0 &&
                     videoFiles.map((file) => (
                       <React.Fragment key={file.fileName}>
-                        <div
-                          onClick={() => {
-                            selectedVideoInfo(file.fileName)
-                            setOpenModalVideo(true)
-                          }}
-                          className="p-5 text-gray-500 flex justify-between hover:bg-gray-200 hover:cursor-pointer"
-                        >
-                          {file.fileName} <Icon_PlayButton />
+                        <div className="flex items-center p-5 text-gray-500 hover:bg-gray-200 hover:cursor-pointer">
+                          <div
+                            onClick={() => {
+                              selectedVideoInfo(file.fileName)
+                              setOpenModalVideo(true)
+                            }}
+                            className="flex-grow"
+                          >
+                            <span>{file.fileName}</span>
+                          </div>
+                          <div className="flex">
+                            <div
+                              className="hover:bg-gray-400 hover:text-white rounded-lg"
+                              onClick={() => {
+                                selectedVideoInfo(file.fileName)
+                                setOpenModalVideo(true)
+                              }}
+                            >
+                              <Icon_PlayButton margin="2" />
+                            </div>
+                            <div
+                              className="hover:bg-gray-400 hover:text-white rounded-lg"
+                              onClick={() => {
+                                // alert("borrar " + file.fileName)
+                                deleteFile(file.fileName, "videos")
+                                window.location.reload()
+                              }}
+                            >
+                              <Icon_Trashcan margin="2" color="text-red-400" />
+                            </div>
+                          </div>
                         </div>
                         <hr className="h-px bg-gray-200 border-0" />
                       </React.Fragment>
@@ -237,9 +275,7 @@ export default function CourseInfoPage() {
                   {homeworkFiles.length > 0 &&
                     homeworkFiles.map((file) => (
                       <React.Fragment key={file.fileName}>
-                        <div
-                          className="p-5 text-gray-500 flex justify-between hover:bg-gray-200 hover:cursor-pointer"
-                        >
+                        <div className="p-5 text-gray-500 flex justify-between hover:bg-gray-200 hover:cursor-pointer">
                           {file.fileName} <Icon_PlayButton />
                         </div>
                         <hr className="h-px bg-gray-200 border-0" />
@@ -271,9 +307,7 @@ export default function CourseInfoPage() {
                   {materialFiles.length > 0 &&
                     materialFiles.map((file) => (
                       <React.Fragment key={file.fileName}>
-                        <div
-                          className="p-5 text-gray-500 flex justify-between hover:bg-gray-200 hover:cursor-pointer"
-                        >
+                        <div className="p-5 text-gray-500 flex justify-between hover:bg-gray-200 hover:cursor-pointer">
                           {file.fileName} <Icon_PlayButton />
                         </div>
                         <hr className="h-px bg-gray-200 border-0" />
