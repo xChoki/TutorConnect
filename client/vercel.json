@@ -17,7 +17,7 @@
             "dest": "/"
         },
         {
-            "src": "/protal/cursos",
+            "src": "/portal/cursos",
             "dest": "/"
         },
         {
@@ -25,11 +25,11 @@
             "dest": "/"
         },
         {
-            "src": "/portal/cursos/:id",
+            "src": "/portal/cursos/([^/]+)",
             "dest": "/"
         },
         {
-            "src": "/portal/cursos/editar/:id",
+            "src": "/portal/cursos/editar/([^/]+)",
             "dest": "/"
         }
         
