@@ -53,7 +53,7 @@ export default function CoursesPage() {
       )}
 
       <section className="flex flex-wrap lg-mx-1">
-        {courses.length > 0 &&
+        {courses?.length > 0 &&
           courses.map((course) => (
             <div key={course._id} className="w-96 h-60 p-4 mb-20 mx-5">
               <Link to={"/portal/cursos/" + course._id}>
@@ -76,14 +76,14 @@ export default function CoursesPage() {
 
                   <section className="px-6 py-4">
                     <span className="font-bold text-xl mb-2">
-                      {course.courseName.length < 28
+                      {course.courseName?.length < 28
                         ? course.courseName
                         : width > 500
                         ? course.courseName.slice(0, 28) + "..."
                         : course.courseName.slice(0, 15) + "..."}
                     </span>
                     <p className="text-gray-700 text-base">
-                      {course.courseDescription.length < 28
+                      {course.courseDescription?.length < 28
                         ? course.courseDescription
                         : width > 500
                         ? course.courseDescription.slice(0, 28) + "..."
