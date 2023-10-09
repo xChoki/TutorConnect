@@ -8,10 +8,14 @@ require("dotenv").config()
 /* EXPRESSJS
  * This is what we are using to code the API */
 const express = require("express") // import
+const path = require('path');
 const app = express() // This is to create an instance of the express app
 const port = process.env.PORT || 4000 // Specify desired port
 app.use(express.json()) // This is used to parse every JSON for express usage
 app.use(express.urlencoded({ extended: true }))
+
+app.use(express.static('uploads'))
+// app.use(express.static(path.join(__dirname, "uploads")))
 
 /* CORS: Cross-Origin Resource Sharing
  * Used to give security and control access to our app*/

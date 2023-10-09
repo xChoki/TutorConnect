@@ -11,17 +11,17 @@ export default function CoursesFormPage() {
     Form section */
 
   // Form variables
-  const [course_name, setCourse_name] = useState("")
-  const [course_description, setCourse_description] = useState("")
-  const [course_extrainfo, setCourse_extrainfo] = useState("")
-  const [course_neurodiv, setCourse_neurodiv] = useState(false)
+  const [courseName, setCourseName] = useState("")
+  const [courseDescription, setCourseDescription] = useState("")
+  const [courseExtrainfo, setCourseExtrainfo] = useState("")
+  const [courseNeurodiv, setCourseNeurodiv] = useState(false)
 
   // Redirection
   const [redirect, setRedirect] = useState(false)
 
   // Function to handle neurodiv checkbox
   function handleCbClick(ev) {
-    setCourse_neurodiv(ev.target.checked)
+    setCourseNeurodiv(ev.target.checked)
     console.log(ev.target.checked)
   }
 
@@ -38,10 +38,10 @@ export default function CoursesFormPage() {
 
     axios.get("/cursos/" + id).then((response) => {
       const { data } = response
-      setCourse_name(data.course_name)
-      setCourse_description(data.course_description)
-      setCourse_extrainfo(data.course_extrainfo)
-      setCourse_neurodiv(data.course_neurodiv)
+      setCourseName(data.courseName)
+      setCourseDescription(data.courseDescription)
+      setCourseExtrainfo(data.courseExtrainfo)
+      setCourseNeurodiv(data.courseNeurodiv)
     })
   }, [id])
 
@@ -50,10 +50,10 @@ export default function CoursesFormPage() {
     ev.preventDefault()
 
     const courseData = {
-      course_name,
-      course_description,
-      course_extrainfo,
-      course_neurodiv,
+      courseName,
+      courseDescription,
+      courseExtrainfo,
+      courseNeurodiv,
     }
 
     try {
@@ -79,7 +79,7 @@ export default function CoursesFormPage() {
     try {
       if (id) {
         var result = window.confirm(
-          `¿Seguro que desea eliminar el curso ${course_name}?`
+          `¿Seguro que desea eliminar el curso ${courseName}?`
         )
         if (result === true) {
           await axios.delete("/cursos/" + id)
@@ -114,68 +114,68 @@ export default function CoursesFormPage() {
           <form onSubmit={saveCourse} className="max-w-7xl px-10 justify-center">
             <div className="relative z-0 w-full mb-6 group">
               <label
-                htmlFor="course_name"
+                htmlFor="courseName"
                 className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
               >
                 Nombre del curso
               </label>
               <input
                 type="text"
-                id="course_name"
+                id="courseName"
                 className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light"
                 placeholder=""
                 required
-                value={course_name}
-                onChange={(ev) => setCourse_name(ev.target.value)}
+                value={courseName}
+                onChange={(ev) => setCourseName(ev.target.value)}
               />
             </div>
 
             <div className="relative z-0 w-full mb-6 group">
               <label
-                htmlFor="course_description"
+                htmlFor="courseDescription"
                 className="block mb-2 text-sm font-medium text-gray-500 dark:text-white"
               >
                 Descripción del curso
               </label>
               <textarea
-                id="course_description"
+                id="courseDescription"
                 rows="4"
                 className="block p-2.5 w-full text-sm text-gray-500 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 placeholder="Describe tu curso..."
                 required
-                value={course_description}
-                onChange={(ev) => setCourse_description(ev.target.value)}
+                value={courseDescription}
+                onChange={(ev) => setCourseDescription(ev.target.value)}
               ></textarea>
             </div>
 
             <div className="relative z-0 w-full mb-6 group">
               <label
-                htmlFor="course_extrainfo"
+                htmlFor="courseExtrainfo"
                 className="block mb-2 text-sm font-medium text-gray-500 dark:text-white"
               >
                 Información extra (opcional)
               </label>
               <textarea
-                id="course_extrainfo"
+                id="courseExtrainfo"
                 rows="4"
                 className="block p-2.5 w-full text-sm text-gray-500 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 placeholder="Deja un comentario..."
-                value={course_extrainfo}
-                onChange={(ev) => setCourse_extrainfo(ev.target.value)}
+                value={courseExtrainfo}
+                onChange={(ev) => setCourseExtrainfo(ev.target.value)}
               ></textarea>
             </div>
 
             <div className="relative z-0 w-full mb-6 group">
               <input
-                id="course_neurodiv"
+                id="courseNeurodiv"
                 type="checkbox"
-                name="course_neurodiv"
+                name="courseNeurodiv"
                 onChange={handleCbClick}
                 className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                checked={!!course_neurodiv}
+                checked={!!courseNeurodiv}
               />
               <label
-                htmlFor="course_neurodiv"
+                htmlFor="courseNeurodiv"
                 className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"
               >
                 Estoy capacitado para alumnos neurodivergentes.

@@ -1,12 +1,18 @@
 import axios from "axios"
-import { useEffect, useState } from "react"
+import React, { useEffect, useState } from "react"
 import { Link, useParams } from "react-router-dom"
 import SideBar from "../../components/SideBar"
+
+import ReactPlayer from "react-player"
 
 import { validateRoles } from "../../scripts/ValidateRoles"
 
 import { Accordion } from "flowbite-react"
-import { Icon_Upload, Icon_UploadCloud } from "../../assets/Icons"
+import {
+  Icon_PlayButton,
+  Icon_Upload,
+  Icon_UploadCloud,
+} from "../../assets/Icons"
 import Modal from "../../components/Modal"
 
 export default function CourseInfoPage() {
@@ -14,15 +20,23 @@ export default function CourseInfoPage() {
 
   const { id } = useParams()
 
-  const [course_name, setCourse_name] = useState("")
-  const [course_description, setCourse_description] = useState("")
-  const [course_extrainfo, setCourse_extrainfo] = useState("")
-  const [course_neurodiv, setCourse_neurodiv] = useState(false)
-  const [openModal, setOpenModal] = useState(false)
+  const [courseName, setCourseName] = useState("")
+  const [courseDescription, setCourseDescription] = useState("")
+  const [courseExtrainfo, setCourseExtrainfo] = useState("")
+  const [courseNeurodiv, setCourseNeurodiv] = useState(false)
+  const [videoFiles, setVideoFiles] = useState([])
+  const [homeworkFiles, setHomeworkFiles] = useState([])
+  const [materialFiles, setMaterialFiles] = useState([])
+
+  const [openModalUpload, setOpenModalUpload] = useState(false)
+  const [openModalVideo, setOpenModalVideo] = useState(false)
+
   const [addedFiles, setAddedFiles] = useState([])
   const [uploadedFile, setUploadedFile] = useState(false)
   const [fileName, setFileName] = useState("")
   const [fileDiff, setFileDiff] = useState("")
+
+  const [selectedVideo, setSelectedVideo] = useState("")
 
   useEffect(() => {
     if (!id) {
@@ -31,10 +45,13 @@ export default function CourseInfoPage() {
 
     axios.get("/cursos/" + id).then((response) => {
       const { data } = response
-      setCourse_name(data.course_name)
-      setCourse_description(data.course_description)
-      setCourse_extrainfo(data.course_extrainfo)
-      setCourse_neurodiv(data.course_neurodiv)
+      setCourseName(data.courseName)
+      setCourseDescription(data.courseDescription)
+      setCourseExtrainfo(data.courseExtrainfo)
+      setCourseNeurodiv(data.courseNeurodiv)
+      setVideoFiles(data.videoFiles)
+      setMaterialFiles(data.materialFiles)
+      setHomeworkFiles(data.homeworkFiles)
     })
   }, [id])
 
@@ -47,14 +64,13 @@ export default function CourseInfoPage() {
     setAddedFiles(e.target.files[0])
     if (addedFiles) {
       setFileName(e.target.files[0].name)
-      console.log(e.target.files[0].name)
+      // console.log(e.target.files[0].name)
     }
   }
 
   async function uploadFile() {
-    
     try {
-      if (!addedFiles){
+      if (!addedFiles) {
         alert("Por favor, seleccione un archivo para subir")
         return
       }
@@ -89,6 +105,27 @@ export default function CourseInfoPage() {
       alert("Error subiendo el archivo.")
     }
   }
+  function selectedVideoInfo(selectedFileName) {
+    if (selectedFileName != "") {
+      setSelectedVideo(
+        import.meta.env.VITE_API_URL_VIDEOFILES + selectedFileName
+      )
+    } else {
+      setSelectedVideo("")
+    }
+    // console.log(selectedVideo)
+  }
+
+  function getAcceptedFiles() {
+    switch (fileDiff) {
+      case "vid":
+        return "video/*"
+      case "mat":
+        return ".doc, .docx, .xls, .xlsx, .txt, .pdf"
+      case "hom":
+        return ".doc, .docx, .xls, .xlsx, .txt"
+    }
+  }
 
   return (
     <>
@@ -109,28 +146,28 @@ export default function CourseInfoPage() {
             )}
 
             <h2 className="mb-2 text-3xl font-bold tracking-tight text-gray-900">
-              {course_name}
+              {courseName}
             </h2>
             <hr className="h-px my-8 bg-gray-200 border-0" />
             <h2 className="mb-2 text-lg font-bold tracking-tight text-gray-900">
               Información del curso
             </h2>
-            <p className="font-normal text-gray-700">{course_description}</p>
+            <p className="font-normal text-gray-700">{courseDescription}</p>
 
             <hr className="w-48 h-1 mx-auto my-4 bg-gray-200 border-0 rounded md:my-10" />
 
-            {course_extrainfo && (
+            {courseExtrainfo && (
               <div className="">
                 <h2 className="mb-2 text-lg font-bold tracking-tight text-gray-900">
                   Información extra del curso
                 </h2>
-                <p> {course_extrainfo} </p>
+                <p> {courseExtrainfo} </p>
                 <hr className="w-48 h-1 mx-auto my-4 bg-gray-200 border-0 rounded md:my-10" />
               </div>
             )}
 
             <p>
-              Este curso {course_neurodiv ? "" : "no"} cuenta con disponibilidad
+              Este curso {courseNeurodiv ? "" : "no"} cuenta con disponibilidad
               para tratar con personas neurodivergentes.{" "}
               <Link to={"/"} className="text-blue-500">
                 Saber más.
@@ -148,7 +185,7 @@ export default function CourseInfoPage() {
                       <div
                         onClick={() => {
                           // console.log("Subiendo grabación")
-                          setOpenModal(true)
+                          setOpenModalUpload(true)
                           setFileDiff("vid")
                         }}
                         className="p-5 text-gray-500 flex justify-between hover:bg-gray-200 hover:cursor-pointer"
@@ -158,6 +195,22 @@ export default function CourseInfoPage() {
                       <hr className="h-px bg-gray-200 border-0" />
                     </>
                   )}
+
+                  {videoFiles.length > 0 &&
+                    videoFiles.map((file) => (
+                      <React.Fragment key={file.fileName}>
+                        <div
+                          onClick={() => {
+                            selectedVideoInfo(file.fileName)
+                            setOpenModalVideo(true)
+                          }}
+                          className="p-5 text-gray-500 flex justify-between hover:bg-gray-200 hover:cursor-pointer"
+                        >
+                          {file.fileName} <Icon_PlayButton />
+                        </div>
+                        <hr className="h-px bg-gray-200 border-0" />
+                      </React.Fragment>
+                    ))}
                 </Accordion.Content>
               </Accordion.Panel>
               <Accordion.Panel>
@@ -170,7 +223,7 @@ export default function CourseInfoPage() {
                       <div
                         onClick={() => {
                           // console.log("Subiendo tarea")
-                          setOpenModal(true)
+                          setOpenModalUpload(true)
                           setFileDiff("hom")
                         }}
                         className="p-5 text-gray-500 flex justify-between hover:bg-gray-200 hover:cursor-pointer"
@@ -180,6 +233,18 @@ export default function CourseInfoPage() {
                       <hr className="h-px bg-gray-200 border-0" />
                     </>
                   )}
+
+                  {homeworkFiles.length > 0 &&
+                    homeworkFiles.map((file) => (
+                      <React.Fragment key={file.fileName}>
+                        <div
+                          className="p-5 text-gray-500 flex justify-between hover:bg-gray-200 hover:cursor-pointer"
+                        >
+                          {file.fileName} <Icon_PlayButton />
+                        </div>
+                        <hr className="h-px bg-gray-200 border-0" />
+                      </React.Fragment>
+                    ))}
                 </Accordion.Content>
               </Accordion.Panel>
               <Accordion.Panel>
@@ -192,7 +257,7 @@ export default function CourseInfoPage() {
                       <div
                         onClick={() => {
                           // console.log("Subiendo material")
-                          setOpenModal(true)
+                          setOpenModalUpload(true)
                           setFileDiff("mat")
                         }}
                         className="p-5 text-gray-500 flex justify-between hover:bg-gray-200 hover:cursor-pointer"
@@ -202,6 +267,18 @@ export default function CourseInfoPage() {
                       <hr className="h-px bg-gray-200 border-0" />
                     </>
                   )}
+
+                  {materialFiles.length > 0 &&
+                    materialFiles.map((file) => (
+                      <React.Fragment key={file.fileName}>
+                        <div
+                          className="p-5 text-gray-500 flex justify-between hover:bg-gray-200 hover:cursor-pointer"
+                        >
+                          {file.fileName} <Icon_PlayButton />
+                        </div>
+                        <hr className="h-px bg-gray-200 border-0" />
+                      </React.Fragment>
+                    ))}
                 </Accordion.Content>
               </Accordion.Panel>
             </Accordion>
@@ -210,8 +287,11 @@ export default function CourseInfoPage() {
       </div>
 
       <Modal
-        open={openModal}
-        onClose={() => setOpenModal(false)}
+        open={openModalUpload}
+        onClose={() => {
+          setOpenModalUpload(false)
+          window.location.reload()
+        }}
         cancel={true}
         modalMargin={open ? "72" : "20"}
       >
@@ -228,10 +308,11 @@ export default function CourseInfoPage() {
               <button
                 className="focus:outline-none text-white bg-green-500 hover:bg-green-600 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2"
                 onClick={() => {
-                  setOpenModal(false)
+                  setOpenModalUpload(false)
                   setUploadedFile(false)
                   setFileName("")
                   setAddedFiles([])
+                  window.location.reload()
                 }}
               >
                 Continuar
@@ -245,14 +326,14 @@ export default function CourseInfoPage() {
                 <div className="flex items-center space-x-2">
                   <Icon_UploadCloud />
                   <span className="font-medium text-gray-600">
-                    Arrastra tus archivos, o{" "}
-                    <span className="text-blue-600 underline">súbelos.</span>
+                    Presiona para subir tu archivo
                   </span>
                 </div>
                 <input
                   type="file"
                   name="file_upload"
                   className="hidden"
+                  accept={getAcceptedFiles()}
                   onChange={uploadFileChange}
                 />
               </label>
@@ -274,6 +355,27 @@ export default function CourseInfoPage() {
             </div>
           </div>
         )}
+      </Modal>
+
+      <Modal
+        open={openModalVideo}
+        onClose={() => {
+          setOpenModalVideo(false)
+          selectedVideoInfo("")
+        }}
+        cancel={true}
+        modalMargin={open ? "72" : "20"}
+      >
+        <>
+          <ReactPlayer
+            url={selectedVideo}
+            controls
+            width="50%" // Set the width to 100% to fill the modal
+            height="50%" // Set the height to 100% to fill the modal
+            playing // AutoPlay
+            onEnded={() => setOpenModalVideo(false)}
+          />
+        </>
       </Modal>
     </>
   )
