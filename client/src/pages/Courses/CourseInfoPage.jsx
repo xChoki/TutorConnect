@@ -9,6 +9,7 @@ import { validateRoles } from "../../scripts/ValidateRoles"
 
 import { Accordion } from "flowbite-react"
 import {
+  Icon_Download,
   Icon_PlayButton,
   Icon_Trashcan,
   Icon_Upload,
@@ -234,6 +235,7 @@ export default function CourseInfoPage() {
                             >
                               <Icon_PlayButton margin="2" />
                             </div>
+
                             <div
                               className="hover:bg-gray-400 hover:text-white rounded-lg"
                               onClick={() => {
@@ -251,6 +253,7 @@ export default function CourseInfoPage() {
                     ))}
                 </Accordion.Content>
               </Accordion.Panel>
+
               <Accordion.Panel>
                 <Accordion.Title className="flex items-center">
                   <span className="text-lg">Tareas</span>
@@ -275,8 +278,36 @@ export default function CourseInfoPage() {
                   {homeworkFiles.length > 0 &&
                     homeworkFiles.map((file) => (
                       <React.Fragment key={file.fileName}>
-                        <div className="p-5 text-gray-500 flex justify-between hover:bg-gray-200 hover:cursor-pointer">
-                          {file.fileName} <Icon_PlayButton />
+                        <div className="flex items-center p-5 text-gray-500 hover:bg-gray-200 hover:cursor-pointer">
+                          <div
+                            onClick={() => {
+                              alert("tareas")
+                            }}
+                            className="flex-grow"
+                          >
+                            <span>{file.fileName}</span>
+                          </div>
+                          <div className="flex">
+                            <div
+                              className="hover:bg-gray-400 hover:text-white rounded-lg"
+                              onClick={() => {
+                                alert("tareas")
+                              }}
+                            >
+                              <Icon_Download margin="2" />
+                            </div>
+
+                            <div
+                              className="hover:bg-gray-400 hover:text-white rounded-lg"
+                              onClick={() => {
+                                // alert("borrar " + file.fileName)
+                                deleteFile(file.fileName, "homework")
+                                window.location.reload()
+                              }}
+                            >
+                              <Icon_Trashcan margin="2" color="text-red-400" />
+                            </div>
+                          </div>
                         </div>
                         <hr className="h-px bg-gray-200 border-0" />
                       </React.Fragment>
@@ -307,8 +338,36 @@ export default function CourseInfoPage() {
                   {materialFiles.length > 0 &&
                     materialFiles.map((file) => (
                       <React.Fragment key={file.fileName}>
-                        <div className="p-5 text-gray-500 flex justify-between hover:bg-gray-200 hover:cursor-pointer">
-                          {file.fileName} <Icon_PlayButton />
+                        <div className="flex items-center p-5 text-gray-500 hover:bg-gray-200 hover:cursor-pointer">
+                          <div
+                            onClick={() => {
+                              alert("material")
+                            }}
+                            className="flex-grow"
+                          >
+                            <span>{file.fileName}</span>
+                          </div>
+                          <div className="flex">
+                            <div
+                              className="hover:bg-gray-400 hover:text-white rounded-lg"
+                              onClick={() => {
+                                alert("material")
+                              }}
+                            >
+                              <Icon_Download margin="2" />
+                            </div>
+
+                            <div
+                              className="hover:bg-gray-400 hover:text-white rounded-lg"
+                              onClick={() => {
+                                // alert("borrar " + file.fileName)
+                                deleteFile(file.fileName, "material")
+                                window.location.reload()
+                              }}
+                            >
+                              <Icon_Trashcan margin="2" color="text-red-400" />
+                            </div>
+                          </div>
                         </div>
                         <hr className="h-px bg-gray-200 border-0" />
                       </React.Fragment>

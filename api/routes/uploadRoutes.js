@@ -265,15 +265,18 @@ router.delete("/file/:type/:id/:fileName", async (req, res) => {
 
     // Determine which array field to remove the file from (e.g., videoFiles, materialFiles, homeworkFiles)
     let fileArray
-
-    if (type === "videos") {
-      fileArray = course.videoFiles
-    } else if (type === "materials") {
-      fileArray = course.materialFiles
-    } else if (type === "homeworks") {
-      fileArray = course.homeworkFiles
-    } else {
-      return res.status(400).json({ message: "Invalid file type" })
+    switch (type) {
+      case "videos":
+        fileArray = course.videoFiles
+        break
+      case "material":
+        fileArray = course.materialFiles
+        break
+      case "homework":
+        fileArray = course.homeworkFiles
+        break
+      default:
+        return res.status(400).json({ message: "Invalid file type" })
     }
 
     // Find the index of the file to remove from the array
