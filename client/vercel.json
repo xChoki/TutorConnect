@@ -1,0 +1,37 @@
+{
+    "routes":[
+        {
+            "src": "/",
+            "dest": "/"
+        },
+        {
+            "src": "/login",
+            "dest": "/"
+        },
+        {
+            "src": "/register",
+            "dest": "/"
+        },
+        {
+            "src": "/portal",
+            "dest": "/"
+        },
+        {
+            "src": "/protal/cursos",
+            "dest": "/"
+        },
+        {
+            "src": "/portal/cursos/nuevo",
+            "dest": "/"
+        },
+        {
+            "src": "/portal/cursos/:id",
+            "dest": "/"
+        },
+        {
+            "src": "/portal/cursos/editar/:id",
+            "dest": "/"
+        }
+        
+    ]
+}
