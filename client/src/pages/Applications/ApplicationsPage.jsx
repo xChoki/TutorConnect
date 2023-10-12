@@ -36,12 +36,13 @@ export default function ApplicationsPage() {
   function getTextColor(applicationState) {
     switch (applicationState) {
       case "En proceso":
-        return "text-black font-semibold" // Black text
+        return "text-white" // Black text
       case "Aceptada":
+        return "text-white"
       case "Rechazada":
-        return "text-white font-semibold" // White text
+        return "text-white" // White text
       default:
-        return "text-gray-700 font-semibold" // Default text styles for other states
+        return "text-gray-700" // Default text styles for other states
     }
   }
 
@@ -74,7 +75,7 @@ export default function ApplicationsPage() {
                       application.applicationState
                     )}`}
                   >
-                    <span className={`block p-3 w-full h-full text-center text-white text-sm font-bold ${getTextColor(application.applicationState)}`}>
+                    <span className={`block p-3 w-full h-full text-center text-sm font-bold ${getTextColor(application.applicationState)}`}>
                       {application.applicationState}
                     </span>
                   </div>
