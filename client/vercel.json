@@ -31,7 +31,22 @@
         {
             "src": "/portal/cursos/editar/([^/]+)",
             "dest": "/"
+        },
+        {
+            "src": "/portal/solicitudes",
+            "dest": "/"
+        },
+        {
+            "src": "/portal/solicitudes/detalles",
+            "dest": "/"
+        },
+        {
+            "src": "/portal/solicitudes/nuevo",
+            "dest": "/"
+        },
+        {
+            "src": "/portal/solicitudes/([^/]+)",
+            "dest": "/"
         }
-        
     ]
 }

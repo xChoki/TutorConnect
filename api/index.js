@@ -8,7 +8,6 @@ require("dotenv").config()
 /* EXPRESSJS
  * This is what we are using to code the API */
 const express = require("express") // import
-const path = require('path');
 const app = express() // This is to create an instance of the express app
 const port = process.env.PORT || 4000 // Specify desired port
 app.use(express.json()) // This is used to parse every JSON for express usage
@@ -30,7 +29,6 @@ app.use(
 /* Multer
  * Handles and helps with file uploading  */
 const multer = require("multer")
-const fs = require("fs")
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -66,6 +64,7 @@ const logoutRoutes = require("./routes/logoutRoutes")
 const cursosRoutes = require("./routes/cursosRoutes")
 const cuentaRoutes = require("./routes/cuentaRoutes")
 const uploadRoutes = require("./routes/uploadRoutes")
+const applicationRoutes = require("./routes/applicationRoutes")
 
 /*     /test
  *     This endpoint is to test the connection, if it is up it shows "test ok" */
@@ -98,15 +97,27 @@ app.use("/api/logout", logoutRoutes)
 app.use("/api/cursos", cursosRoutes)
 
 /*    /cuenta
- *     This endpoint handles the count of users and courses with the id, when it succeeded, validates the information and uses get to send the information */
+*     This endpoint handles the count of users and courses with the id, when it succeeded, validates the information and uses get to send the information */
 app.use("/api/cuenta", cuentaRoutes)
 
 /*    /upload
- *     This endpoint handles the upload of files to the course
- *     /videos: manages the video files
- *     /homework: manages the homework files
- *     /material: manages the extra material files*/
+*     This endpoint handles the upload of files to the course
+*     /videos: manages the video files
+*     /homework: manages the homework files
+*     /material: manages the extra material files*/
 app.use("/api/upload", uploadRoutes)
+
+/*     /applications
+ *     This endpoint handles applications from the form, and others
+ *     There are multiple endpoints inside:
+ *      - POST: When it is called and it succeeded, validates the information and uses post to register a new Application
+ *      - GET: When it is called and it succeeded, validates the information and uses get to obtain the Applications data
+ *      
+ *      TODO:
+ *      - GET(id): When it is called and it succeeded, validates the information and uses get to obtain the detailed information by id
+ *      - PUT: When it is called and it succeeded, validates the information and uses put to update the information
+ *      - DELETE(id): When it is called and it succeeded, validates the information and uses delete to erase from database the information */
+app.use("/api/applications", applicationRoutes)
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`)

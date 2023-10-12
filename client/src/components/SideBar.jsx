@@ -12,6 +12,7 @@ import {
   Icon_Logout,
   Icon_Mensajes,
   Arrow_Control,
+  Icon_Letter,
 } from "../assets/Icons"
 
 import axios from "axios"
@@ -92,9 +93,10 @@ export default function SideBar({ open, setOpen }) {
     return <Navigate to={redirect} />
   }
 
-  const allowedRoles = [2002, 2003, 5001]
-
-  const ValidateResult = validateRoles({ allowedRoles })
+  let allowedRoles = [2002, 2003, 5001]
+  const ValidateResultTeaAdmTut = validateRoles({ allowedRoles })
+  allowedRoles = [2003, 5001]
+  const ValidateResultTeaAdm = validateRoles({ allowedRoles })
 
   return (
     <>
@@ -132,7 +134,7 @@ export default function SideBar({ open, setOpen }) {
               </NavLink>
             </li>
 
-            {ValidateResult && (
+            {ValidateResultTeaAdmTut && (
               <li>
                 <NavLink
                   to={"/portal/alumnos"}
@@ -145,6 +147,24 @@ export default function SideBar({ open, setOpen }) {
                     } origin-left duration-200 flex-1 ml-3`}
                   >
                     Alumnos
+                  </span>
+                </NavLink>
+              </li>
+            )}
+
+            {ValidateResultTeaAdm && (
+              <li>
+                <NavLink
+                  to={"/portal/solicitudes"}
+                  className={link_Classes("solicitudes")}
+                >
+                  <Icon_Letter />
+                  <span
+                    className={`${
+                      !open && "hidden"
+                    } origin-left duration-200 flex-1 ml-3`}
+                  >
+                    Solicitudes
                   </span>
                 </NavLink>
               </li>
