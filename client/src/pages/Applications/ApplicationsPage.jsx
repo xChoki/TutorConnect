@@ -23,13 +23,25 @@ export default function ApplicationsPage() {
   function getApplicationStateColor(applicationState) {
     switch (applicationState) {
       case "En proceso":
-        return "bg-yellow-400";
+        return "bg-yellow-400"
       case "Aceptada":
-        return "bg-green-400";
+        return "bg-green-400"
       case "Rechazada":
-        return "bg-red-400";
+        return "bg-red-400"
       default:
-        return "bg-gray-400"; // Default color for other states
+        return "bg-gray-400" // Default color for other states
+    }
+  }
+
+  function getTextColor(applicationState) {
+    switch (applicationState) {
+      case "En proceso":
+        return "text-black font-semibold" // Black text
+      case "Aceptada":
+      case "Rechazada":
+        return "text-white font-semibold" // White text
+      default:
+        return "text-gray-700 font-semibold" // Default text styles for other states
     }
   }
 
@@ -57,13 +69,14 @@ export default function ApplicationsPage() {
                     alt="Background image of some pencils with a yellow background"
                   />
 
-                  {/* Circle at the top right */}
-                  <div className="absolute top-4 right-4 w-5 h-5 rounded-full">
-                    <div
-                      className={`w-full h-full rounded-full ${getApplicationStateColor(
-                        application.applicationState
-                      )}`}
-                    ></div>
+                  <div
+                    className={`absolute top-4 right-4 rounded-full ${getApplicationStateColor(
+                      application.applicationState
+                    )}`}
+                  >
+                    <span className={`block p-3 w-full h-full text-center text-white text-sm font-bold ${getTextColor(application.applicationState)}`}>
+                      {application.applicationState}
+                    </span>
                   </div>
 
                   <section className="px-6 py-4">
