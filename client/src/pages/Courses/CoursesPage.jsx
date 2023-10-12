@@ -23,6 +23,8 @@ export default function CoursesPage() {
     })
   }, [])
 
+  console.log(courses)
+
   if (!ready) {
     return "Cargando..."
   }
@@ -43,11 +45,14 @@ export default function CoursesPage() {
       {ValidateResult && (
         <section className="m-10">
           <Link
-            className="inline-flex py-16 px-20 rounded-lg text-lg border hover:bg-gray-100"
-            to={"/portal/cursos/nuevo"}
+            className="inline-block py-16 px-20 rounded-lg text-lg border hover:bg-gray-100"
+            to="/portal/cursos/nuevo"
+            style={{ display: "flex", justifyContent: "center" }}
           >
-            <Icon_Plus />
-            <span className="pl-2">Agregar curso</span>
+            <div className="text-center flex">
+              <Icon_Plus />
+              <span className="pl-2">Agregar curso</span>
+            </div>
           </Link>
         </section>
       )}

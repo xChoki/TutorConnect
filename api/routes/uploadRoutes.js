@@ -57,7 +57,7 @@ const upload = multer({
 function fileNameChange(path, name, id, fileType) {
   const uploadedFiles = []
 
-  const newName = id + "_" + Date.now() + "_" + name
+  const newName = id + "____" + Date.now() + "____" + name
   // console.log("Nuevo nombre de archivo: " + newName)
 
   // Construct the new path using the newName
