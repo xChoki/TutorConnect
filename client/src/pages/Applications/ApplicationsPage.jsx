@@ -18,7 +18,20 @@ export default function ApplicationsPage() {
     })
   }, [])
 
-  console.log(applications)
+  // console.log(applications)
+
+  function getApplicationStateColor(applicationState) {
+    switch (applicationState) {
+      case "En proceso":
+        return "bg-yellow-400";
+      case "Aceptada":
+        return "bg-green-400";
+      case "Rechazada":
+        return "bg-red-400";
+      default:
+        return "bg-gray-400"; // Default color for other states
+    }
+  }
 
   if (!ready) {
     return "Cargando..."
@@ -44,19 +57,21 @@ export default function ApplicationsPage() {
                     alt="Background image of some pencils with a yellow background"
                   />
 
+                  {/* Circle at the top right */}
+                  <div className="absolute top-4 right-4 w-5 h-5 rounded-full">
+                    <div
+                      className={`w-full h-full rounded-full ${getApplicationStateColor(
+                        application.applicationState
+                      )}`}
+                    ></div>
+                  </div>
+
                   <section className="px-6 py-4">
                     <span className="font-bold text-xl mb-2">
-                    {application.applicationStudentInfo.map((studentInfo) => (
+                      {application.applicationStudentInfo.map((studentInfo) => (
                         <span key={studentInfo._id}>{studentInfo.studentName}</span>
                       ))}
                     </span>
-                    {/* <p className="text-gray-700 text-base">
-                      {applications.courseDescription?.length < 28
-                        ? applications.courseDescription
-                        : width > 500
-                        ? applications.courseDescription.slice(0, 28) + "..."
-                        : applications.courseDescription.slice(0, 15) + "..."}
-                    </p> */}
                   </section>
 
                   <section className="px-6 pt-4 pb-2">

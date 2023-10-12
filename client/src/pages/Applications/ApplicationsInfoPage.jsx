@@ -58,22 +58,16 @@ export default function ApplicationsInfoPage() {
             <h2 className="mb-2 text-lg font-bold tracking-tight text-gray-900">
               Información de la solicitud
             </h2>
-            <p className="font-normal text-gray-700">
-              {applicationData.applicationDescription}
-            </p>
+            <p className="font-normal text-gray-700">{applicationData.applicationDescription}</p>
 
             <hr className="h-px my-8 bg-gray-200 border-0" />
             <h2 className="mb-2 text-lg font-bold tracking-tight text-gray-900">
               Información extra de la solicitud
             </h2>
-            <p className="font-normal text-gray-700">
-              {applicationData.applicationExtraInfo}
-            </p>
+            <p className="font-normal text-gray-700">{applicationData.applicationExtraInfo}</p>
 
             <hr className="h-px my-8 bg-gray-200 border-0" />
-            <h2 className="mb-2 text-lg font-bold tracking-tight text-gray-900">
-              Documento notas
-            </h2>
+            <h2 className="mb-2 text-lg font-bold tracking-tight text-gray-900">Documento notas</h2>
             <div className="flex items-center p-5 text-gray-500 hover:bg-gray-200 hover:cursor-pointer">
               <div
                 onClick={() => {

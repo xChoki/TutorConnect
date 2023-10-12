@@ -75,7 +75,8 @@ function createApplication(
   user_token,
   applicationDescription,
   applicationExtraInfo,
-  applicationFiles
+  applicationFiles,
+  applicationState
 ) {
   jwt.verify(
     // We verify the jwt
@@ -98,6 +99,7 @@ function createApplication(
         applicationDescription,
         applicationExtraInfo,
         applicationFiles,
+        applicationState
       })
     }
   )
@@ -150,7 +152,8 @@ router.post("/", uploadApplicationFile.single("file"), (req, res) => {
     token,
     applicationDescription,
     applicationExtraInfo,
-    applicationFiles
+    applicationFiles,
+    "En proceso"
   )
 })
 
