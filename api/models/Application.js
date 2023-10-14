@@ -20,7 +20,7 @@ const ReviewerInfo = new Schema({
 })
 
 const ApplicationSchema = new Schema({
-  applicationStudentInfo: [StudentInfo],
+  applicationStudentInfo: StudentInfo,
   applicationDate: { type: Date, default: Date.now },
   applicationDescription: String,
   applicationExtraInfo: String,

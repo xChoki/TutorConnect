@@ -19,6 +19,7 @@ const { default: mongoose } = require("mongoose") // import
 mongoose.connect(process.env.MONGO_URL) // .env file that has access token to MongoDB Atlas
 // Mongoose models
 const Application = require("../models/Application") // Model for Applications
+const User = require("../models/User") // Model for Applications
 
 /* JSONWebToken
  * Self-contained way for securely transmitting information between parties as a JSON object*/
@@ -42,10 +43,7 @@ const storage = multer.diskStorage({
   filename: (req, file, cb) => {
     const applicationId = req.body.id || req.query.id
     if (applicationId)
-      cb(
-        null,
-        "prueba " + applicationId + "_" + Date.now() + "_" + file.originalname
-      )
+      cb(null, "prueba " + applicationId + "_" + Date.now() + "_" + file.originalname)
   },
 })
 
@@ -87,23 +85,65 @@ function createApplication(
       // callback?: VerifyCallback<JwtPayload | string>,
       if (err) throw err // If there's an error we send it
 
-      const applicationStudentInfo = [
-        {
-          studentId: userData.id,
-          studentName: userData.userName,
-        },
-      ]
+      const applicationStudentInfo = {
+        studentId: userData.id,
+        studentName: userData.userName,
+      }
 
       Application.create({
         applicationStudentInfo,
         applicationDescription,
         applicationExtraInfo,
         applicationFiles,
-        applicationState
+        applicationState,
       })
     }
   )
   return
+}
+
+async function addRoleToUser(applicationStudentId) {
+  try {
+    const userDoc = await User.findById(applicationStudentId)
+
+    if (!userDoc) {
+      console.log("User not found")
+      return
+    }
+
+    userDoc.userRoles = {
+      ...userDoc.userRoles,
+      Tutor: 2002,
+    }
+
+    await userDoc.save()
+
+    // const updatedUser = await userDoc.save()
+    // console.log(updatedUser)
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+async function removeRoleFromUser(applicationStudentId, roleToRemove) {
+  try {
+    const update = {
+      $unset: {
+        [`userRoles.${roleToRemove}`]: 1,
+      },
+    }
+
+    const userDoc = await User.findByIdAndUpdate(applicationStudentId, update, { new: true })
+
+    if (!userDoc) {
+      console.log("User not found")
+      return
+    }
+
+    console.log(userDoc)
+  } catch (error) {
+    console.error(error)
+  }
 }
 
 /*     ENDPOINTS TO API
@@ -178,6 +218,57 @@ router.get("/", (req, res) => {
   )
 })
 
+/*     /applictaions
+ *     This endpoint handles applications, when it succeeded, validates the information and uses put to update the application state (Aceptad, Rechazada) */
+router.put("/", async (req, res) => {
+  // We listen to /cursos with an async put function
+  const { token } = req.cookies // We require from the session the token cookie
+  let { applicationId, applicationState, applicationStudentId } = req.body // We require from the form the application id, applicationState and applicationStudentId sent by the user
+  const allowedRoles = [5001, 2003] // we set the allowed roles variable, 5001: Admin, 2003: Teacher
+  jwt.verify(
+    // We verify the jwt
+    token, // token: string,
+    jwtSecret, // secretOrPublicKey: Secret | GetPublicKeyOrSecret,
+    {}, // options?: VerifyOptions & { complete?: false },
+    async (err, userData) => {
+      // callback?: VerifyCallback<JwtPayload | string>,
+      if (err) throw err // If there's an error we send it
+      const applicationDoc = await Application.findById(applicationId) // We find by id the application in the Application model
+
+      if (Object.values(userData.userRoles).some((role) => allowedRoles.includes(role))) {
+        // We checking if the logged in user has the allowedRoles
+        // If it is true (the user has the allowed roles) we set the new values
+        applicationDoc.set({
+          applicationState,
+        })
+
+        // User.findByIdAndUpdate(
+        //   applicationStudentId,
+        //   {
+        //     $set: { ["userRoles.Tutor"]: 2003 },
+        //   },
+        //   { new: true }
+        // ) // We find by id the user in the User model
+        applicationStudentId = new mongoose.Types.ObjectId(applicationStudentId)
+        applicationState === "Aceptada"
+          ? addRoleToUser(applicationStudentId)
+          : removeRoleFromUser(applicationStudentId, "Tutor")
+
+        await applicationDoc.save() // We save the new data
+        // await studentDocDoc.save() // We save the new data
+
+        res.json("Actualización completada") // We send a response
+      } else {
+        // If it is false (doesn't have the allowedRoles) we send a message
+        console.log("NO TIENE LOS ROLES PERMITIDOS")
+        res.json("Actualización ha fallado, no posees los permisos necesarios")
+      }
+    }
+  )
+})
+
+/*     /applications:id
+ *     This endpoint handles cursos with the id info, when it succeeded, validates the information and uses get to obtain the detailed information */
 router.get("/:id", async (req, res) => {
   // We listen to /cursos with an async get function
   const { id } = req.params // We require the id parameter

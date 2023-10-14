@@ -75,16 +75,18 @@ export default function ApplicationsPage() {
                       application.applicationState
                     )}`}
                   >
-                    <span className={`block p-3 w-full h-full text-center text-sm font-bold ${getTextColor(application.applicationState)}`}>
+                    <span
+                      className={`block p-3 w-full h-full text-center text-sm font-bold ${getTextColor(
+                        application.applicationState
+                      )}`}
+                    >
                       {application.applicationState}
                     </span>
                   </div>
 
                   <section className="px-6 py-4">
                     <span className="font-bold text-xl mb-2">
-                      {application.applicationStudentInfo.map((studentInfo) => (
-                        <span key={studentInfo._id}>{studentInfo.studentName}</span>
-                      ))}
+                      <span>{application.applicationStudentInfo?.studentName}</span>
                     </span>
                   </section>
 
