@@ -23,7 +23,7 @@ export default function CoursesPage() {
     })
   }, [])
 
-  console.log(courses)
+  // console.log(courses)
 
   if (!ready) {
     return "Cargando..."

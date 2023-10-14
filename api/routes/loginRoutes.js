@@ -56,6 +56,7 @@ router.post("/", async (req, res) => {
           userEmail: userDoc.userEmail,
           id: userDoc._id,
           userName: userDoc.userName,
+          userRoles: userDoc.userRoles,
         }, // User payload: string | Buffer | object,
         jwtSecret, // secretOrPrivateKey: Secret
         {}, // Empty parameters, options: SignOptions
