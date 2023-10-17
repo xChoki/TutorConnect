@@ -107,7 +107,6 @@ router.put("/", async (req, res) => {
     courseExtrainfo,
     courseNeurodiv,
   } = req.body // We require from the form the id, courseName, courseDescription, courseCategory, courseExtrainfo and courseNeurodiv sent by the user
-
   jwt.verify(
     // We verify the jwt
     token, // token: string,
@@ -118,8 +117,7 @@ router.put("/", async (req, res) => {
       if (err) throw err // If there's an error we send it
 
       const courseDoc = await Course.findById(id) // We find by id the course in the Course model
-
-      if (userData.id === courseDoc.course_tutor_id.toString()) {
+      if (userData.id === courseDoc.courseTutorId.toString()) {
         // We are comparing the logged in user with the tutor id registered in the course
         // If it is true (the id is the same) we set the new values
         courseDoc.set({
@@ -166,7 +164,7 @@ router.delete("/:id", async (req, res) => {
           return res.status(404).json({ error: "El curso no se encuentra" })
         }
 
-        if (userData.id === courseDoc.course_tutor_id.toString()) {
+        if (userData.id === courseDoc.courseTutorId.toString()) {
           // We are comparing the logged in user with the tutor id registered in the course
           // If it is true (the id is the same) we delete the course
           await Course.findByIdAndDelete(id) // We find by id and delete the course

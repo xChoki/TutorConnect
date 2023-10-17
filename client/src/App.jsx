@@ -67,6 +67,7 @@ function App() {
           <Route path="/portal/solicitudes" element={<ApplicationsPage />} />
           <Route path="/portal/solicitudes/:id" element={<ApplicationsInfoPage />} />
         </Route>
+        <Route path="/*" element={<IndexPage />} />
       </Route>
     </Routes>
   )

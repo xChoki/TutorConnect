@@ -1,20 +1,12 @@
-import { useState } from "react"
-import SideBar from "../components/SideBar" // Asegúrate de importar correctamente el componente del sidebar
-import { Link, Navigate } from "react-router-dom"
+import SideBar from "../components/SideBar"
+import { Link } from "react-router-dom"
 import useAuth from "../hooks/useAuth"
 import { validateRoles } from "../scripts/ValidateRoles"
+import { useSidebarState } from "../hooks/useSidebarState"
 
 export default function PortalPage() {
-  const { ready, auth } = useAuth()
-  const [open, setOpen] = useState(true)
-
-  if (!ready) {
-    return "Cargando..."
-  }
-
-  if (ready && !auth) {
-    return <Navigate to={"/login"} />
-  }
+  const { auth } = useAuth()
+  const [open, setOpen] = useSidebarState()
 
   const allowedRoles = [2003, 5001]
   const ValidateResult = validateRoles({ allowedRoles })

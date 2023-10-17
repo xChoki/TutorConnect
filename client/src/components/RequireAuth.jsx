@@ -5,9 +5,9 @@ import { validateRoles } from "../scripts/ValidateRoles"
 export default function RequireAuth({ allowedRoles }) {
   const { auth, ready } = useAuth()
   const location = useLocation()
-
+  
   const ValidateResult = validateRoles({ allowedRoles })
-
+  
   // console.log("resultado: " + ValidateResult)
   // console.log("Datos usuario: " + auth.userName + " " + auth.userEmail)
   // console.log("Roles permitidos: " + allowedRoles)
@@ -19,7 +19,10 @@ export default function RequireAuth({ allowedRoles }) {
     ) : auth?.user ? (
       <Navigate to="/" />
     ) : (
+      <>
+      {console.log("usuario no logeado")}
       <Navigate to="/login" state={{ from: location }} replace />
+      </>
     )
   }
 }

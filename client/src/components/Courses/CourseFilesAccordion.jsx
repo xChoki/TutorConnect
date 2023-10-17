@@ -1,0 +1,209 @@
+import { Accordion } from "flowbite-react"
+import { Icon_Download, Icon_PlayButton, Icon_Trashcan, Icon_Upload } from "../../assets/Icons"
+import React from "react"
+
+export default function CourseFilesAccordion({
+  ValidateResult,
+  videoFiles,
+  homeworkFiles,
+  materialFiles,
+  downloadFile,
+  setSidebarStateWithRefModalUpload,
+  setSidebarStateWithRefModalVideo,
+  setSidebarStateWithRefModalDelete,
+  setFileDiff,
+  setFileName,
+  selectedVideoInfo,
+}) {
+  return (
+    <Accordion className="mt-20">
+      <Accordion.Panel>
+        <Accordion.Title className="flex items-center">
+          <span className="text-lg">Grabaciones</span>
+        </Accordion.Title>
+        <Accordion.Content>
+          {ValidateResult && (
+            <>
+              <div
+                onClick={() => {
+                  // console.log("Subiendo grabación")
+                  setSidebarStateWithRefModalUpload(true)
+                  setFileDiff("vid")
+                }}
+                className="p-5 text-gray-500 flex justify-between hover:bg-gray-200 hover:cursor-pointer"
+              >
+                Subir grabación <Icon_Upload />
+              </div>
+              <hr className="h-px bg-gray-200 border-0" />
+            </>
+          )}
+
+          {videoFiles?.length > 0 &&
+            videoFiles?.map((file) => (
+              <React.Fragment key={file.fileName}>
+                <div className="flex items-center p-5 text-gray-500 hover:bg-gray-200 hover:cursor-pointer">
+                  <div
+                    onClick={() => {
+                      selectedVideoInfo(file.fileName)
+                      setSidebarStateWithRefModalVideo(true)
+                    }}
+                    className="flex-grow"
+                  >
+                    <span>{file.fileName}</span>
+                  </div>
+                  <div className="flex">
+                    <div
+                      className="hover:bg-gray-400 hover:text-white rounded-lg"
+                      onClick={() => {
+                        selectedVideoInfo(file.fileName)
+                        setSidebarStateWithRefModalVideo(true)
+                      }}
+                    >
+                      <Icon_PlayButton margin="2" />
+                    </div>
+
+                    <div
+                      className="hover:bg-gray-400 hover:text-white rounded-lg"
+                      onClick={() => {
+                        // alert("borrar " + file.fileName)
+                        setSidebarStateWithRefModalDelete(true)
+                        setFileDiff("videos")
+                        setFileName(file.fileName)
+                      }}
+                    >
+                      <Icon_Trashcan margin="2" color="text-red-400" />
+                    </div>
+                  </div>
+                </div>
+                <hr className="h-px bg-gray-200 border-0" />
+              </React.Fragment>
+            ))}
+        </Accordion.Content>
+      </Accordion.Panel>
+
+      <Accordion.Panel>
+        <Accordion.Title className="flex items-center">
+          <span className="text-lg">Tareas</span>
+        </Accordion.Title>
+        <Accordion.Content>
+          {ValidateResult && (
+            <>
+              <div
+                onClick={() => {
+                  // console.log("Subiendo tarea")
+                  setSidebarStateWithRefModalUpload(true)
+                  setFileDiff("hom")
+                }}
+                className="p-5 text-gray-500 flex justify-between hover:bg-gray-200 hover:cursor-pointer"
+              >
+                Subir tarea <Icon_Upload />
+              </div>
+              <hr className="h-px bg-gray-200 border-0" />
+            </>
+          )}
+
+          {homeworkFiles?.length > 0 &&
+            homeworkFiles?.map((file) => (
+              <React.Fragment key={file.fileName}>
+                <div className="flex items-center p-5 text-gray-500 hover:bg-gray-200 hover:cursor-pointer">
+                  <div
+                    onClick={() => {
+                      downloadFile(file.fileName, "homework")
+                    }}
+                    className="flex-grow"
+                  >
+                    <span>{file.fileName}</span>
+                  </div>
+                  <div className="flex">
+                    <div
+                      className="hover:bg-gray-400 hover:text-white rounded-lg"
+                      onClick={() => {
+                        downloadFile(file.fileName, "homework")
+                      }}
+                    >
+                      <Icon_Download margin="2" />
+                    </div>
+
+                    <div
+                      className="hover:bg-gray-400 hover:text-white rounded-lg"
+                      onClick={() => {
+                        // alert("borrar " + file.fileName)
+                        setSidebarStateWithRefModalDelete(true)
+                        setFileDiff("homework")
+                        setFileName(file.fileName)
+                      }}
+                    >
+                      <Icon_Trashcan margin="2" color="text-red-400" />
+                    </div>
+                  </div>
+                </div>
+                <hr className="h-px bg-gray-200 border-0" />
+              </React.Fragment>
+            ))}
+        </Accordion.Content>
+      </Accordion.Panel>
+
+      <Accordion.Panel>
+        <Accordion.Title className="flex items-center">
+          <span className="text-lg">Material</span>
+        </Accordion.Title>
+        <Accordion.Content>
+          {ValidateResult && (
+            <>
+              <div
+                onClick={() => {
+                  // console.log("Subiendo material")
+                  setSidebarStateWithRefModalUpload(true)
+                  setFileDiff("mat")
+                }}
+                className="p-5 text-gray-500 flex justify-between hover:bg-gray-200 hover:cursor-pointer"
+              >
+                Subir material <Icon_Upload />
+              </div>
+              <hr className="h-px bg-gray-200 border-0" />
+            </>
+          )}
+
+          {materialFiles?.length > 0 &&
+            materialFiles?.map((file) => (
+              <React.Fragment key={file.fileName}>
+                <div className="flex items-center p-5 text-gray-500 hover:bg-gray-200 hover:cursor-pointer">
+                  <div
+                    onClick={() => {
+                      downloadFile(file.fileName, "material")
+                    }}
+                    className="flex-grow"
+                  >
+                    <span>{file.fileName}</span>
+                  </div>
+                  <div className="flex">
+                    <div
+                      className="hover:bg-gray-400 hover:text-white rounded-lg"
+                      onClick={() => {
+                        downloadFile(file.fileName, "material")
+                      }}
+                    >
+                      <Icon_Download margin="2" />
+                    </div>
+
+                    <div
+                      className="hover:bg-gray-400 hover:text-white rounded-lg"
+                      onClick={() => {
+                        // alert("borrar " + file.fileName)
+                        setSidebarStateWithRefModalDelete(true)
+                        setFileDiff("material")
+                        setFileName(file.fileName)
+                      }}
+                    >
+                      <Icon_Trashcan margin="2" color="text-red-400" />
+                    </div>
+                  </div>
+                </div>
+                <hr className="h-px bg-gray-200 border-0" />
+              </React.Fragment>
+            ))}
+        </Accordion.Content>
+      </Accordion.Panel>
+    </Accordion>
+  )
+}

@@ -1,19 +1,9 @@
-import { useState } from "react"
 import SideBar from "../../components/SideBar"
-import useAuth from "../../hooks/useAuth"
-import { Link, Navigate } from "react-router-dom"
+import { Link } from "react-router-dom"
+import { useSidebarState } from "../../hooks/useSidebarState"
 
 export default function ApplicationsDetailsPage() {
-  const { ready, auth } = useAuth()
-  const [open, setOpen] = useState(true)
-
-  if (!ready) {
-    return "Cargando..."
-  }
-
-  if (ready && !auth) {
-    return <Navigate to={"/login"} />
-  }
+  const [open, setOpen] = useSidebarState()
 
   return (
     <div className="grid grid-cols-[auto,1fr]">

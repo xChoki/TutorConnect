@@ -2,10 +2,11 @@ import axios from "axios"
 import { useEffect, useState } from "react"
 import { useParams } from "react-router-dom"
 import SideBar from "../../components/SideBar"
-import { Icon_Download } from "../../assets/Icons"
+import { Icon_Alert, Icon_Download } from "../../assets/Icons"
+import { useSidebarState } from "../../hooks/useSidebarState"
 
 export default function ApplicationsInfoPage() {
-  const [open, setOpen] = useState(true)
+  const [open, setOpen] = useSidebarState()
   const [applicationData, setAplicationData] = useState([])
 
   const { id } = useParams()
@@ -21,35 +22,35 @@ export default function ApplicationsInfoPage() {
     })
   }, [id])
 
-  console.log(applicationData.applicationStudentInfo?.studentId)
+  // console.log(applicationData.applicationStudentInfo?.studentId)
 
   async function handleApplication(applicationState, applicationId, applicationStudentId) {
     try {
       const data = { applicationState, applicationId, applicationStudentId }
       await axios.put("/applications/", data)
+      window.location.reload()
     } catch (error) {
       console.error("Error actualizando la solicitud: ", error)
       throw error
     }
   }
 
-  async function downloadFile(fileName) {
-    try {
-      const endpoint = `/upload/${fileName}`
+  function downloadFile(fileName) {
+    const endpoint = `/upload/${fileName}`
 
-      // Create a hidden anchor element for download
-      const link = document.createElement("a")
-      link.href = endpoint
-      link.download = fileName
-
-      // Trigger a click event on the anchor element
-      link.click()
-
-      // You can add additional logic here after successfully triggering the download
-    } catch (error) {
-      console.error("Error downloading the file:", error)
-      // You can handle the error as needed
-    }
+    fetch(endpoint)
+      .then((response) => response.blob())
+      .then((blob) => {
+        const url = window.URL.createObjectURL(blob)
+        const link = document.createElement("a")
+        link.href = url
+        link.download = fileName
+        link.click()
+        window.URL.revokeObjectURL(url)
+      })
+      .catch((error) => {
+        console.error("Error downloading the file:", error)
+      })
   }
 
   return (
@@ -98,44 +99,42 @@ export default function ApplicationsInfoPage() {
               </div>
             </div>
 
-            {applicationData.applicationState === "Aceptada" ? (
+            {applicationData.applicationState === "Aceptada" && (
               <div
                 className="flex items-center p-4 mb-4 text-sm text-green-800 border border-green-300 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400 dark:border-green-800"
                 role="alert"
               >
-                <svg
-                  className="flex-shrink-0 inline w-4 h-4 mr-3"
-                  aria-hidden="true"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
-                  <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
-                </svg>
+                <Icon_Alert />
                 <span className="sr-only">Info</span>
                 <div>
                   La solicitud actualmente se encuentra{" "}
                   <span className="font-medium">Aceptada</span>.
                 </div>
               </div>
-            ) : applicationData.applicationState === "Rechazada" && (
+            )}
+            {applicationData.applicationState === "Rechazada" && (
               <div
                 className="flex items-center p-4 mb-4 text-sm text-red-800 border border-red-300 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400 dark:border-red-800"
                 role="alert"
               >
-                <svg
-                  className="flex-shrink-0 inline w-4 h-4 mr-3"
-                  aria-hidden="true"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
-                  <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
-                </svg>
+                <Icon_Alert />
                 <span className="sr-only">Info</span>
                 <div>
                   La solicitud actualmente se encuentra{" "}
-                  <span className="font-medium">rechazada.</span>
+                  <span className="font-medium">rechazada</span>.
+                </div>
+              </div>
+            )}
+            {applicationData.applicationState === "En proceso" && (
+              <div
+                className="flex items-center p-4 mb-4 text-sm text-yellow-800 rounded-lg bg-yellow-50 dark:bg-gray-800 dark:text-yellow-300"
+                role="alert"
+              >
+                <Icon_Alert />
+                <span className="sr-only">Info</span>
+                <div>
+                  La solicitud actualmente se encuentra{" "}
+                  <span className="font-medium">en proceso</span>.
                 </div>
               </div>
             )}
