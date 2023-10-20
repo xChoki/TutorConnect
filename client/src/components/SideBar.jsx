@@ -1,9 +1,8 @@
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { NavLink, Navigate, useParams } from "react-router-dom"
 import useAuth from "../hooks/useAuth"
 
 import { validateRoles } from "../scripts/ValidateRoles"
-import useWindowDimensions from "../hooks/useWindowDimensions"
 
 import {
   Icon_Alumnos,
@@ -11,7 +10,7 @@ import {
   Icon_Home,
   Icon_Logout,
   Icon_Mensajes,
-  Arrow_Control,
+  Icon_Arrow,
   Icon_Letter,
 } from "../assets/Icons"
 
@@ -24,20 +23,7 @@ export default function SideBar({ open, setOpen }) {
 
   const [openModal, setOpenModal] = useState(false)
 
-  const { width } = useWindowDimensions()
-
   let { subpage } = useParams()
-
-  const [windowWidth, setWindowWidth] = useState(width)
-
-  useEffect(() => {
-    setWindowWidth(width)
-    if (width < 1000) {
-      setOpen(false)
-    } else {
-      setOpen(true)
-    }
-  }, [width])
 
   // useEffect(() => {
   //   function handleResize() {
@@ -138,7 +124,7 @@ export default function SideBar({ open, setOpen }) {
         >
           <div className="flex gap-x-4 items-center">
             <NavLink className={link_Classes()}>
-              <Arrow_Control open={open} onClick={() => setOpen(!open)} />
+              <Icon_Arrow open={open} onClick={() => setOpen(!open)} />
             </NavLink>
           </div>
 

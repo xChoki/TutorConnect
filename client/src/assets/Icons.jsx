@@ -152,7 +152,7 @@ export function Icon_Plus() {
   )
 }
 
-export function Arrow_Control({ onClick, open }) {
+export function Icon_Arrow({ onClick, open }) {
   return (
     <svg
       fill="currentColor"
@@ -170,7 +170,7 @@ export function Arrow_Control({ onClick, open }) {
   )
 }
 
-Arrow_Control.propTypes = {
+Icon_Arrow.propTypes = {
   onClick: PropTypes.func.isRequired,
   open: PropTypes.bool.isRequired,
 }
