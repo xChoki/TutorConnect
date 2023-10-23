@@ -1,7 +1,7 @@
 import axios from "axios"
 import { useEffect, useState } from "react"
 import { Link, useParams } from "react-router-dom"
-import SideBar from "../../components/SideBar"
+import SideBar from "../../components/Navigation/SideBar"
 
 import ReactPlayer from "react-player"
 
@@ -203,7 +203,9 @@ export default function CourseInfoPage() {
         open={openModalUpload}
         onClose={() => {
           setOpenModalUpload(false)
-          window.location.reload()
+          if (fileName !== "") {
+            window.location.reload()
+          }
         }}
         cancel={true}
         modalMargin={open ? "72" : "20"}

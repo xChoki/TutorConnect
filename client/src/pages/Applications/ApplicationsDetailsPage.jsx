@@ -1,4 +1,4 @@
-import SideBar from "../../components/SideBar"
+import SideBar from "../../components/Navigation/SideBar"
 import { Link } from "react-router-dom"
 import { useSidebarState } from "../../hooks/useSidebarState"
 

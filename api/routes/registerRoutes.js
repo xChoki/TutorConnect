@@ -29,13 +29,14 @@ const bcryptSalt = bcrypt.genSaltSync(10) // Generate salt with a length of 10
  *       - delete to delete data */
 
 /*    /register
-*     This endpoint handles register form, validates the information and uses post */
+ *     This endpoint handles register form, validates the information and uses post */
 router.post("/", async (req, res) => {
   // we listen to /register with an async post function
-  const { userName, userEmail, userPassword } = req.body // We require from the form the name, email and password sent by the user
+  const { userName, userEmail, userDate, userPassword } = req.body // We require from the form the name, email and password sent by the user
   console.log("Received registration request with:")
-  console.log("Name:", userName)
-  console.log("Email:", userEmail)
+  console.log("Name: ", userName)
+  console.log("Email: ", userEmail)
+  console.log("Fecha: ", userDate)
 
   // Validate that userEmail is not null or empty
   if (!userEmail || userEmail.trim() === "") {
@@ -53,12 +54,11 @@ router.post("/", async (req, res) => {
     const userDoc = await User.create({
       userName,
       userEmail,
+      userDate,
       userPassword: bcrypt.hashSync(userPassword, bcryptSalt),
     }) // This creates a User using the User mongoose model defined beforehand
 
-    res
-      .status(201)
-      .json({ success: `El usuario ${userDoc.userName} ha sido creado!` }) // This gives as a response the parsed json
+    res.status(201).json({ success: `El usuario ${userDoc.userName} ha sido creado!` }) // This gives as a response the parsed json
   } catch (e) {
     // in case of an error it send an error message
     res.status(422).json(e) // Error message corresponds to status 422, it means "The request was well-formed but was unable to be followed due to semantic errors."

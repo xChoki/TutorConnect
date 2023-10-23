@@ -140,7 +140,7 @@ async function removeRoleFromUser(applicationStudentId, roleToRemove) {
       return
     }
 
-    console.log(userDoc)
+    // console.log(userDoc)
   } catch (error) {
     console.error(error)
   }
@@ -213,7 +213,7 @@ router.get("/", (req, res) => {
       if (err) throw err // If there's an error we send it
       const { id } = userData // We retreive from userData the id of the logged in user
 
-      res.json(await Application.find()) // We find the courses created by the logged in tutor
+      res.json(await Application.find()) // We find all the applications
     }
   )
 })
@@ -238,17 +238,18 @@ router.put("/", async (req, res) => {
       if (Object.values(userData.userRoles).some((role) => allowedRoles.includes(role))) {
         // We checking if the logged in user has the allowedRoles
         // If it is true (the user has the allowed roles) we set the new values
+
+        const applicationReviewer = {
+          reviewerId: userData.id,
+          reviewerName: userData.userName,
+          reviewerDate: Date.now(),
+        }
+
         applicationDoc.set({
+          applicationReviewer,
           applicationState,
         })
 
-        // User.findByIdAndUpdate(
-        //   applicationStudentId,
-        //   {
-        //     $set: { ["userRoles.Tutor"]: 2003 },
-        //   },
-        //   { new: true }
-        // ) // We find by id the user in the User model
         applicationStudentId = new mongoose.Types.ObjectId(applicationStudentId)
         applicationState === "Aceptada"
           ? addRoleToUser(applicationStudentId)

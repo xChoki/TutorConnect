@@ -8,9 +8,9 @@ export default function CourseFilesAccordion({
   homeworkFiles,
   materialFiles,
   downloadFile,
-  setSidebarStateWithRefModalUpload,
-  setSidebarStateWithRefModalVideo,
-  setSidebarStateWithRefModalDelete,
+  setOpenModalUpload,
+  setOpenModalVideo,
+  setOpenModalDelete,
   setFileDiff,
   setFileName,
   selectedVideoInfo,
@@ -27,7 +27,7 @@ export default function CourseFilesAccordion({
               <div
                 onClick={() => {
                   // console.log("Subiendo grabación")
-                  setSidebarStateWithRefModalUpload(true)
+                  setOpenModalUpload(true)
                   setFileDiff("vid")
                 }}
                 className="p-5 text-gray-500 flex justify-between hover:bg-gray-200 hover:cursor-pointer"
@@ -45,18 +45,18 @@ export default function CourseFilesAccordion({
                   <div
                     onClick={() => {
                       selectedVideoInfo(file.fileName)
-                      setSidebarStateWithRefModalVideo(true)
+                      setOpenModalVideo(true)
                     }}
                     className="flex-grow"
                   >
-                    <span>{file.fileName}</span>
+                    <span>{file.fileName.split("____").pop()}</span>
                   </div>
                   <div className="flex">
                     <div
                       className="hover:bg-gray-400 hover:text-white rounded-lg"
                       onClick={() => {
                         selectedVideoInfo(file.fileName)
-                        setSidebarStateWithRefModalVideo(true)
+                        setOpenModalVideo(true)
                       }}
                     >
                       <Icon_PlayButton margin="2" />
@@ -66,7 +66,7 @@ export default function CourseFilesAccordion({
                       className="hover:bg-gray-400 hover:text-white rounded-lg"
                       onClick={() => {
                         // alert("borrar " + file.fileName)
-                        setSidebarStateWithRefModalDelete(true)
+                        setOpenModalDelete(true)
                         setFileDiff("videos")
                         setFileName(file.fileName)
                       }}
@@ -91,7 +91,7 @@ export default function CourseFilesAccordion({
               <div
                 onClick={() => {
                   // console.log("Subiendo tarea")
-                  setSidebarStateWithRefModalUpload(true)
+                  setOpenModalUpload(true)
                   setFileDiff("hom")
                 }}
                 className="p-5 text-gray-500 flex justify-between hover:bg-gray-200 hover:cursor-pointer"
@@ -112,7 +112,7 @@ export default function CourseFilesAccordion({
                     }}
                     className="flex-grow"
                   >
-                    <span>{file.fileName}</span>
+                    <span>{file.fileName.split("____").pop()}</span>
                   </div>
                   <div className="flex">
                     <div
@@ -128,7 +128,7 @@ export default function CourseFilesAccordion({
                       className="hover:bg-gray-400 hover:text-white rounded-lg"
                       onClick={() => {
                         // alert("borrar " + file.fileName)
-                        setSidebarStateWithRefModalDelete(true)
+                        setOpenModalDelete(true)
                         setFileDiff("homework")
                         setFileName(file.fileName)
                       }}
@@ -153,7 +153,7 @@ export default function CourseFilesAccordion({
               <div
                 onClick={() => {
                   // console.log("Subiendo material")
-                  setSidebarStateWithRefModalUpload(true)
+                  setOpenModalUpload(true)
                   setFileDiff("mat")
                 }}
                 className="p-5 text-gray-500 flex justify-between hover:bg-gray-200 hover:cursor-pointer"
@@ -174,7 +174,7 @@ export default function CourseFilesAccordion({
                     }}
                     className="flex-grow"
                   >
-                    <span>{file.fileName}</span>
+                    <span>{file.fileName.split("____").pop()}</span>
                   </div>
                   <div className="flex">
                     <div
@@ -190,7 +190,7 @@ export default function CourseFilesAccordion({
                       className="hover:bg-gray-400 hover:text-white rounded-lg"
                       onClick={() => {
                         // alert("borrar " + file.fileName)
-                        setSidebarStateWithRefModalDelete(true)
+                        setOpenModalDelete(true)
                         setFileDiff("material")
                         setFileName(file.fileName)
                       }}

@@ -18,6 +18,11 @@ const UserSchema = new Schema({
     required: true,
   },
 
+  userDate: {
+    type: Date,
+    required: true,
+  },
+
   userRoles: {
     User: {
         type: Number,

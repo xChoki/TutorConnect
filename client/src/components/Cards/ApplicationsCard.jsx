@@ -29,7 +29,7 @@ export default function ApplicationsCard(props) {
       default:
         return "text-gray-700" // Default text styles for other states
     }
-  } 
+  }
 
   return (
     <Link to={"/portal/solicitudes/" + application._id}>
@@ -58,6 +58,18 @@ export default function ApplicationsCard(props) {
           <span className="font-bold text-xl mb-2">
             <span>{application.applicationStudentInfo?.studentName}</span>
           </span>
+          <p className="text-gray-700 text-base">
+            {application.applicationReviewer?.reviewerDate
+              ? "Revisada el: " + new Date(application.applicationReviewer?.reviewerDate).toLocaleDateString(
+                  "es-CL",
+                  {
+                    day: "2-digit",
+                    month: "2-digit",
+                    year: "numeric",
+                  }
+                )
+              : "Pendiente"}
+          </p>
         </section>
 
         <section className="px-6 pt-4 pb-2">

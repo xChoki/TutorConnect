@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { Link } from "react-router-dom"
 import { Icon_Plus } from "../../assets/Icons/"
-import SideBar from "../../components/SideBar"
+import SideBar from "../../components/Navigation/SideBar"
 import axios from "axios"
 
 import { Toaster, toast } from "sonner"

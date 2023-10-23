@@ -1,8 +1,8 @@
 import { useState } from "react"
 import { NavLink, Navigate, useParams } from "react-router-dom"
-import useAuth from "../hooks/useAuth"
+import useAuth from "../../hooks/useAuth"
 
-import { validateRoles } from "../scripts/ValidateRoles"
+import { validateRoles } from "../../scripts/ValidateRoles"
 
 import {
   Icon_Alumnos,
@@ -12,10 +12,10 @@ import {
   Icon_Mensajes,
   Icon_Arrow,
   Icon_Letter,
-} from "../assets/Icons"
+} from "../../assets/Icons"
 
 import axios from "axios"
-import Modal from "./Modal"
+import Modal from "../Modal"
 
 export default function SideBar({ open, setOpen }) {
   const [redirect, setRedirect] = useState(null)

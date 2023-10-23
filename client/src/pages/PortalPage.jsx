@@ -1,8 +1,10 @@
-import SideBar from "../components/SideBar"
+import SideBar from "../components/Navigation/SideBar"
 import { Link } from "react-router-dom"
 import useAuth from "../hooks/useAuth"
 import { validateRoles } from "../scripts/ValidateRoles"
 import { useSidebarState } from "../hooks/useSidebarState"
+import { useEffect } from "react"
+import { Toaster, toast } from "sonner"
 
 export default function PortalPage() {
   const { auth } = useAuth()
@@ -11,9 +13,17 @@ export default function PortalPage() {
   const allowedRoles = [2003, 5001]
   const ValidateResult = validateRoles({ allowedRoles })
 
+  useEffect(() => {
+    if (sessionStorage.getItem("showloginmsg") == "1") {
+      toast.success(`Bienvenido ${auth.userName}!`)
+      sessionStorage.removeItem("showloginmsg")
+    }
+  }, [])
+
   return (
     <div className="grid grid-cols-[auto,1fr]">
       <SideBar open={open} setOpen={setOpen} />
+      <Toaster position="top-center" />
 
       <section className={`${open ? "ml-72" : "ml-20"} p-7 font-semibold`}>
         {!ValidateResult && (

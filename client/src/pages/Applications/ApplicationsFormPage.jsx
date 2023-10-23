@@ -2,7 +2,7 @@ import axios from "axios"
 import { useEffect, useState } from "react"
 import { Link, Navigate, useParams } from "react-router-dom"
 import { Icon_Cancel } from "../../assets/Icons"
-import SideBar from "../../components/SideBar"
+import SideBar from "../../components/Navigation/SideBar"
 import { useSidebarState } from "../../hooks/useSidebarState"
 import ApplicationForm from "../../components/Applications/ApplicationForm"
 

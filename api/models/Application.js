@@ -15,7 +15,7 @@ const StudentInfo = new Schema({
 
 const ReviewerInfo = new Schema({
   reviewerId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-  reviewerName: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+  reviewerName: { type: mongoose.Schema.Types.String, ref: "User" },
   reviewerDate: { type: Date },
 })
 
@@ -26,7 +26,7 @@ const ApplicationSchema = new Schema({
   applicationExtraInfo: String,
   applicationFiles: FileSchema, // PDF file.
   applicationState: String, // En proceso, aceptada, rechazada.
-  applicationReviewer: [ReviewerInfo],
+  applicationReviewer: ReviewerInfo,
 })
 
 const ApplicationModel = mongoose.model("Applications", ApplicationSchema)

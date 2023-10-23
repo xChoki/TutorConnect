@@ -1,66 +1,71 @@
 import { useState } from "react"
-import { Link } from "react-router-dom"
 import axios from "axios"
 
+import {
+  validateEmail,
+  validateName,
+  validatePassword,
+} from "../../scripts/ValidateLoginRegisterForm"
+import { useValidationRegisterForm } from "../../hooks/useValidationRegisterForm"
+import RegisterForm from "../../components/LoginRegister/RegisterForm"
+import { Navigate } from "react-router-dom"
+
 export default function RegisterPage() {
+  const [redirect, setRedirect] = useState(false)
   // Variables de formulario
-  const [userName, setUserName] = useState("")
-  const [userEmail, setUserEmail] = useState("")
-  const [userPassword, setUserPassword] = useState("")
+  const [userDate, setUserDate] = useState("")
+
+  const nameValidation = useValidationRegisterForm("", validateName)
+  const emailValidation = useValidationRegisterForm("", validateEmail)
+  const passwordValidation = useValidationRegisterForm("", validatePassword)
+  const passwordVerifyValidation = useValidationRegisterForm(
+    "",
+    (value) => value === passwordValidation.value
+  )
 
   async function registerUser(ev) {
     ev.preventDefault()
-    console.log("Sending request with data:", {
-      userName,
-      userEmail,
-      userPassword,
-    })
+    const userData = {
+      userName: nameValidation.value,
+      userEmail: emailValidation.value,
+      userPassword: passwordValidation.value,
+      userDate,
+    }
+
     try {
-      await axios.post("/register", {
-        userName,
-        userEmail,
-        userPassword,
-      })
-      alert("¡Registro exitoso!")
+      await axios.post("/register", userData)
+      sessionStorage.setItem("showregistermsg", "1")
+      setRedirect(true)
     } catch (e) {
-      alert("El registro a fallado, por favor intentalo más tarde." + e)
+      alert("El registro a fallado, por favor intentalo más tarde." + e) + console.error(e)
     }
   }
 
-  return (
-    <div className="mt-32 grow flex items-center justify-around">
-      <div className=" mb-64">
-        <h1 className="text-4xl text-center mb-4">Regístrate</h1>
+  const [show, setShow] = useState(false)
+  const handleChange = (selectedDate) => {
+    setUserDate(selectedDate)
+  }
+  const handleClose = (state) => {
+    setShow(state)
+  }
 
-        <form className="max-w-md mx-auto" onSubmit={registerUser}>
-          <input
-            type="text"
-            placeholder="Nombre"
-            value={userName}
-            onChange={(ev) => setUserName(ev.target.value)}
-          />
-          <input
-            type="email"
-            placeholder="mail@mail.com"
-            value={userEmail}
-            onChange={(ev) => setUserEmail(ev.target.value)}
-          />
-          <input
-            type="password"
-            placeholder="contraseña"
-            value={userPassword}
-            onChange={(ev) => setUserPassword(ev.target.value)}
-          />
-          <button className="buttonLogin mt-2 bg-gray-800 hover:bg-bestColor7 hover:text-white focus:outline-none focus:ring-4 focus:ring-gray-300">
-            Registrar
-          </button>
-          <div className="text-center py-2 text-gray-500">
-            ¿Ya tienes cuenta?{" "}
-            <Link className="underline text-black" to={"/login"}>
-              Ingresa aquí
-            </Link>
-          </div>
-        </form>
+  if(redirect){
+    <Navigate to="/login"/>
+  }
+
+  return (
+    <div className="min-h-screen flex items-center justify-center -mt-16">
+      <div className="w-full max-w-sm p-4 bg-white md:border md:border-gray-200 rounded-lg md:shadow sm:p-6 md:p-8 dark:bg-gray-800 dark:border-gray-700">
+        <RegisterForm
+          registerUser={registerUser}
+          nameValidation={nameValidation}
+          emailValidation={emailValidation}
+          passwordValidation={passwordValidation}
+          passwordVerifyValidation={passwordVerifyValidation}
+          handleChange={handleChange}
+          show={show}
+          handleClose={handleClose}
+        />
       </div>
     </div>
   )
