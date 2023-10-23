@@ -23,7 +23,7 @@ const Course = require("../models/Course") // Model for Courses
 /* JSONWebToken
  * Self-contained way for securely transmitting information between parties as a JSON object*/
 const jwt = require("jsonwebtoken") // import
-const jwtSecret = "AOi3ejk34io" // jwt secret token, it is randomly typed
+const jwtSecret = process.env.JWT_SECRET // jwt secret token, it is randomly typed
 
 /* Cookieparser
  * Parse and handle HTTP cookies that are sent between the client and the server.  */
@@ -41,11 +41,7 @@ const storage = multer.diskStorage({
   },
   filename: (req, file, cb) => {
     const courseId = req.body.id || req.query.id
-    if (courseId)
-      cb(
-        null,
-        "prueba " + courseId + "_" + Date.now() + "_" + file.originalname
-      )
+    if (courseId) cb(null, "prueba " + courseId + "_" + Date.now() + "_" + file.originalname)
   },
 })
 
@@ -82,13 +78,7 @@ function fileNameChange(path, name, id, fileType) {
   return { uploadedFiles, newName }
 }
 
-function updateMongoFileField(
-  file_name,
-  file_url,
-  user_token,
-  course_id,
-  type
-) {
+function updateMongoFileField(file_name, file_url, user_token, course_id, type) {
   jwt.verify(
     // We verify the jwt
     user_token, // token: string,
@@ -161,13 +151,7 @@ router.post("/video/:id", uploadVideo.single("file"), (req, res) => {
     // console.log("Nombre return funcion: " + filesReturn.newName)
 
     const { token } = req.cookies // We require from the session the token cookie
-    updateMongoFileField(
-      filesReturn.newName,
-      "uploads/videos",
-      token,
-      id,
-      "video"
-    )
+    updateMongoFileField(filesReturn.newName, "uploads/videos", token, id, "video")
 
     // console.log("Archivo subido")
     res.json({ message: "File uploaded successfully.", filesReturn })
@@ -191,13 +175,7 @@ router.post("/homework/:id", uploadHomework.single("file"), (req, res) => {
     const filesReturn = fileNameChange(path, originalname, id, "homework")
 
     const { token } = req.cookies // We require from the session the token cookie
-    updateMongoFileField(
-      filesReturn.newName,
-      "uploads/homework",
-      token,
-      id,
-      "homework"
-    )
+    updateMongoFileField(filesReturn.newName, "uploads/homework", token, id, "homework")
 
     // console.log("Archivo subido")
     res.json({ message: "File uploaded successfully.", filesReturn })
@@ -221,13 +199,7 @@ router.post("/material/:id", uploadMaterial.single("file"), (req, res) => {
     const filesReturn = fileNameChange(path, originalname, id, "material")
 
     const { token } = req.cookies // We require from the session the token cookie
-    updateMongoFileField(
-      filesReturn.newName,
-      "uploads/material",
-      token,
-      id,
-      "material"
-    )
+    updateMongoFileField(filesReturn.newName, "uploads/material", token, id, "material")
 
     // console.log("Archivo subido")
     res.json({ message: "File uploaded successfully.", filesReturn })

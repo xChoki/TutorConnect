@@ -65,6 +65,7 @@ const cursosRoutes = require("./routes/cursosRoutes")
 const cuentaRoutes = require("./routes/cuentaRoutes")
 const uploadRoutes = require("./routes/uploadRoutes")
 const applicationRoutes = require("./routes/applicationRoutes")
+const studentRoutes = require("./routes/studentRoutes")
 
 /*     /test
  *     This endpoint is to test the connection, if it is up it shows "test ok" */
@@ -118,6 +119,8 @@ app.use("/api/upload", uploadRoutes)
  *      - PUT: When it is called and it succeeded, validates the information and uses put to update the information
  *      - DELETE(id): When it is called and it succeeded, validates the information and uses delete to erase from database the information */
 app.use("/api/applications", applicationRoutes)
+
+app.use("/api/student", studentRoutes)
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`)

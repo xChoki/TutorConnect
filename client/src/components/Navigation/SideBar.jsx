@@ -57,7 +57,11 @@ export default function SideBar({ open, setOpen }) {
         }
         break
       case "cursos":
-        if (window.location.pathname === "/portal/cursos") {
+        if (
+          window.location.pathname === "/portal/cursos" ||
+          window.location.pathname === "/portal/cursos/registrar" ||
+          window.location.pathname === "/portal/cursos/nuevo"
+        ) {
           classes += " bg-gray-200"
         }
         break

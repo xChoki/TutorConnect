@@ -35,13 +35,8 @@ router.use(cookieParser()) // This is to create an instance of the cookieparser
 router.post("/", (req, res) => {
   // We listen to /cursos with a post function
   const { token } = req.cookies // We require from the session the token cookie
-  const {
-    courseName,
-    courseDescription,
-    courseCategory,
-    courseExtrainfo,
-    courseNeurodiv,
-  } = req.body // We require from the form the courseName, courseDescription, courseCategory, courseExtrainfo and courseNeurodiv sent by the user
+  const { courseName, courseDescription, courseCategory, courseExtrainfo, courseNeurodiv } =
+    req.body // We require from the form the courseName, courseDescription, courseCategory, courseExtrainfo and courseNeurodiv sent by the user
 
   jwt.verify(
     // We verify the jwt
@@ -80,8 +75,15 @@ router.get("/", (req, res) => {
       // callback?: VerifyCallback<JwtPayload | string>,
       if (err) throw err // If there's an error we send it
       const { id } = userData // We retreive from userData the id of the logged in user
-      
-      res.json(await Course.find({ courseTutorId: id })) // We find the courses created by the logged in tutor
+
+      res.json(
+        await Course.find({
+          $or: [
+            { courseTutorId: id }, // Tutor is the logged-in user
+            { "courseStudents.student_id": id }, // Student with matching ID
+          ],
+        })
+      ) // We find the courses created by the logged in tutor
     }
   )
 })
@@ -99,14 +101,8 @@ router.get("/:id", async (req, res) => {
 router.put("/", async (req, res) => {
   // We listen to /cursos with an async put function
   const { token } = req.cookies // We require from the session the token cookie
-  const {
-    id,
-    courseName,
-    courseDescription,
-    courseCategory,
-    courseExtrainfo,
-    courseNeurodiv,
-  } = req.body // We require from the form the id, courseName, courseDescription, courseCategory, courseExtrainfo and courseNeurodiv sent by the user
+  const { id, courseName, courseDescription, courseCategory, courseExtrainfo, courseNeurodiv } =
+    req.body // We require from the form the id, courseName, courseDescription, courseCategory, courseExtrainfo and courseNeurodiv sent by the user
   jwt.verify(
     // We verify the jwt
     token, // token: string,

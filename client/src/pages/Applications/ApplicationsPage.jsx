@@ -15,6 +15,13 @@ export default function ApplicationsPage() {
     })
   }, [])
 
+  const inProcessApplications = applications.filter(
+    (application) => application.applicationState === "En proceso"
+  )
+  const notInProcessApplications = applications.filter(
+    (application) => application.applicationState !== "En proceso"
+  )
+
   return (
     <div className={`${open ? "ml-72" : "ml-20"} pt-6`}>
       <SideBar open={open} setOpen={setOpen} />
@@ -24,14 +31,14 @@ export default function ApplicationsPage() {
       <h2 className="text-4xl p-4">Pendientes</h2>
 
       <section className="flex flex-wrap lg-mx-1">
-        {applications?.length > 0 && applications?.applicationState === "En proceso" ? (
-          applications.map((application) => (
+        {inProcessApplications.length > 0 ? (
+          inProcessApplications.map((application) => (
             <div key={application._id} className="w-96 h-60 p-4 mb-20 mx-5">
               <ApplicationsCard application={application} />
             </div>
           ))
         ) : (
-          <p className="p-4 mb-10 mx-5"> No hay aplicaciones pendientes.</p>
+          <p className="p-4 mb-10 mx-5">No hay más aplicaciones pendientes.</p>
         )}
       </section>
 
@@ -40,13 +47,15 @@ export default function ApplicationsPage() {
       <h2 className="text-4xl p-4">Revisadas</h2>
 
       <section className="flex flex-wrap lg-mx-1">
-        {applications?.length > 0 &&
-          applications?.applicationState !== "En proceso" &&
-          applications.map((application) => (
+        {notInProcessApplications.length > 0 ? (
+          notInProcessApplications.map((application) => (
             <div key={application._id} className="w-96 h-60 p-4 mb-20 mx-5">
               <ApplicationsCard application={application} />
             </div>
-          ))}
+          ))
+        ) : (
+          <p className="p-4 mb-10 mx-5">No hay aplicaciones revisadas.</p>
+        )}
       </section>
     </div>
   )

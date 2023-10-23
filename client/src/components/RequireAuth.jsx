@@ -20,7 +20,7 @@ export default function RequireAuth({ allowedRoles }) {
       <Navigate to="/" />
     ) : (
       <>
-      {console.log("usuario no logeado")}
+      {/* {console.log("usuario no logeado")} */}
       <Navigate to="/login" state={{ from: location }} replace />
       </>
     )

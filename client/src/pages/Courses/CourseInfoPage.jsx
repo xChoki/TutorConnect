@@ -1,6 +1,6 @@
 import axios from "axios"
 import { useEffect, useState } from "react"
-import { Link, useParams } from "react-router-dom"
+import { Link, useNavigate, useParams } from "react-router-dom"
 import SideBar from "../../components/Navigation/SideBar"
 
 import ReactPlayer from "react-player"
@@ -12,9 +12,12 @@ import Modal from "../../components/Modal"
 import CourseInfo from "../../components/Courses/CourseInfo"
 import CourseFilesAccordion from "../../components/Courses/CourseFilesAccordion"
 import { useSidebarState } from "../../hooks/useSidebarState"
+import useAuth from "../../hooks/useAuth"
 
 export default function CourseInfoPage() {
   const [open, setOpen] = useSidebarState()
+
+  const { auth } = useAuth()
 
   const { id } = useParams()
 
@@ -25,6 +28,7 @@ export default function CourseInfoPage() {
   const [videoFiles, setVideoFiles] = useState([])
   const [homeworkFiles, setHomeworkFiles] = useState([])
   const [materialFiles, setMaterialFiles] = useState([])
+  const [students, setStudents] = useState([])
 
   const [openModalUpload, setOpenModalUpload] = useState(false)
   const [openModalVideo, setOpenModalVideo] = useState(false)
@@ -36,6 +40,8 @@ export default function CourseInfoPage() {
   const [fileDiff, setFileDiff] = useState("")
 
   const [selectedVideo, setSelectedVideo] = useState("")
+
+  const navigate = useNavigate()
 
   useEffect(() => {
     if (!id) {
@@ -51,6 +57,7 @@ export default function CourseInfoPage() {
       setVideoFiles(data.videoFiles)
       setMaterialFiles(data.materialFiles)
       setHomeworkFiles(data.homeworkFiles)
+      setStudents(data.courseStudents)
     })
   }, [id])
 
@@ -157,6 +164,9 @@ export default function CourseInfoPage() {
       })
   }
 
+  // Check if student is registered in the course or not
+  const isUserInCourse = students && students.includes(auth.id)
+
   return (
     <>
       <div className="grid grid-cols-[auto,1fr]">
@@ -181,20 +191,33 @@ export default function CourseInfoPage() {
               courseExtrainfo={courseExtrainfo}
               courseNeurodiv={courseNeurodiv}
             />
-
-            <CourseFilesAccordion
-              ValidateResult={ValidateResult}
-              videoFiles={videoFiles}
-              homeworkFiles={homeworkFiles}
-              materialFiles={materialFiles}
-              downloadFile={downloadFile}
-              setOpenModalUpload={setOpenModalUpload}
-              setOpenModalVideo={setOpenModalVideo}
-              setOpenModalDelete={setOpenModalDelete}
-              setFileDiff={setFileDiff}
-              setFileName={setFileName}
-              selectedVideoInfo={selectedVideoInfo}
-            />
+            {isUserInCourse ? (
+              <CourseFilesAccordion
+                ValidateResult={ValidateResult}
+                videoFiles={videoFiles}
+                homeworkFiles={homeworkFiles}
+                materialFiles={materialFiles}
+                downloadFile={downloadFile}
+                setOpenModalUpload={setOpenModalUpload}
+                setOpenModalVideo={setOpenModalVideo}
+                setOpenModalDelete={setOpenModalDelete}
+                setFileDiff={setFileDiff}
+                setFileName={setFileName}
+                selectedVideoInfo={selectedVideoInfo}
+              />
+            ) : (
+              <div className="mt-20 flex gap-5">
+                <button className="mx-2 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center">
+                  Ingresar
+                </button>
+                <button
+                  onClick={() => navigate("/portal/cursos/registrar")}
+                  className="mx-2 text-black hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center"
+                >
+                  Cancelar
+                </button>
+              </div>
+            )}
           </section>
         </div>
       </div>

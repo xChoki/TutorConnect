@@ -17,7 +17,7 @@ export default function CoursesPage() {
   const [courses, setCourses] = useState([])
 
   const [open, setOpen] = useSidebarState()
-  
+
   const { width } = useWindowDimensions()
 
   useEffect(() => {
@@ -62,6 +62,21 @@ export default function CoursesPage() {
             <div className="text-center flex">
               <Icon_Plus />
               <span className="pl-2">Agregar curso</span>
+            </div>
+          </Link>
+        </section>
+      )}
+
+      {!ValidateResult && (
+        <section className="m-10">
+          <Link
+            className="inline-block py-16 px-20 rounded-lg text-lg border hover:bg-gray-100"
+            to="/portal/cursos/registrar"
+            style={{ display: "flex", justifyContent: "center" }}
+          >
+            <div className="text-center">
+              <span className="pl-2">¿Deseas entrar a un curso?</span>
+              <p>Presiona aquí para registrarte en una tutoría.</p>
             </div>
           </Link>
         </section>

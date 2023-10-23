@@ -23,8 +23,9 @@ export default function PortalPage() {
   return (
     <div className="grid grid-cols-[auto,1fr]">
       <SideBar open={open} setOpen={setOpen} />
-      <Toaster position="top-center" />
 
+      <Toaster position="top-center" />
+      
       <section className={`${open ? "ml-72" : "ml-20"} p-7 font-semibold`}>
         {!ValidateResult && (
           <section className="m-10">
