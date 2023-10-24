@@ -40,7 +40,7 @@ router.use(cookieParser()) // This is to create an instance of the cookieparser
 
 /*     /student/cursos
  *     This endpoint handles cursos, when it succeeded, validates the information and uses get to receive the courses data*/
-router.get("/cursos", (req, res) => {
+router.get("/courses", (req, res) => {
   // We listen to /applications with a get function
   const { token } = req.cookies // We require from the session the token cookie
 
@@ -63,6 +63,36 @@ router.get("/:id", async (req, res) => {
   const { id } = req.params // Get the studentId from the URL parameter
 
   res.json(await Application.findOne({ "applicationStudentInfo.studentId": id }))
+})
+
+router.put("/course/register/:id", (req, res) => {
+  const { token } = req.cookies
+  const { id } = req.params
+
+  jwt.verify(
+    // We verify the jwt
+    token, // token: string,
+    jwtSecret, // secretOrPublicKey: Secret | GetPublicKeyOrSecret,
+    {}, // options?: VerifyOptions & { complete?: false },
+    async (err, userData) => {
+      // callback?: VerifyCallback<JwtPayload | string>,
+      if (err) throw err // If there's an error we send it
+      const courseDoc = await Course.findById(id) // We find by id the course in the Course model
+
+      courseStudents = [
+        {
+          student_id: userData.id,
+          student_name: userData.userName,
+        },
+      ]
+
+      courseDoc.set({
+        courseStudents,
+      })
+
+      await courseDoc.save() // We save the new data
+    }
+  )
 })
 
 module.exports = router

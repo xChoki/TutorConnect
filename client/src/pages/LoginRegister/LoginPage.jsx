@@ -46,6 +46,7 @@ export default function LoginPage() {
       toast.success("Registro exitoso, puedes iniciar sesión.")
       sessionStorage.removeItem("showregistermsg")
     }
+    document.title = "TutorConnect | Login"
   }, [])
 
   // function handleCbClick(ev) {

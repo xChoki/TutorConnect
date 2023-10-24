@@ -21,7 +21,7 @@ export default function CoursesPage() {
   const { width } = useWindowDimensions()
 
   useEffect(() => {
-    axios.get("/cursos").then(({ data }) => {
+    axios.get("/courses").then(({ data }) => {
       setCourses(data)
       // console.log(courses)
     })
@@ -40,11 +40,17 @@ export default function CoursesPage() {
       sessionStorage.removeItem("showcreatemsg")
     }
   }, [])
+  useEffect(() => {
+    if (sessionStorage.getItem("showregistercoursemsg") == "1") {
+      toast.success("Te registraste correctamente en el curso.")
+      sessionStorage.removeItem("showregistercoursemsg")
+    }
+  }, [])
 
   const allowedRoles = [2002, 2003, 5001]
 
-  const ValidateResult = validateRoles({ allowedRoles })
-  //console.log("resultado: " + ValidateResult)
+  const ValidateRoles = validateRoles({ allowedRoles })
+  //console.log("resultado: " + ValidateRoles)
 
   return (
     <div className={`${open ? "ml-72" : "ml-20"}`}>
@@ -52,7 +58,7 @@ export default function CoursesPage() {
 
       <Toaster position="top-center" />
 
-      {ValidateResult && (
+      {ValidateRoles && (
         <section className="m-10">
           <Link
             className="inline-block py-16 px-20 rounded-lg text-lg border hover:bg-gray-100"
@@ -67,7 +73,7 @@ export default function CoursesPage() {
         </section>
       )}
 
-      {!ValidateResult && (
+      {!ValidateRoles && (
         <section className="m-10">
           <Link
             className="inline-block py-16 px-20 rounded-lg text-lg border hover:bg-gray-100"
@@ -83,7 +89,7 @@ export default function CoursesPage() {
       )}
 
       {/* {console.log(courses)} */}
-      <section className="flex flex-wrap lg-mx-1">
+      <section className="flex flex-wrap lg-mx-1 ml-5">
         {courses?.length > 0 &&
           courses?.map((course) => (
             <div key={course._id} className="w-96 h-60 mb-20 mx-5">

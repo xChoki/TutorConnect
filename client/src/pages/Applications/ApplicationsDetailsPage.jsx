@@ -17,7 +17,7 @@ export default function ApplicationsDetailsPage() {
     axios.get("/student/" + auth.id).then(({ data }) => {
       setApplications(data)
     })
-  }, [])
+  }, [auth.id])
 
   return (
     <div className="grid grid-cols-[auto,1fr]">

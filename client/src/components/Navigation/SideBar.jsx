@@ -107,9 +107,9 @@ export default function SideBar({ open, setOpen }) {
   }
 
   let allowedRoles = [2002, 2003, 5001]
-  const ValidateResultTeaAdmTut = validateRoles({ allowedRoles })
+  const ValidateRolesTeaAdmTut = validateRoles({ allowedRoles })
   allowedRoles = [2003, 5001]
-  const ValidateResultTeaAdm = validateRoles({ allowedRoles })
+  const ValidateRolesTeaAdm = validateRoles({ allowedRoles })
 
   return (
     <>
@@ -143,7 +143,7 @@ export default function SideBar({ open, setOpen }) {
               </NavLink>
             </li>
 
-            {ValidateResultTeaAdmTut && (
+            {ValidateRolesTeaAdmTut && (
               <li>
                 <NavLink to={"/portal/alumnos"} className={link_Classes("alumnos")}>
                   <Icon_Alumnos />
@@ -154,7 +154,7 @@ export default function SideBar({ open, setOpen }) {
               </li>
             )}
 
-            {ValidateResultTeaAdm && (
+            {ValidateRolesTeaAdm && (
               <li>
                 <NavLink to={"/portal/solicitudes"} className={link_Classes("solicitudes")}>
                   <Icon_Letter />

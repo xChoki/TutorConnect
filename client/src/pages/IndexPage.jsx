@@ -19,6 +19,8 @@ export default function IndexPage() {
       .catch((error) => {
         console.error("Error fetching counts:", error)
       })
+
+    document.title = "TutorConnect"
   }, [])
 
   return (
@@ -27,7 +29,10 @@ export default function IndexPage() {
         <div className="relative h-1/2">
           <img src={head} className="w-full h-full object-cover object-center" alt="Background" />
           <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center backdrop-blur-sm p-2 md:p-5">
-            <h1 className="text-2xl md:text-4xl lg:text-6xl text-white" style={{ textShadow: "#161523 1px 0 10px" }}>
+            <h1
+              className="text-2xl md:text-4xl lg:text-6xl text-white"
+              style={{ textShadow: "#161523 1px 0 10px" }}
+            >
               ¡Bienvenidos a TutorConnect!
             </h1>
             <p className="lg:text-xl text-gray-100" style={{ textShadow: "#161523 1px 0 10px" }}>
@@ -67,7 +72,7 @@ export default function IndexPage() {
         </div>
       </section>
 
-      <Footer/>
+      <Footer />
     </div>
   )
 }

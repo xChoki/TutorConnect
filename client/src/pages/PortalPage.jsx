@@ -11,13 +11,15 @@ export default function PortalPage() {
   const [open, setOpen] = useSidebarState()
 
   const allowedRoles = [2003, 5001]
-  const ValidateResult = validateRoles({ allowedRoles })
+  const ValidateRoles = validateRoles({ allowedRoles })
 
   useEffect(() => {
     if (sessionStorage.getItem("showloginmsg") == "1") {
       toast.success(`Bienvenido ${auth.userName}!`)
       sessionStorage.removeItem("showloginmsg")
     }
+
+    document.title = "TutorConect | Portal"
   }, [])
 
   return (
@@ -27,7 +29,7 @@ export default function PortalPage() {
       <Toaster position="top-center" />
       
       <section className={`${open ? "ml-72" : "ml-20"} p-7 font-semibold`}>
-        {!ValidateResult && (
+        {!ValidateRoles && (
           <section className="m-10">
             <Link
               className="inline-block py-16 px-20 rounded-lg text-lg border hover:bg-gray-100"

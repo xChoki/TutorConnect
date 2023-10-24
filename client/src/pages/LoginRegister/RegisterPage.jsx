@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import axios from "axios"
 
 import {
@@ -49,9 +49,13 @@ export default function RegisterPage() {
     setShow(state)
   }
 
-  if(redirect){
-    <Navigate to="/login"/>
+  if (redirect) {
+    <Navigate to="/login" />
   }
+
+  useEffect(() => {
+    document.title = "TutorConnect | Register"
+  }, [])
 
   return (
     <div className="min-h-screen flex items-center justify-center -mt-16">

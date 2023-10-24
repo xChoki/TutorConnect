@@ -13,6 +13,7 @@ import CourseInfo from "../../components/Courses/CourseInfo"
 import CourseFilesAccordion from "../../components/Courses/CourseFilesAccordion"
 import { useSidebarState } from "../../hooks/useSidebarState"
 import useAuth from "../../hooks/useAuth"
+import StudentCourseButtons from "../../components/Students/StudentCourseButtons"
 
 export default function CourseInfoPage() {
   const [open, setOpen] = useSidebarState()
@@ -28,6 +29,7 @@ export default function CourseInfoPage() {
   const [videoFiles, setVideoFiles] = useState([])
   const [homeworkFiles, setHomeworkFiles] = useState([])
   const [materialFiles, setMaterialFiles] = useState([])
+  const [tutorId, setTutorId] = useState([])
   const [students, setStudents] = useState([])
 
   const [openModalUpload, setOpenModalUpload] = useState(false)
@@ -48,7 +50,7 @@ export default function CourseInfoPage() {
       return
     }
 
-    axios.get("/cursos/" + id).then((response) => {
+    axios.get("/courses/" + id).then((response) => {
       const { data } = response
       setCourseName(data.courseName)
       setCourseDescription(data.courseDescription)
@@ -58,13 +60,14 @@ export default function CourseInfoPage() {
       setMaterialFiles(data.materialFiles)
       setHomeworkFiles(data.homeworkFiles)
       setStudents(data.courseStudents)
+      setTutorId(data.courseTutorId)
     })
   }, [id])
 
   const allowedRoles = [2002, 2003, 5001]
 
-  const ValidateResult = validateRoles({ allowedRoles })
-  //console.log("resultado: " + ValidateResult)
+  const ValidateRoles = validateRoles({ allowedRoles })
+  //console.log("resultado: " + ValidateRoles)
 
   function uploadFileChange(e) {
     setAddedFiles(e.target.files[0])
@@ -146,26 +149,21 @@ export default function CourseInfoPage() {
     }
   }
 
-  function downloadFile(fileName) {
-    const endpoint = `/upload/${fileName}`
-
-    fetch(endpoint)
-      .then((response) => response.blob())
-      .then((blob) => {
-        const url = window.URL.createObjectURL(blob)
-        const link = document.createElement("a")
-        link.href = url
-        link.download = fileName
-        link.click()
-        window.URL.revokeObjectURL(url)
-      })
-      .catch((error) => {
-        console.error("Error downloading the file:", error)
-      })
+  async function registerStudent() {
+    try {
+      sessionStorage.setItem("showregistercoursemsg", "1")
+      navigate("/portal/cursos")
+      await axios.put("/student/course/register/" + id)
+    } catch (error) {
+      console.error(`Error registering user into course ${id}`)
+    }
   }
 
   // Check if student is registered in the course or not
-  const isUserInCourse = students && students.includes(auth.id)
+  // const isUserInCourse = students && students.includes(auth.id)
+  const isUserInCourse = students.some(student => student.student_id === auth.id);
+
+  const isUserCourseTutor = auth && tutorId.includes(auth.id)
 
   return (
     <>
@@ -174,7 +172,7 @@ export default function CourseInfoPage() {
 
         <div className={`${open ? "ml-72" : "ml-20"} p-10`}>
           <section className="block max-w-full p-6 bg-white border border-gray-200 rounded-lg shadow">
-            {ValidateResult && (
+            {ValidateRoles && (
               <aside className="float-right">
                 <Link
                   to={"/portal/cursos/editar/" + id}
@@ -191,13 +189,13 @@ export default function CourseInfoPage() {
               courseExtrainfo={courseExtrainfo}
               courseNeurodiv={courseNeurodiv}
             />
-            {isUserInCourse ? (
+
+            {(isUserInCourse || isUserCourseTutor) ? (
               <CourseFilesAccordion
-                ValidateResult={ValidateResult}
+                ValidateRoles={ValidateRoles}
                 videoFiles={videoFiles}
                 homeworkFiles={homeworkFiles}
                 materialFiles={materialFiles}
-                downloadFile={downloadFile}
                 setOpenModalUpload={setOpenModalUpload}
                 setOpenModalVideo={setOpenModalVideo}
                 setOpenModalDelete={setOpenModalDelete}
@@ -206,17 +204,7 @@ export default function CourseInfoPage() {
                 selectedVideoInfo={selectedVideoInfo}
               />
             ) : (
-              <div className="mt-20 flex gap-5">
-                <button className="mx-2 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center">
-                  Ingresar
-                </button>
-                <button
-                  onClick={() => navigate("/portal/cursos/registrar")}
-                  className="mx-2 text-black hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center"
-                >
-                  Cancelar
-                </button>
-              </div>
+              <StudentCourseButtons registerStudent={registerStudent} />
             )}
           </section>
         </div>

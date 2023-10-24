@@ -38,7 +38,7 @@ export default function CoursesFormPage() {
       return
     }
 
-    axios.get("/cursos/" + id).then((response) => {
+    axios.get("/courses/" + id).then((response) => {
       const { data } = response
       setCourseName(data.courseName)
       setCourseDescription(data.courseDescription)

@@ -61,7 +61,7 @@ const registerRoutes = require("./routes/registerRoutes")
 const loginRoutes = require("./routes/loginRoutes")
 const profileRoutes = require("./routes/profileRoutes")
 const logoutRoutes = require("./routes/logoutRoutes")
-const cursosRoutes = require("./routes/cursosRoutes")
+const coursesRoutes = require("./routes/coursesRoutes")
 const cuentaRoutes = require("./routes/cuentaRoutes")
 const uploadRoutes = require("./routes/uploadRoutes")
 const applicationRoutes = require("./routes/applicationRoutes")
@@ -95,7 +95,7 @@ app.use("/api/logout", logoutRoutes)
  *      - GET(id): When it is called and it succeeded, validates the information and uses get to obtain the detailed information by id
  *      - PUT: When it is called and it succeeded, validates the information and uses put to update the information
  *      - DELETE(id): When it is called and it succeeded, validates the information and uses delete to erase from database the information */
-app.use("/api/cursos", cursosRoutes)
+app.use("/api/courses", coursesRoutes)
 
 /*    /cuenta
 *     This endpoint handles the count of users and courses with the id, when it succeeded, validates the information and uses get to send the information */

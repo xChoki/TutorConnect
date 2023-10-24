@@ -3,11 +3,10 @@ import { Icon_Download, Icon_PlayButton, Icon_Trashcan, Icon_Upload } from "../.
 import React from "react"
 
 export default function CourseFilesAccordion({
-  ValidateResult,
+  ValidateRoles,
   videoFiles,
   homeworkFiles,
   materialFiles,
-  downloadFile,
   setOpenModalUpload,
   setOpenModalVideo,
   setOpenModalDelete,
@@ -15,6 +14,24 @@ export default function CourseFilesAccordion({
   setFileName,
   selectedVideoInfo,
 }) {
+  function downloadFile(fileName) {
+    const endpoint = `/upload/${fileName}`
+
+    fetch(endpoint)
+      .then((response) => response.blob())
+      .then((blob) => {
+        const url = window.URL.createObjectURL(blob)
+        const link = document.createElement("a")
+        link.href = url
+        link.download = fileName
+        link.click()
+        window.URL.revokeObjectURL(url)
+      })
+      .catch((error) => {
+        console.error("Error downloading the file:", error)
+      })
+  }
+  
   return (
     <Accordion className="mt-20">
       <Accordion.Panel>
@@ -22,7 +39,7 @@ export default function CourseFilesAccordion({
           <span className="text-lg">Grabaciones</span>
         </Accordion.Title>
         <Accordion.Content>
-          {ValidateResult && (
+          {ValidateRoles && (
             <>
               <div
                 onClick={() => {
@@ -86,7 +103,7 @@ export default function CourseFilesAccordion({
           <span className="text-lg">Tareas</span>
         </Accordion.Title>
         <Accordion.Content>
-          {ValidateResult && (
+          {ValidateRoles && (
             <>
               <div
                 onClick={() => {
@@ -148,7 +165,7 @@ export default function CourseFilesAccordion({
           <span className="text-lg">Material</span>
         </Accordion.Title>
         <Accordion.Content>
-          {ValidateResult && (
+          {ValidateRoles && (
             <>
               <div
                 onClick={() => {
