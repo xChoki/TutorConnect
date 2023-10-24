@@ -7,7 +7,7 @@ export default function Footer() {
         <span className="text-sm text-gray-500 sm:text-center">
           © 2023{" "}
           <Link to="/" className="hover:underline">
-            TuttorConnect
+            TutorConnect
           </Link>
         </span>
 
