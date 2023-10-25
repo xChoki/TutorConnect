@@ -16,8 +16,11 @@ export default function ApplicationsFormPage() {
   const [applicationDescription, setApplicationDescription] = useState("")
   const [applicationExtraInfo, setCourseExtrainfo] = useState("")
 
-  const [addedFiles, setAddedFiles] = useState([])
-  const [fileName, setFileName] = useState("")
+  const [addedGradesFile, setAddedGradesFile] = useState([])
+  const [gradesFileName, setGradesFileName] = useState("")
+
+  const [addedRegularFile, setAddedRegularFile] = useState([])
+  const [regularFileName, setRegularFileName] = useState("")
 
   // Redirection
   const [redirect, setRedirect] = useState(false)
@@ -37,7 +40,8 @@ export default function ApplicationsFormPage() {
       const { data } = response
       setApplicationDescription(data.applicationDescription)
       setCourseExtrainfo(data.applicationExtraInfo)
-      setAddedFiles(data.applicationFiles)
+      setAddedGradesFile(data.applicationGradesFile)
+      setAddedRegularFile(data.applicationRegualarFile)
     })
   }, [id])
 
@@ -46,12 +50,13 @@ export default function ApplicationsFormPage() {
     ev.preventDefault()
 
     const applicationData = new FormData()
-    const applicationDataFile = new FormData()
+    // const applicationDataFile = new FormData()
 
-    // applicationData.append('addedFiles', addedFiles)
-    applicationData.append('file', addedFiles)
-    applicationData.append('applicationExtraInfo', applicationExtraInfo)
-    applicationData.append('applicationDescription', applicationDescription)
+    // applicationData.append('addedGradesFile', addedGradesFile)
+    applicationData.append("applicationGradesFile", addedGradesFile)
+    applicationData.append("applicationRegularFile", addedRegularFile)
+    applicationData.append("applicationExtraInfo", applicationExtraInfo)
+    applicationData.append("applicationDescription", applicationDescription)
 
     try {
       if (id) {
@@ -65,11 +70,11 @@ export default function ApplicationsFormPage() {
         // new application
         setRedirect(true)
         await axios.post("/applications", applicationData, {
-            headers: {'Content-Type': 'multipart/form-data'}
+          headers: { "Content-Type": "multipart/form-data" },
         })
-        await axios.post("/applications/file", applicationDataFile, {
-            headers: {'Content-Type': 'multipart/form-data'}
-        })
+        // await axios.post("/applications/file", applicationDataFile, {
+        //   headers: { "Content-Type": "multipart/form-data" },
+        // })
       }
     } catch (error) {
       alert("Ha ocurrido un error, por favor intente nuevamente. " + error)
@@ -80,9 +85,7 @@ export default function ApplicationsFormPage() {
   async function deleteApplication() {
     try {
       if (id) {
-        var result = window.confirm(
-          "¿Seguro que desea eliminar la solicitud?"
-        )
+        var result = window.confirm("¿Seguro que desea eliminar la solicitud?")
         if (result === true) {
           await axios.delete("/cursos/" + id)
           setRedirect(true)
@@ -93,10 +96,17 @@ export default function ApplicationsFormPage() {
     }
   }
 
-  function uploadFileChange(e) {
-    setAddedFiles(e.target.files[0])
-    if (addedFiles) {
-      setFileName(e.target.files[0].name)
+  function uploadGradesFileChange(e) {
+    setAddedGradesFile(e.target.files[0])
+    if (addedGradesFile) {
+      setGradesFileName(e.target.files[0].name)
+      // console.log(e.target.files[0].name)
+    }
+  }
+  function uploadRegularFileChange(e) {
+    setAddedRegularFile(e.target.files[0])
+    if (addedRegularFile) {
+      setRegularFileName(e.target.files[0].name)
       // console.log(e.target.files[0].name)
     }
   }
@@ -124,17 +134,19 @@ export default function ApplicationsFormPage() {
             </Link>
           </div>
 
-          <ApplicationForm 
+          <ApplicationForm
             saveApplication={saveApplication}
             applicationDescription={applicationDescription}
             setApplicationDescription={setApplicationDescription}
-            uploadFileChange={uploadFileChange}
-            fileName={fileName}
+            uploadGradesFileChange={uploadGradesFileChange}
+            uploadRegularFileChange={uploadRegularFileChange}
+            gradesFileName={gradesFileName}
+            regularFileName={regularFileName}
             applicationExtraInfo={applicationExtraInfo}
             setCourseExtrainfo={setCourseExtrainfo}
             id={id}
             deleteApplication={deleteApplication}
-            />
+          />
         </section>
       </div>
     </>

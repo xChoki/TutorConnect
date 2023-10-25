@@ -8,10 +8,9 @@ import {
 } from "../../scripts/ValidateLoginRegisterForm"
 import { useValidationRegisterForm } from "../../hooks/useValidationRegisterForm"
 import RegisterForm from "../../components/LoginRegister/RegisterForm"
-import { Navigate } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 
 export default function RegisterPage() {
-  const [redirect, setRedirect] = useState(false)
   // Variables de formulario
   const [userDate, setUserDate] = useState("")
 
@@ -23,6 +22,8 @@ export default function RegisterPage() {
     (value) => value === passwordValidation.value
   )
 
+  const navigate = useNavigate()
+
   async function registerUser(ev) {
     ev.preventDefault()
     const userData = {
@@ -33,9 +34,9 @@ export default function RegisterPage() {
     }
 
     try {
+      navigate("/login")
       await axios.post("/register", userData)
       sessionStorage.setItem("showregistermsg", "1")
-      setRedirect(true)
     } catch (e) {
       alert("El registro a fallado, por favor intentalo más tarde." + e) + console.error(e)
     }
@@ -47,10 +48,6 @@ export default function RegisterPage() {
   }
   const handleClose = (state) => {
     setShow(state)
-  }
-
-  if (redirect) {
-    <Navigate to="/login" />
   }
 
   useEffect(() => {

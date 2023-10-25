@@ -4,8 +4,10 @@ export default function ApplicationForm({
   saveApplication,
   applicationDescription,
   setApplicationDescription,
-  uploadFileChange,
-  fileName,
+  uploadGradesFileChange,
+  uploadRegularFileChange,
+  gradesFileName,
+  regularFileName,
   applicationExtraInfo,
   setCourseExtrainfo,
   id,
@@ -30,28 +32,56 @@ export default function ApplicationForm({
           onChange={(ev) => setApplicationDescription(ev.target.value)}
         ></textarea>
       </div>
+
       <div className="relative z-0 w-full mb-6 group">
         <div className="mx-auto my-4 w-full h-full">
           <label className="flex flex-col justify-center items-center w-full h-full px-4 transition bg-white border-2 border-gray-300 border-dashed rounded-md appearance-none cursor-pointer hover:border-gray-400 focus:outline-none">
             <div className="flex items-center space-x-2">
               <Icon_UploadCloud />
               <span className="font-medium text-gray-600">
-                Presiona para subir tus reporte de notas.
+                Presiona para subir tu reporte de notas.
               </span>
             </div>
             <p className="text-xs leading-5 text-gray-600">PDF de hasta 1MB</p>
             <input
               type="file"
-              name="file"
+              name="applicationRegularFile"
               className="hidden"
               accept=".pdf"
-              onChange={uploadFileChange}
+              onChange={uploadGradesFileChange}
             />
           </label>
 
-          {fileName && (
+          {gradesFileName && (
             <>
-              <p className="text-sm text-gray-500 mt-2">Se está subiendo el archivo {fileName}.</p>
+              <p className="text-sm text-gray-500 mt-2">Se está subiendo el archivo {gradesFileName}.</p>
+            </>
+          )}
+        </div>
+      </div>
+
+      <div className="relative z-0 w-full mb-6 group">
+        <div className="mx-auto my-4 w-full h-full">
+          <label className="flex flex-col justify-center items-center w-full h-full px-4 transition bg-white border-2 border-gray-300 border-dashed rounded-md appearance-none cursor-pointer hover:border-gray-400 focus:outline-none">
+            <div className="flex items-center space-x-2">
+              <Icon_UploadCloud />
+              <span className="font-medium text-gray-600">
+                Presiona para subir tu documento de alumno regular.
+              </span>
+            </div>
+            <p className="text-xs leading-5 text-gray-600">PDF de hasta 1MB</p>
+            <input
+              type="file"
+              name="applicationRegularFile"
+              className="hidden"
+              accept=".pdf"
+              onChange={uploadRegularFileChange}
+            />
+          </label>
+
+          {regularFileName && (
+            <>
+              <p className="text-sm text-gray-500 mt-2">Se está subiendo el archivo {regularFileName}.</p>
             </>
           )}
         </div>

@@ -19,6 +19,39 @@ export default function ApplicationsDetailsPage() {
     })
   }, [auth.id])
 
+  const INFO_TEXT = [
+    {
+      PREGUNTA: "¿Qué es ser tutor?",
+      RESPUESTA:
+        "Forma parte de tu comunidad educativa generando un impacto positivo, ven a formar parte del equipo de tutores que ayudarán a los alumnos a mejorar su rendimiento académico.",
+    },
+    {
+      PREGUNTA: "¿Qué necesito para postular?",
+      RESPUESTA: [
+        "Certificado académico de notas que acredite haber aprobado la asignatura con nota igual o superior a 6,5.",
+        "Certificado de alumno regular de la institución.",
+        "Ser ético y responsable.",
+        "Haber cursado por lo menos 4 semestres académicos.",
+        "Ganas de enseñar.",
+        "Computador y conexión a internet.",
+        "Dominio adecuado del contenido.",
+      ],
+    },
+    {
+      PREGUNTA: "¿Cuánto tiempo tarda la postulación?",
+      RESPUESTA:
+        "El tiempo de respuesta va a depender de las etapas adicionales que se requieran, el tiempo mínimo de espera es de 7 días hábiles.",
+    },
+    {
+      PREGUNTA: "¿Hay remuneración?",
+      RESPUESTA: "Por el momento no hay remuneración para los tutores.",
+    },
+    {
+      PREGUNTA: "¿Cómo te contactaremos? ",
+      RESPUESTA: "Por correo electrónico registrado en tu cuenta.",
+    },
+  ]
+
   return (
     <div className="grid grid-cols-[auto,1fr]">
       <SideBar open={open} setOpen={setOpen} />
@@ -31,34 +64,28 @@ export default function ApplicationsDetailsPage() {
           </div>
           <div className="mt-6 border-t border-gray-100">
             <dl className="divide-y divide-gray-100">
-              <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                <dt className="text-lg font-medium leading-6 text-gray-900">¿Qué es ser tutor?</dt>
-                <dd className="mt-1 text-base leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-                  Información
-                </dd>
-              </div>
-              <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                <dt className="text-lg font-medium leading-6 text-gray-900">Más info.</dt>
-                <dd className="mt-1 text-base leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-                  ...
-                </dd>
-              </div>
-              <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                <dt className="text-lg font-medium leading-6 text-gray-900">
-                  ¿Que necesito para postular?
-                </dt>
-                <dd className="mt-1 text-base leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-                  ...
-                </dd>
-              </div>
-              <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                <dt className="text-lg font-medium leading-6 text-gray-900">
-                  ¿Cuánto tiempo tarda la postulación?
-                </dt>
-                <dd className="mt-1 text-base leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-                  ...
-                </dd>
-              </div>
+              {INFO_TEXT &&
+                INFO_TEXT.map((INFO_TEXT) => (
+                  <div
+                    key={INFO_TEXT.PREGUNTA}
+                    className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0"
+                  >
+                    <dt className="text-lg font-medium leading-6 text-gray-900">
+                      {INFO_TEXT.PREGUNTA}
+                    </dt>
+                    <dd className="mt-1 text-base leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
+                      {Array.isArray(INFO_TEXT.RESPUESTA) ? (
+                        <ul className="list-disc">
+                          {INFO_TEXT.RESPUESTA.map((listItem, index) => (
+                            <li key={index}>{listItem}</li>
+                          ))}
+                        </ul>
+                      ) : (
+                        INFO_TEXT.RESPUESTA
+                      )}
+                    </dd>
+                  </div>
+                ))}
             </dl>
           </div>
         </div>

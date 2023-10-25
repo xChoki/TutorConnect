@@ -38,7 +38,7 @@ router.use(cookieParser()) // This is to create an instance of the cookieparser
  *       - delete to delete data */
 
 /*    /profile
-*     This endpoint handles profile redirection from the login when it succeeded, validates the information and uses get*/
+ *     This endpoint handles profile redirection from the login when it succeeded, validates the information and uses get*/
 router.get("/", (req, res) => {
   // We listen to /profile with a get function
   const { token } = req.cookies // We require from the session the cookies
@@ -53,10 +53,8 @@ router.get("/", (req, res) => {
         // callback?: VerifyCallback<JwtPayload | string>
         // We catch error and the user data
         if (err) throw err // If there's an error we send it
-        const { userName, userEmail, id, userRoles } = await User.findById(
-          userData.id
-        ) // We retrive the name, email and id from the database by finding it by id
-        res.json({ userName, userEmail, id, userRoles }) // We give as a response the name, email and id
+        const { userName, userEmail, id, userRoles, userDate } = await User.findById(userData.id) // We retrive the name, email and id from the database by finding it by id
+        res.json({ userName, userEmail, id, userRoles, userDate }) // We give as a response the name, email and id
       }
     )
   } else {

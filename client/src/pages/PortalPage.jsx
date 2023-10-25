@@ -10,7 +10,7 @@ export default function PortalPage() {
   const { auth } = useAuth()
   const [open, setOpen] = useSidebarState()
 
-  const allowedRoles = [2003, 5001]
+  const allowedRoles = [2002, 2003, 5001]
   const ValidateRoles = validateRoles({ allowedRoles })
 
   useEffect(() => {

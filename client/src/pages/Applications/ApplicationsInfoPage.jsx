@@ -4,12 +4,17 @@ import { useParams } from "react-router-dom"
 import SideBar from "../../components/Navigation/SideBar"
 import { useSidebarState } from "../../hooks/useSidebarState"
 import ApplicationStateAlert from "../../components/Applications/ApplicationStateAlert"
-import { Icon_Download } from "../../assets/Icons"
+// import { Icon_Download } from "../../assets/Icons"
 import ApplicationButtons from "../../components/Applications/ApplicationButtons"
+import Modal from "../../components/Modal"
+import FileViewer from "../../components/FileViewer"
 
 export default function ApplicationsInfoPage() {
   const [open, setOpen] = useSidebarState()
   const [applicationData, setAplicationData] = useState([])
+
+  const [openFileModal, setOpenFileModal] = useState(false)
+  const [fileUrl, setFileUrl] = useState(false)
 
   const { id } = useParams()
 
@@ -37,22 +42,30 @@ export default function ApplicationsInfoPage() {
     }
   }
 
-  function downloadFile(fileName) {
-    const endpoint = `/upload/${fileName}`
+  // function downloadFile(fileName) {
+  //   const endpoint = `http://localhost:4000/applications/${fileName}`
 
-    fetch(endpoint)
-      .then((response) => response.blob())
-      .then((blob) => {
-        const url = window.URL.createObjectURL(blob)
-        const link = document.createElement("a")
-        link.href = url
-        link.download = fileName
-        link.click()
-        window.URL.revokeObjectURL(url)
-      })
-      .catch((error) => {
-        console.error("Error downloading the file:", error)
-      })
+  //   fetch(endpoint, {
+  //     method: "GET",
+  //   })
+  //     .then((response) => response.blob())
+  //     .then((blob) => {
+  //       const url = window.URL.createObjectURL(blob)
+  //       const link = document.createElement("a")
+  //       link.href = url
+  //       link.download = fileName
+  //       link.click()
+  //       window.URL.revokeObjectURL(url)
+  //     })
+  //     .catch((error) => {
+  //       console.error("Error downloading the file:", error)
+  //     })
+  // }
+
+  function showFileModal(fileUrlParam) {
+    setFileUrl(fileUrlParam)
+    console.log(fileUrl)
+    setOpenFileModal(true)
   }
 
   return (
@@ -70,7 +83,32 @@ export default function ApplicationsInfoPage() {
             <h2 className="mb-2 text-lg font-bold tracking-tight text-gray-900">
               Información de la solicitud
             </h2>
-            <p className="font-normal text-gray-700">{applicationData.applicationDescription}</p>
+            <dl className="divide-y divide-gray-100">
+              <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                <dt className="text-lg font-medium leading-6 text-gray-900">
+                  <p>Descripción de la aplicación:</p>
+                </dt>
+                <dd className="mt-1 text-base leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
+                  {applicationData.applicationDescription}
+                </dd>
+              </div>
+              <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                <dt className="text-lg font-medium leading-6 text-gray-900">
+                  <p>Correo estudiante:</p>
+                </dt>
+                <dd className="mt-1 text-base leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
+                  {applicationData.applicationStudentInfo?.studentEmail}
+                </dd>
+              </div>
+              <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                <dt className="text-lg font-medium leading-6 text-gray-900">
+                  <p>Fecha de nacimiento del estudiante:</p>
+                </dt>
+                <dd className="mt-1 text-base leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
+                  {applicationData.applicationStudentInfo?.studentDateofBirth}
+                </dd>
+              </div>
+            </dl>
 
             <hr className="h-px my-8 bg-gray-200 border-0" />
             <h2 className="mb-2 text-lg font-bold tracking-tight text-gray-900">
@@ -79,26 +117,61 @@ export default function ApplicationsInfoPage() {
             <p className="font-normal text-gray-700">{applicationData.applicationExtraInfo}</p>
 
             <hr className="h-px my-8 bg-gray-200 border-0" />
-            <h2 className="mb-2 text-lg font-bold tracking-tight text-gray-900">Documento notas</h2>
+            <h2 className="mb-2 text-lg font-bold tracking-tight text-gray-900">Documentos</h2>
             <div className="flex items-center p-5 text-gray-500 hover:bg-gray-200 hover:cursor-pointer">
               <div
                 onClick={() => {
-                  downloadFile(applicationData.applicationFiles?.fileName)
+                  showFileModal(
+                    import.meta.env.VITE_API_FILE_URL +
+                      "applications" +
+                      "/" +
+                      applicationData.applicationGradesFile?.fileName
+                  )
                 }}
                 className="flex-grow"
               >
-                <span>{applicationData.applicationFiles?.fileName.split("____").pop()}</span>
+                <span>
+                  Notas: {applicationData.applicationGradesFile?.fileName.split("____").pop()}
+                </span>
               </div>
-              <div className="flex">
+              {/* <div className="flex">
                 <div
                   className="hover:bg-gray-400 hover:text-white rounded-lg"
                   onClick={() => {
-                    downloadFile(applicationData.applicationFiles?.fileName)
+                    downloadFile(applicationData.applicationGradesFile?.fileName)
                   }}
                 >
                   <Icon_Download margin="2" />
                 </div>
+              </div> */}
+            </div>
+            <div className="flex items-center p-5 text-gray-500 hover:bg-gray-200 hover:cursor-pointer">
+              <div
+                onClick={() => {
+                  showFileModal(
+                    import.meta.env.VITE_API_FILE_URL +
+                      "applications" +
+                      "/" +
+                      applicationData.applicationRegularFile?.fileName
+                  )
+                }}
+                className="flex-grow"
+              >
+                <span>
+                  Alumno regular:{" "}
+                  {applicationData.applicationRegularFile?.fileName.split("____").pop()}
+                </span>
               </div>
+              {/* <div className="flex">
+                <div
+                  className="hover:bg-gray-400 hover:text-white rounded-lg"
+                  onClick={() => {
+                    downloadFile(applicationData.applicationRegularFile?.fileName)
+                  }}
+                >
+                  <Icon_Download margin="2" />
+                </div>
+              </div> */}
             </div>
 
             <ApplicationStateAlert applicationData={applicationData} />
@@ -110,6 +183,31 @@ export default function ApplicationsInfoPage() {
           </section>
         </div>
       </div>
+
+      <Modal
+        open={openFileModal}
+        onClose={() => setOpenFileModal(false)}
+        cancel={true}
+        modalMargin={open ? "72" : "20"}
+      >
+        <div className="flex flex-col items-center justify-center text-center h-full">
+          <div className="mx-auto my-4 w-full h-full">
+            <h3>Archivo de postulación</h3>
+            <FileViewer fileUrl={fileUrl ? fileUrl : null} />
+          </div>
+
+          <div className="gap-4 mt-7">
+            <button
+              className="focus:outline-none text-white bg-gray-400 hover:bg-gray-600 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2"
+              onClick={() => {
+                setOpenFileModal(false)
+              }}
+            >
+              Cerrar
+            </button>
+          </div>
+        </div>
+      </Modal>
     </>
   )
 }

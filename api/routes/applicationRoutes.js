@@ -35,6 +35,7 @@ router.use(cookieParser()) // This is to create an instance of the cookieparser
  * Handles and helps with file uploading  */
 const multer = require("multer")
 const fs = require("fs")
+const path = require("path")
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -55,25 +56,28 @@ const upload = multer({
 function fileNameChange(filePath, fileName, studentId) {
   const uploadedFiles = []
 
+  const fileExtension = ".pdf" // Get the file extension
   const newName = studentId + "____" + Date.now() + "____" + fileName
-  // console.log("Nuevo nombre de archivo: " + newName)
 
-  // Construct the new filePath using the newName
-  let newPath = "uploads/applications/" + newName
+  // Construct the new filePath using the newName and the original file extension
+  const newFileName = newName + fileExtension // Include the file extension in the new file name
+  let newPath = "uploads/applications/" + newFileName
 
-  // console.log("Nuevo filePath de archivo: " + newPath)
+  console.log("New File Name: " + newFileName) // Log the new file name
+  console.log("New Path: " + newPath) // Log the new path
 
   fs.renameSync(filePath, newPath)
-  uploadedFiles.push(newName)
+  uploadedFiles.push(newFileName)
 
-  return { uploadedFiles, newName }
+  return { uploadedFiles, newFileName } // Return the new file name
 }
 
 function createApplication(
   user_token,
   applicationDescription,
   applicationExtraInfo,
-  applicationFiles,
+  applicationGradesFile,
+  applicationRegularFile,
   applicationState
 ) {
   jwt.verify(
@@ -88,13 +92,16 @@ function createApplication(
       const applicationStudentInfo = {
         studentId: userData.id,
         studentName: userData.userName,
+        studentEmail: userData.userEmail,
+        studentDateofBirth: userData.userDate,
       }
 
       Application.create({
         applicationStudentInfo,
         applicationDescription,
         applicationExtraInfo,
-        applicationFiles,
+        applicationGradesFile,
+        applicationRegularFile,
         applicationState,
       })
     }
@@ -156,46 +163,78 @@ async function removeRoleFromUser(applicationStudentId, roleToRemove) {
 /*     /applications
  *     This endpoint handles applications from the form, when it succeeded, validates the information and uses post*/
 const uploadApplicationFile = multer({ dest: "uploads/applications/" })
-router.post("/", uploadApplicationFile.single("file"), (req, res) => {
-  // We listen to /applications with a post function
-  if (!req.file) {
-    return res.status(400).send("No file uploaded.")
-  }
-  const { path, originalname } = req.file
-  const { token } = req.cookies // We require from the session the token cookie
-  const { applicationDescription, applicationExtraInfo } = req.body // We require from the form the applicationDescription, applicationExtraInfo sent by the user
-
-  let filesReturn = ""
-  jwt.verify(
-    // We verify the jwt
-    token, // token: string,
-    jwtSecret, // secretOrPublicKey: Secret | GetPublicKeyOrSecret,
-    {}, // options?: VerifyOptions & { complete?: false },
-    async (err, userData) => {
-      // callback?: VerifyCallback<JwtPayload | string>,
-      if (err) throw err // If there's an error we send it
-      filesReturn = fileNameChange(path, originalname, userData.id)
+router.post(
+  "/",
+  uploadApplicationFile.fields([
+    { name: "applicationGradesFile", maxCount: 1 },
+    { name: "applicationRegularFile", maxCount: 1 },
+  ]),
+  (req, res) => {
+    // We listen to /applications with a post function
+    if (!req.files || !req.files.applicationGradesFile || !req.files.applicationRegularFile) {
+      return res.status(400).send("No files uploaded.")
     }
-  )
+    const { applicationGradesFile, applicationRegularFile } = req.files
+    const { token } = req.cookies // We require from the session the token cookie
+    const { applicationDescription, applicationExtraInfo } = req.body // We require from the form the applicationDescription, applicationExtraInfo sent by the user
 
-  // console.log("Datos de archivo subido original:")
-  // console.log("Path: ", path)
-  // console.log("Nombre: ", originalname)
-  // console.log("Devuelta de funcion cambio nombre: ", filesReturn)
+    let studentId = ""
 
-  const applicationFiles = {
-    fileName: filesReturn.newName,
-    fileUrl: "uploads/applications",
+    jwt.verify(
+      // We verify the jwt
+      token, // token: string,
+      jwtSecret, // secretOrPublicKey: Secret | GetPublicKeyOrSecret,
+      {}, // options?: VerifyOptions & { complete?: false },
+      async (err, userData) => {
+        // callback?: VerifyCallback<JwtPayload | string>,
+        if (err) throw err // If there's an error we send it
+        studentId = userData.id
+      }
+    )
+
+    let applicationGrades = {
+      fileName: "", // Initialize with an empty string
+      fileUrl: "uploads/applications",
+    }
+
+    let applicationRegular = {
+      fileName: "", // Initialize with an empty string
+      fileUrl: "uploads/applications",
+    }
+
+    if (applicationGradesFile) {
+      const gradesFile = applicationGradesFile[0]
+      const gradesFileData = fileNameChange(gradesFile.path, "Notas", studentId)
+
+      applicationGrades.fileName = gradesFileData.newFileName // Update the fileName property
+      applicationGrades.fileUrl = "uploads/applications" // Update the fileUrl property
+
+      console.log("Notas")
+      console.log(applicationGrades.fileName)
+      console.log(applicationGrades.fileUrl)
+    }
+
+    if (applicationRegularFile) {
+      const regularFile = applicationRegularFile[0]
+      const regularFileData = fileNameChange(regularFile.path, "AlumnoRegular", studentId)
+
+      applicationRegular.fileName = regularFileData.newFileName // Update the fileName property
+      applicationRegular.fileUrl = "uploads/applications" // Update the fileUrl property
+      console.log("regular")
+      console.log(applicationRegular.fileName)
+      console.log(applicationRegular.fileUrl)
+    }
+
+    createApplication(
+      token,
+      applicationDescription,
+      applicationExtraInfo,
+      applicationGrades,
+      applicationRegular,
+      "En proceso"
+    )
   }
-
-  createApplication(
-    token,
-    applicationDescription,
-    applicationExtraInfo,
-    applicationFiles,
-    "En proceso"
-  )
-})
+)
 
 /*     /applications
  *     This endpoint handles applications, when it succeeded, validates the information and uses get to receive the courses data*/

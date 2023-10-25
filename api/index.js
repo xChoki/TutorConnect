@@ -5,8 +5,9 @@
  * Dependency used to read .env files, in NODE v20.6.0 it is integrated, but we are using v18.17.1LTS and it is not */
 require("dotenv").config()
 
+
 /* EXPRESSJS
- * This is what we are using to code the API */
+* This is what we are using to code the API */
 const express = require("express") // import
 const app = express() // This is to create an instance of the express app
 const port = process.env.PORT || 4000 // Specify desired port
