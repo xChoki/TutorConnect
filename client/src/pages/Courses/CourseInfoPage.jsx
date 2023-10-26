@@ -200,6 +200,7 @@ export default function CourseInfoPage() {
                 setOpenModalVideo={setOpenModalVideo}
                 setOpenModalDelete={setOpenModalDelete}
                 setFileDiff={setFileDiff}
+                fileDiff={fileDiff}
                 setFileName={setFileName}
                 selectedVideoInfo={selectedVideoInfo}
               />

@@ -5,17 +5,13 @@
  * Dependency used to read .env files, in NODE v20.6.0 it is integrated, but we are using v18.17.1LTS and it is not */
 require("dotenv").config()
 
-
 /* EXPRESSJS
-* This is what we are using to code the API */
+ * This is what we are using to code the API */
 const express = require("express") // import
 const app = express() // This is to create an instance of the express app
 const port = process.env.PORT || 4000 // Specify desired port
 app.use(express.json()) // This is used to parse every JSON for express usage
 app.use(express.urlencoded({ extended: true }))
-
-app.use(express.static('uploads'))
-// app.use(express.static(path.join(__dirname, "uploads")))
 
 /* CORS: Cross-Origin Resource Sharing
  * Used to give security and control access to our app*/
@@ -27,6 +23,9 @@ app.use(
   })
 )
 
+// app.use(express.static(path.join(__dirname, "uploads")))
+app.use(express.static("uploads"))
+
 /* Multer
  * Handles and helps with file uploading  */
 const multer = require("multer")
@@ -37,11 +36,7 @@ const storage = multer.diskStorage({
   },
   filename: (req, file, cb) => {
     const courseId = req.body.id || req.query.id
-    if (courseId)
-      cb(
-        null,
-        "prueba " + courseId + "_" + Date.now() + "_" + file.originalname
-      )
+    if (courseId) cb(null, "prueba " + courseId + "_" + Date.now() + "_" + file.originalname)
   },
 })
 
@@ -99,14 +94,14 @@ app.use("/api/logout", logoutRoutes)
 app.use("/api/courses", coursesRoutes)
 
 /*    /cuenta
-*     This endpoint handles the count of users and courses with the id, when it succeeded, validates the information and uses get to send the information */
+ *     This endpoint handles the count of users and courses with the id, when it succeeded, validates the information and uses get to send the information */
 app.use("/api/cuenta", cuentaRoutes)
 
 /*    /upload
-*     This endpoint handles the upload of files to the course
-*     /videos: manages the video files
-*     /homework: manages the homework files
-*     /material: manages the extra material files*/
+ *     This endpoint handles the upload of files to the course
+ *     /videos: manages the video files
+ *     /homework: manages the homework files
+ *     /material: manages the extra material files*/
 app.use("/api/upload", uploadRoutes)
 
 /*     /applications
@@ -114,7 +109,7 @@ app.use("/api/upload", uploadRoutes)
  *     There are multiple endpoints inside:
  *      - POST: When it is called and it succeeded, validates the information and uses post to register a new Application
  *      - GET: When it is called and it succeeded, validates the information and uses get to obtain the Applications data
- *      
+ *
  *      TODO:
  *      - GET(id): When it is called and it succeeded, validates the information and uses get to obtain the detailed information by id
  *      - PUT: When it is called and it succeeded, validates the information and uses put to update the information

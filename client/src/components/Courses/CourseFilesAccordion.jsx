@@ -14,24 +14,29 @@ export default function CourseFilesAccordion({
   setFileName,
   selectedVideoInfo,
 }) {
-  function downloadFile(fileName) {
-    const endpoint = `/upload/${fileName}`
+  function downloadFile(fileName, fileDirectory) {
+    const url = `${import.meta.env.VITE_API_FILE_URL}/${fileDirectory}/${fileName}`
 
-    fetch(endpoint)
+    fetch(url)
       .then((response) => response.blob())
       .then((blob) => {
-        const url = window.URL.createObjectURL(blob)
-        const link = document.createElement("a")
-        link.href = url
-        link.download = fileName
-        link.click()
-        window.URL.revokeObjectURL(url)
+        const blobURL = window.URL.createObjectURL(blob)
+        const a = document.createElement("a")
+        a.href = blobURL
+        a.download = fileName
+        a.style.display = "none"
+
+        document.body.appendChild(a)
+        a.click()
+
+        document.body.removeChild(a)
+        window.URL.revokeObjectURL(blobURL)
       })
       .catch((error) => {
-        console.error("Error downloading the file:", error)
+        console.error("Error downloading file:", error)
       })
   }
-  
+
   return (
     <Accordion className="mt-20">
       <Accordion.Panel>
