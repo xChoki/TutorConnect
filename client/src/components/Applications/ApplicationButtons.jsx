@@ -1,4 +1,9 @@
-export default function ApplicationButtons({ applicationData, handleApplication }) {
+export default function ApplicationButtons({
+  applicationData,
+  handleApplication,
+  handleReject,
+  setOpenCommentModal,
+}) {
   return (
     <div className="flex mt-20">
       {applicationData.applicationState === "En proceso" && (
@@ -23,11 +28,7 @@ export default function ApplicationButtons({ applicationData, handleApplication 
         <button
           type="button"
           onClick={() => {
-            handleApplication(
-              "Rechazada",
-              applicationData._id,
-              applicationData.applicationStudentInfo.studentId
-            )
+            handleReject(setOpenCommentModal(true))
           }}
           className="mx-2 text-white bg-red-400 hover:bg-red-500 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center"
         >

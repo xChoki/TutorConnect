@@ -4,6 +4,7 @@ import { useSidebarState } from "../../hooks/useSidebarState"
 import { useEffect, useState } from "react"
 import axios from "axios"
 import useAuth from "../../hooks/useAuth"
+import ApplicationStateAlert from "../../components/Applications/ApplicationStateAlert"
 // import ApplicationsCard from "../../components/Cards/ApplicationsCard"
 
 export default function ApplicationsDetailsPage() {
@@ -106,9 +107,19 @@ export default function ApplicationsDetailsPage() {
         ) : (
           <>
             <hr />
-            <p className="pt-5">
-              Ya tienes una postulación pendiente, te contactaremos a la brevedad.
-            </p>
+            {applications.applicationState === "En proceso" && (
+              <>
+                <p className="pt-5">
+                  Ya tienes una postulación pendiente, te contactaremos a la brevedad.
+                </p>
+              </>
+            )}
+
+            {applications.applicationState === "Rechazada" && (
+              <>
+                <ApplicationStateAlert applicationData={applications} />
+              </>
+            )}
           </>
         )}
       </section>

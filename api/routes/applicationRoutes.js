@@ -262,7 +262,7 @@ router.get("/", (req, res) => {
 router.put("/", async (req, res) => {
   // We listen to /cursos with an async put function
   const { token } = req.cookies // We require from the session the token cookie
-  let { applicationId, applicationState, applicationStudentId } = req.body // We require from the form the application id, applicationState and applicationStudentId sent by the user
+  let { applicationId, applicationState, applicationStudentId, applicationComment } = req.body // We require from the form the application id, applicationState and applicationStudentId sent by the user
   const allowedRoles = [5001, 2003] // we set the allowed roles variable, 5001: Admin, 2003: Teacher
   jwt.verify(
     // We verify the jwt
@@ -282,6 +282,7 @@ router.put("/", async (req, res) => {
           reviewerId: userData.id,
           reviewerName: userData.userName,
           reviewerDate: Date.now(),
+          reviewerComment: applicationComment,
         }
 
         applicationDoc.set({

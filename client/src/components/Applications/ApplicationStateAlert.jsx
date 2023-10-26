@@ -55,6 +55,9 @@ export default function ApplicationStateAlert({
               )}{" "}
               por {applicationData.applicationReviewer?.reviewerName}
             </li>
+            <li>
+              Las razones del rechazo fueron: {applicationData.applicationReviewer?.reviewerComment}
+            </li>
           </ul>
         </div>
       )}

@@ -18,6 +18,7 @@ const ReviewerInfo = new Schema({
   reviewerId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
   reviewerName: { type: mongoose.Schema.Types.String, ref: "User" },
   reviewerDate: { type: Date },
+  reviewerComment: { type: String },
 })
 
 const ApplicationSchema = new Schema({
