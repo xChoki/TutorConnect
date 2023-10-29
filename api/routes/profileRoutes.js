@@ -53,8 +53,8 @@ router.get("/", (req, res) => {
         // callback?: VerifyCallback<JwtPayload | string>
         // We catch error and the user data
         if (err) throw err // If there's an error we send it
-        const { userName, userEmail, id, userRoles, userDate } = await User.findById(userData.id) // We retrive the name, email and id from the database by finding it by id
-        res.json({ userName, userEmail, id, userRoles, userDate }) // We give as a response the name, email and id
+        const { userName, userEmail, id, userRoles, userDate, userAvailable } = await User.findById(userData.id) // We retrive the name, email and id from the database by finding it by id
+        res.json({ userName, userEmail, id, userRoles, userDate, userAvailable }) // We give as a response the name, email and id
       }
     )
   } else {

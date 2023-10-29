@@ -117,7 +117,7 @@ export default function ApplicationForm({
           onClick={deleteApplication}
           className="mx-2 text-white bg-red-400 hover:bg-red-500 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center"
         >
-          <span className="pl-2">Eliminar Curso</span>
+          <span className="pl-2">Eliminar aplicación</span>
         </button>
       )}
     </form>
