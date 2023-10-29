@@ -20,11 +20,6 @@ mongoose.connect(process.env.MONGO_URL) // .env file that has access token to Mo
 // Mongoose models
 const Course = require("../models/Course") // Model for Courses
 
-/* JSONWebToken
- * Self-contained way for securely transmitting information between parties as a JSON object*/
-const jwt = require("jsonwebtoken") // import
-const jwtSecret = "AOi3ejk34io" // jwt secret token, it is randomly typed
-
 /* Cookieparser
  * Parse and handle HTTP cookies that are sent between the client and the server.  */
 const cookieParser = require("cookie-parser") // import
@@ -87,7 +82,7 @@ router.post("/", async (req, res) => {
     console.error("Error:", err);
     res.status(500).send("Error en la creación del curso.");
   }
-});
+})
 
 /*     /cursos
  *     This endpoint handles cursos, when it succeeded, validates the information and uses get to receive the courses data*/
@@ -137,7 +132,7 @@ router.get("/", async (req, res) => {
     console.error("Error:", err);
     res.status(500).send("Error en la obtención de cursos.");
   }
-});
+})
 
 
 /*     /cursos:id
@@ -213,7 +208,7 @@ router.put("/", async (req, res) => {
     console.error("Error:", err);
     res.status(500).send("Error en la actualización del curso.");
   }
-});
+})
 
 /*     /cursos-eliminar:id
  *     This endpoint handles the deletion of courses with the id, when it succeeded, validates the information and uses delete to erase from database the information */
@@ -285,6 +280,6 @@ router.delete("/:id", async (req, res) => {
     console.error(error);
     res.status(500).json({ error: "Error interno de servidor" });
   }
-});
+})
 
 module.exports = router

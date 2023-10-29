@@ -31,6 +31,9 @@ const Course = require("../models/Course") // Model for Courses
 const cookieParser = require("cookie-parser") // import
 router.use(cookieParser()) // This is to create an instance of the cookieparser
 
+//verify
+const {verifyToken} = require('./../middleware/authHandler')
+
 /*     ENDPOINTS TO API
  *     These correspond to every endpoint that is going to be accessed later in front-end
  *       - get to obtain data
@@ -59,40 +62,70 @@ router.get("/courses", (req, res) => {
   )
 })
 
-router.get("/:id", async (req, res) => {
-  const { id } = req.params // Get the studentId from the URL parameter
+// router.get("/:id", async (req, res) => {
+//   const { id } = req.params // Get the studentId from the URL parameter
 
-  res.json(await Application.findOne({ "applicationStudentInfo.studentId": id }))
-})
+//   res.json(await Application.findOne({ "applicationStudentInfo.studentId": id }))
+// })
 
-router.put("/course/register/:id", (req, res) => {
-  const { token } = req.cookies
-  const { id } = req.params
+// router.put("/course/register/:id", (req, res) => {
+//   const { token } = req.cookies
+//   const { id } = req.params
 
-  jwt.verify(
-    // We verify the jwt
-    token, // token: string,
-    jwtSecret, // secretOrPublicKey: Secret | GetPublicKeyOrSecret,
-    {}, // options?: VerifyOptions & { complete?: false },
-    async (err, userData) => {
-      // callback?: VerifyCallback<JwtPayload | string>,
-      if (err) throw err // If there's an error we send it
-      const courseDoc = await Course.findById(id) // We find by id the course in the Course model
+//   jwt.verify(
+//     // We verify the jwt
+//     token, // token: string,
+//     jwtSecret, // secretOrPublicKey: Secret | GetPublicKeyOrSecret,
+//     {}, // options?: VerifyOptions & { complete?: false },
+//     async (err, userData) => {
+//       // callback?: VerifyCallback<JwtPayload | string>,
+//       if (err) throw err // If there's an error we send it
+//       const courseDoc = await Course.findById(id) // We find by id the course in the Course model
 
-      courseStudents = [
-        {
-          student_id: userData.id,
-          student_name: userData.userName,
-        },
-      ]
+//       courseStudents = [
+//         {
+//           student_id: userData.id,
+//           student_name: userData.userName,
+//         },
+//       ]
 
-      courseDoc.set({
-        courseStudents,
-      })
+//       courseDoc.set({
+//         courseStudents,
+//       })
 
-      await courseDoc.save() // We save the new data
-    }
-  )
-})
+//       await courseDoc.save() // We save the new data
+//     }
+//   )
+// })
+
+
+router.put("/course/register/:id", async (req, res) => {
+  try {
+    const { token } = req.cookies;
+    const { id } = req.params;
+
+    const userData = await verifyToken(token); // Verifica el token JWT
+
+    const courseDoc = await Course.findById(id); // Encuentra el curso por ID en el modelo Course
+
+    const courseStudents = [
+      {
+        student_id: userData.id,
+        student_name: userData.userName,
+      },
+    ];
+
+    courseDoc.set({
+      courseStudents,
+    });
+
+    await courseDoc.save(); // Guarda los nuevos datos
+
+    res.json("Registro en el curso completado"); // Envía una respuesta
+  } catch (err) {
+    console.error("Error:", err);
+    res.status(500).send("Error en el registro en el curso.");
+  }
+});
 
 module.exports = router
