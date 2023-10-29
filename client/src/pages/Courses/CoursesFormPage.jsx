@@ -64,7 +64,7 @@ export default function CoursesFormPage() {
         sessionStorage.setItem("showeditmsg", "1")
 
         setRedirect(true)
-        await axios.put("/cursos", {
+        await axios.put("/courses", {
           id,
           ...courseData,
         })
@@ -73,10 +73,11 @@ export default function CoursesFormPage() {
         sessionStorage.setItem("showcreatemsg", "1")
 
         setRedirect(true)
-        await axios.post("/cursos", courseData)
+        await axios.post("/courses", courseData)
       }
     } catch (error) {
       alert("Ha ocurrido un error.")
+      console.error(error)
       // toast.error('Ha ocurrido un error, verifica la información.')
     }
   }
@@ -87,7 +88,7 @@ export default function CoursesFormPage() {
       if (id) {
         var result = window.confirm(`¿Seguro que desea eliminar el curso ${courseName}?`)
         if (result === true) {
-          await axios.delete("/cursos/" + id)
+          await axios.delete("/courses/" + id)
           setRedirect(true)
         }
       }

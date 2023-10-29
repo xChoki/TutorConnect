@@ -26,46 +26,18 @@ const cookieParser = require("cookie-parser") // import
 router.use(cookieParser()) // This is to create an instance of the cookieparser
 
 //verify
-const {verifyToken} = require('./../middleware/authHandler')
+const { verifyToken } = require("./../middleware/authHandler")
 
 /*     /cursos
  *     This endpoint handles cursos from the form, when it succeeded, validates the information and uses post*/
-// router.post("/", (req, res) => {
-//   // We listen to /cursos with a post function
-//   const { token } = req.cookies // We require from the session the token cookie
-//   const { courseName, courseDescription, courseCategory, courseExtrainfo, courseNeurodiv } =
-//     req.body // We require from the form the courseName, courseDescription, courseCategory, courseExtrainfo and courseNeurodiv sent by the user
-
-//   jwt.verify(
-//     // We verify the jwt
-//     token, // token: string,
-//     jwtSecret, // secretOrPublicKey: Secret | GetPublicKeyOrSecret,
-//     {}, // options?: VerifyOptions & { complete?: false },
-//     async (err, userData) => {
-//       // callback?: VerifyCallback<JwtPayload | string>,
-//       // We catch error and the user data
-//       if (err) throw err // If there's an error we send it
-//       await Course.create({
-//         courseTutorId: userData.id,
-//         courseTutorName: userData.name,
-//         courseName,
-//         courseDescription,
-//         courseCategory,
-//         courseExtrainfo,
-//         courseNeurodiv,
-//       }) // We create a course using the Course model by inserting the data sent by user and data from the user (id and name)
-//     }
-//   )
-// })
-
 router.post("/", async (req, res) => {
   try {
-    const { token } = req.cookies; // We require from the session the token cookie
+    const { token } = req.cookies // We require from the session the token cookie
     // We require from the form the courseName, courseDescription, courseCategory, courseExtrainfo and courseNeurodiv sent by the user
-    const { courseName, courseDescription, courseCategory, courseExtrainfo, courseNeurodiv } = req.body;
-    
+    const { courseName, courseDescription, courseCategory, courseExtrainfo, courseNeurodiv } =
+      req.body
 
-    const userData = await verifyToken(token); // Verify Token
+    const userData = await verifyToken(token) // Verify Token
 
     await Course.create({
       courseTutorId: userData.id,
@@ -75,65 +47,38 @@ router.post("/", async (req, res) => {
       courseCategory,
       courseExtrainfo,
       courseNeurodiv,
-    });
+    })
 
-    res.status(200).send("Curso creado con éxito.");
+    res.status(200).send("Curso creado con éxito.")
   } catch (err) {
-    console.error("Error:", err);
-    res.status(500).send("Error en la creación del curso.");
+    console.error("Error:", err)
+    res.status(500).send("Error en la creación del curso.")
   }
 })
 
 /*     /cursos
  *     This endpoint handles cursos, when it succeeded, validates the information and uses get to receive the courses data*/
-// router.get("/", (req, res) => {
-//   // We listen to /cursos with a get function
-//   const { token } = req.cookies // We require from the session the token cookie
-
-//   jwt.verify(
-//     // We verify the jwt
-//     token, // token: string,
-//     jwtSecret, // secretOrPublicKey: Secret | GetPublicKeyOrSecret,
-//     {}, // options?: VerifyOptions & { complete?: false },
-//     async (err, userData) => {
-//       // callback?: VerifyCallback<JwtPayload | string>,
-//       if (err) throw err // If there's an error we send it
-//       const { id } = userData // We retreive from userData the id of the logged in user
-
-//       res.json(
-//         await Course.find({
-//           $or: [
-//             { courseTutorId: id }, // Tutor is the logged-in user
-//             { "courseStudents.student_id": id }, // Student with matching ID
-//           ],
-//         })
-//       ) // We find the courses created by the logged in tutor
-//     }
-//   )
-// })
-
 router.get("/", async (req, res) => {
   try {
-    const { token } = req.cookies; // We require from the session the token cookie
+    const { token } = req.cookies // We require from the session the token cookie
 
-    const userData = await verifyToken(token); // Verify Token
+    const userData = await verifyToken(token) // Verify Token
 
-    const { id } = userData;
+    const { id } = userData
 
     const courses = await Course.find({
       $or: [
         { courseTutorId: id }, // Tutor is the logged-in user
-        { "courseStudents.student_id": id },  // Student with matching ID
+        { "courseStudents.student_id": id }, // Student with matching ID
       ],
-    });
+    })
 
-    res.json(courses);
+    res.json(courses)
   } catch (err) {
-    console.error("Error:", err);
-    res.status(500).send("Error en la obtención de cursos.");
+    console.error("Error:", err)
+    res.status(500).send("Error en la obtención de cursos.")
   }
 })
-
 
 /*     /cursos:id
  *     This endpoint handles cursos with the id info, when it succeeded, validates the information and uses get to obtain the detailed information */
@@ -145,50 +90,15 @@ router.get("/:id", async (req, res) => {
 
 /*     /cursos
  *     This endpoint handles cursos with the id info, when it succeeded, validates the information and uses put to update the information */
-// router.put("/", async (req, res) => {
-//   // We listen to /cursos with an async put function
-//   const { token } = req.cookies // We require from the session the token cookie
-//   const { id, courseName, courseDescription, courseCategory, courseExtrainfo, courseNeurodiv } =
-//     req.body // We require from the form the id, courseName, courseDescription, courseCategory, courseExtrainfo and courseNeurodiv sent by the user
-//   jwt.verify(
-//     // We verify the jwt
-//     token, // token: string,
-//     jwtSecret, // secretOrPublicKey: Secret | GetPublicKeyOrSecret,
-//     {}, // options?: VerifyOptions & { complete?: false },
-//     async (err, userData) => {
-//       // callback?: VerifyCallback<JwtPayload | string>,
-//       if (err) throw err // If there's an error we send it
-
-//       const courseDoc = await Course.findById(id) // We find by id the course in the Course model
-//       if (userData.id === courseDoc.courseTutorId.toString()) {
-//         // We are comparing the logged in user with the tutor id registered in the course
-//         // If it is true (the id is the same) we set the new values
-//         courseDoc.set({
-//           courseName,
-//           courseDescription,
-//           courseCategory,
-//           courseExtrainfo,
-//           courseNeurodiv,
-//         })
-//         await courseDoc.save() // We save the new data
-
-//         res.json("Actualización completada") // We send a response
-//       } else {
-//         // If it is false (the id is not the same) we send a message
-//         res.json("Actualización ha fallado, no posees los permisos necesarios")
-//       }
-//     }
-//   )
-// })
-
 router.put("/", async (req, res) => {
   try {
-    const { token } = req.cookies;
-    const { id, courseName, courseDescription, courseCategory, courseExtrainfo, courseNeurodiv } = req.body;
+    const { token } = req.cookies
+    const { id, courseName, courseDescription, courseCategory, courseExtrainfo, courseNeurodiv } =
+      req.body
 
-    const userData = await verifyToken(token); // Verifica el token JWT
+    const userData = await verifyToken(token) // Verifica el token JWT
 
-    const courseDoc = await Course.findById(id); // Encuentra el curso por ID en el modelo Course
+    const courseDoc = await Course.findById(id) // Encuentra el curso por ID en el modelo Course
 
     if (userData.id === courseDoc.courseTutorId.toString()) {
       courseDoc.set({
@@ -197,88 +107,45 @@ router.put("/", async (req, res) => {
         courseCategory,
         courseExtrainfo,
         courseNeurodiv,
-      });
-      await courseDoc.save();
+      })
+      await courseDoc.save()
 
-      res.json("Actualización completada");
+      res.json("Actualización completada")
     } else {
-      res.json("Actualización ha fallado, no posees los permisos necesarios");
+      res.json("Actualización ha fallado, no posees los permisos necesarios")
     }
   } catch (err) {
-    console.error("Error:", err);
-    res.status(500).send("Error en la actualización del curso.");
+    console.error("Error:", err)
+    res.status(500).send("Error en la actualización del curso.")
   }
 })
 
 /*     /cursos-eliminar:id
  *     This endpoint handles the deletion of courses with the id, when it succeeded, validates the information and uses delete to erase from database the information */
-// router.delete("/:id", async (req, res) => {
-//   // We listen to /cursos-eliminar specific by the course id with an async put function
-//   const { token } = req.cookies // We require from the session the token cookie
-//   const { id } = req.params // We require the courseid parameter
-
-//   jwt.verify(
-//     // We verify the jwt
-//     token, //  token: string,
-//     jwtSecret, // secretOrPublicKey: Secret | GetPublicKeyOrSecret,
-//     {}, // options?: VerifyOptions & { complete?: false },
-//     async (err, userData) => {
-//       // callback?: VerifyCallback<JwtPayload | string>,
-//       if (err) throw err // If there's an error we send it
-
-//       try {
-//         // If the connection goes trough we enter and delete the course
-
-//         const courseDoc = await Course.findById(id) // We find the course by id sent by the user
-
-//         if (!courseDoc) {
-//           // If there's no course by that id we send an error
-//           return res.status(404).json({ error: "El curso no se encuentra" })
-//         }
-
-//         if (userData.id === courseDoc.courseTutorId.toString()) {
-//           // We are comparing the logged in user with the tutor id registered in the course
-//           // If it is true (the id is the same) we delete the course
-//           await Course.findByIdAndDelete(id) // We find by id and delete the course
-//           res.json({ message: "Curso eliminado exitosamente!" }) // Message
-//         } else {
-//           // If it is false (the id is not the same) we send an error message
-//           res.status(403).json({
-//             error: "No cuentas con los permisos para borrar este curso",
-//           })
-//         }
-//       } catch (error) {
-//         // If the connection doesn't go trough we send an error
-//         console.error(error)
-//         res.status(500).json({ error: "Error interno de servidor" })
-//       }
-//     }
-//   )
-// })
 router.delete("/:id", async (req, res) => {
   try {
-    const { token } = req.cookies;
-    const { id } = req.params;
+    const { token } = req.cookies
+    const { id } = req.params
 
-    const userData = await verifyToken(token); // Verifica el token JWT
+    const userData = await verifyToken(token) // Verifica el token JWT
 
-    const courseDoc = await Course.findById(id);
+    const courseDoc = await Course.findById(id)
 
     if (!courseDoc) {
-      return res.status(404).json({ error: "El curso no se encuentra" });
+      return res.status(404).json({ error: "El curso no se encuentra" })
     }
 
     if (userData.id === courseDoc.courseTutorId.toString()) {
-      await Course.findByIdAndDelete(id);
-      res.json({ message: "Curso eliminado exitosamente!" });
+      await Course.findByIdAndDelete(id)
+      res.json({ message: "Curso eliminado exitosamente!" })
     } else {
       res.status(403).json({
         error: "No cuentas con los permisos para borrar este curso",
-      });
+      })
     }
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Error interno de servidor" });
+    console.error(error)
+    res.status(500).json({ error: "Error interno de servidor" })
   }
 })
 
