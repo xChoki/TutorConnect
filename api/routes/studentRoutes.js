@@ -62,43 +62,6 @@ router.get("/courses", (req, res) => {
   )
 })
 
-// router.get("/:id", async (req, res) => {
-//   const { id } = req.params // Get the studentId from the URL parameter
-
-//   res.json(await Application.findOne({ "applicationStudentInfo.studentId": id }))
-// })
-
-// router.put("/course/register/:id", (req, res) => {
-//   const { token } = req.cookies
-//   const { id } = req.params
-
-//   jwt.verify(
-//     // We verify the jwt
-//     token, // token: string,
-//     jwtSecret, // secretOrPublicKey: Secret | GetPublicKeyOrSecret,
-//     {}, // options?: VerifyOptions & { complete?: false },
-//     async (err, userData) => {
-//       // callback?: VerifyCallback<JwtPayload | string>,
-//       if (err) throw err // If there's an error we send it
-//       const courseDoc = await Course.findById(id) // We find by id the course in the Course model
-
-//       courseStudents = [
-//         {
-//           student_id: userData.id,
-//           student_name: userData.userName,
-//         },
-//       ]
-
-//       courseDoc.set({
-//         courseStudents,
-//       })
-
-//       await courseDoc.save() // We save the new data
-//     }
-//   )
-// })
-
-
 router.put("/course/register/:id", async (req, res) => {
   try {
     const { token } = req.cookies;
