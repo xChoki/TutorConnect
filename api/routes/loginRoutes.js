@@ -91,17 +91,19 @@ const {generateAuthToken} = require('./../middleware/authHandler')
 //   }
 // })
 
-router.post("/", async (req, res) => {
-  const { userEmail, userPassword } = req.body;
+router.post("/", async (req, res) => {// We listen to /login with an async post funcion
+  const { userEmail, userPassword } = req.body; // We require from the form the name, email and password sent by the user
 
+  // This searches for an existing User using findOne function by their email
   const userDoc = await User.findOne({ userEmail });
 
   if (userDoc) {
+    // If email is found it checks for a password
     const passOk = bcrypt.compareSync(userPassword, userDoc.userPassword);
 
     if (passOk) {
       try {
-        const token = await generateAuthToken(userDoc); // Generar el token JWT
+        const token = await generateAuthToken(userDoc); // Generate token JWT
 
         res
           .cookie("token", token, {
@@ -114,16 +116,16 @@ router.post("/", async (req, res) => {
             id: userDoc._id,
             userName: userDoc.userName,
             userRoles: userDoc.userRoles,
-          });
+          }); // If it goes through we create the session cookie with the corresponding token
       } catch (err) {
         console.error("Error generando el token:", err);
         res.status(500).json("Error en el servidor");
       }
     } else {
-      res.status(422).json("Contraseña incorrecta");
+      res.status(422).json("Contraseña incorrecta");// If password is correct it shows message
     }
   } else {
-    return res.status(422).json("Correo no existe");
+    return res.status(422).json("Correo no existe"); // If email doesn't exists it shows message
   }
 })
 
