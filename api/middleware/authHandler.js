@@ -9,21 +9,6 @@ const jwtSecret = process.env.JWT_SECRET;
 const util = require('util');
 const verifyTokenAsync = util.promisify(jwt.verify);
 
-// async function verifyToken(token) {
-//     return new Promise((resolve, reject) => {
-//       jwt.verify(token, // token: string,
-//         jwtSecret, // secretOrPublicKey: Secret | GetPublicKeyOrSecret,
-//         {}, // options?: VerifyOptions & { complete?: false },
-//         (err, userData) => {
-//         if (err) {
-//           reject(err); // If there's an error we send it
-//         } else {
-//           resolve(userData);
-//         }
-//       });
-//     });
-//   }
-
 async function verifyToken(token) {
   try {
     const userData = await verifyTokenAsync(token, jwtSecret);

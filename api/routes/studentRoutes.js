@@ -43,25 +43,6 @@ const {verifyToken} = require('./../middleware/authHandler')
 
 /*     /student/cursos
  *     This endpoint handles cursos, when it succeeded, validates the information and uses get to receive the courses data*/
-// router.get("/courses", (req, res) => {
-//   // We listen to /applications with a get function
-//   const { token } = req.cookies // We require from the session the token cookie
-
-//   jwt.verify(
-//     // We verify the jwt
-//     token, // token: string,
-//     jwtSecret, // secretOrPublicKey: Secret | GetPublicKeyOrSecret,
-//     {}, // options?: VerifyOptions & { complete?: false },
-//     async (err, userData) => {
-//       // callback?: VerifyCallback<JwtPayload | string>,
-//       if (err) throw err // If there's an error we send it
-//       const { id } = userData // We retreive from userData the id of the logged in user
-
-//       res.json(await Course.find()) // We find all the applications
-//     }
-//   )
-// })
-
 router.get("/courses", async (req, res) => {
   const { token } = req.cookies;
 
