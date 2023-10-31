@@ -6,6 +6,7 @@ require("dotenv").config()
 const jwt = require("jsonwebtoken") // import
 const jwtSecret = process.env.JWT_SECRET;
 // jwt.verify return a promise
+const util = require('util');
 const verifyTokenAsync = util.promisify(jwt.verify);
 
 // async function verifyToken(token) {
