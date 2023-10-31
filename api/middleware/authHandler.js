@@ -32,4 +32,27 @@ async function verifyToken(token) {
   }
 }
 
-module.exports = { verifyToken };
+
+function generateAuthToken(userDoc) {
+  return new Promise((resolve, reject) => {
+    jwt.sign(
+      {
+        userEmail: userDoc.userEmail,
+        id: userDoc._id,
+        userName: userDoc.userName,
+        userRoles: userDoc.userRoles,
+      },
+      jwtSecret,
+      {},
+      (err, token) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(token);
+        }
+      }
+    );
+  });
+}
+
+module.exports = { verifyToken, generateAuthToken };
