@@ -20,7 +20,7 @@ const UserSchema = new Schema({
 
   userDate: {
     type: Date,
-    required: true,
+    required: false,
   },
 
   userRoles: {
