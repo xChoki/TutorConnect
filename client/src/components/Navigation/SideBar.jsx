@@ -1,9 +1,8 @@
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { NavLink, Navigate, useParams } from "react-router-dom"
-import useAuth from "../hooks/useAuth"
+import useAuth from "../../hooks/useAuth"
 
-import { validateRoles } from "../scripts/ValidateRoles"
-import useWindowDimensions from "../hooks/useWindowDimensions"
+import { validateRoles } from "../../scripts/ValidateRoles"
 
 import {
   Icon_Alumnos,
@@ -11,44 +10,45 @@ import {
   Icon_Home,
   Icon_Logout,
   Icon_Mensajes,
-  Arrow_Control,
-} from "../assets/Icons"
+  Icon_Arrow,
+  Icon_Letter,
+} from "../../assets/Icons"
 
 import axios from "axios"
-import Modal from "./Modal"
+import Modal from "../Modal"
 
 export default function SideBar({ open, setOpen }) {
   const [redirect, setRedirect] = useState(null)
-  const { ready, auth, setAuth } = useAuth()
+  const { setAuth } = useAuth()
 
   const [openModal, setOpenModal] = useState(false)
-  const { width } = useWindowDimensions()
 
   let { subpage } = useParams()
 
-  useEffect(() => {
-    if (width < 1000) {
-      setOpen(false)
-    } else {
-      setOpen(true)
-    }
-  }, [width])
+  // useEffect(() => {
+  //   function handleResize() {
+  //     setOpen(window.innerWidth >= 1000)
+  //   }
+
+  //   window.addEventListener("resize", handleResize)
+
+  //   return () => {
+  //     window.removeEventListener("resize", handleResize)
+  //   }
+  // }, [])
 
   if (subpage === undefined) {
     subpage = "portal"
   }
 
-  if (!ready) {
-    return "Cargando..."
-  }
-
-  if (ready && !auth) {
-    return <Navigate to={"/login"} />
-  }
-
   function link_Classes(type = null) {
     let classes =
       "flex items-center p-2 my-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-300 dark:hover:bg-gray-700 group"
+
+    // Detecting the application id to later verify it for later className usage
+    const path = window.location.pathname
+    const match = path.match(/\/portal\/solicitudes\/(\w+)/)
+    const id = match ? match[1] : ""
 
     switch (type) {
       case subpage:
@@ -57,7 +57,11 @@ export default function SideBar({ open, setOpen }) {
         }
         break
       case "cursos":
-        if (window.location.pathname === "/portal/cursos") {
+        if (
+          window.location.pathname === "/portal/cursos" ||
+          window.location.pathname === "/portal/cursos/registrar" ||
+          window.location.pathname === "/portal/cursos/nuevo"
+        ) {
           classes += " bg-gray-200"
         }
         break
@@ -68,6 +72,16 @@ export default function SideBar({ open, setOpen }) {
         break
       case "mensajes":
         if (window.location.pathname === "/portal/mensajes") {
+          classes += " bg-gray-200"
+        }
+        break
+      case "solicitudes":
+        if (
+          window.location.pathname === "/portal/solicitudes" ||
+          window.location.pathname === "/portal/solicitudes/detalles" ||
+          window.location.pathname === "/portal/solicitudes/nuevo" ||
+          window.location.pathname === "/portal/solicitudes/" + id
+        ) {
           classes += " bg-gray-200"
         }
         break
@@ -92,9 +106,10 @@ export default function SideBar({ open, setOpen }) {
     return <Navigate to={redirect} />
   }
 
-  const allowedRoles = [2002, 2003, 5001]
-
-  const ValidateResult = validateRoles({ allowedRoles })
+  let allowedRoles = [2002, 2003, 5001]
+  const ValidateRolesTeaAdmTut = validateRoles({ allowedRoles })
+  allowedRoles = [2003, 5001]
+  const ValidateRolesTeaAdm = validateRoles({ allowedRoles })
 
   return (
     <>
@@ -113,7 +128,7 @@ export default function SideBar({ open, setOpen }) {
         >
           <div className="flex gap-x-4 items-center">
             <NavLink className={link_Classes()}>
-              <Arrow_Control open={open} onClick={() => setOpen(!open)} />
+              <Icon_Arrow open={open} onClick={() => setOpen(!open)} />
             </NavLink>
           </div>
 
@@ -122,29 +137,29 @@ export default function SideBar({ open, setOpen }) {
               <NavLink to={"/portal"} className={link_Classes("portal")}>
                 <Icon_Home />
 
-                <span
-                  className={`${
-                    !open && "hidden"
-                  } origin-left duration-200 flex-1 ml-3 `}
-                >
+                <span className={`${!open && "hidden"} origin-left duration-200 flex-1 ml-3 `}>
                   Inicio
                 </span>
               </NavLink>
             </li>
 
-            {ValidateResult && (
+            {ValidateRolesTeaAdmTut && (
               <li>
-                <NavLink
-                  to={"/portal/alumnos"}
-                  className={link_Classes("alumnos")}
-                >
+                <NavLink to={"/portal/alumnos"} className={link_Classes("alumnos")}>
                   <Icon_Alumnos />
-                  <span
-                    className={`${
-                      !open && "hidden"
-                    } origin-left duration-200 flex-1 ml-3`}
-                  >
+                  <span className={`${!open && "hidden"} origin-left duration-200 flex-1 ml-3`}>
                     Alumnos
+                  </span>
+                </NavLink>
+              </li>
+            )}
+
+            {ValidateRolesTeaAdm && (
+              <li>
+                <NavLink to={"/portal/solicitudes"} className={link_Classes("solicitudes")}>
+                  <Icon_Letter />
+                  <span className={`${!open && "hidden"} origin-left duration-200 flex-1 ml-3`}>
+                    Solicitudes
                   </span>
                 </NavLink>
               </li>
@@ -153,41 +168,23 @@ export default function SideBar({ open, setOpen }) {
             <li>
               <NavLink to={"/portal/cursos"} className={link_Classes("cursos")}>
                 <Icon_Cursos />
-                <span
-                  className={`${
-                    !open && "hidden"
-                  } origin-left duration-200 flex-1 ml-3 `}
-                >
+                <span className={`${!open && "hidden"} origin-left duration-200 flex-1 ml-3 `}>
                   Cursos
                 </span>
               </NavLink>
             </li>
             <li>
-              <NavLink
-                to={"/portal/mensajes"}
-                className={link_Classes("mensajes")}
-              >
+              <NavLink to={"/portal/mensajes"} className={link_Classes("mensajes")}>
                 <Icon_Mensajes />
-                <span
-                  className={`${
-                    !open && "hidden"
-                  } origin-left duration-200 flex-1 ml-3 `}
-                >
+                <span className={`${!open && "hidden"} origin-left duration-200 flex-1 ml-3 `}>
                   Mensajes
                 </span>
               </NavLink>
             </li>
             <li>
-              <NavLink
-                onClick={() => setOpenModal(true)}
-                className={link_Classes("logout")}
-              >
+              <NavLink onClick={() => setOpenModal(true)} className={link_Classes("logout")}>
                 <Icon_Logout />
-                <span
-                  className={`${
-                    !open && "hidden"
-                  } origin-left duration-200 flex-1 ml-3 `}
-                >
+                <span className={`${!open && "hidden"} origin-left duration-200 flex-1 ml-3 `}>
                   Cerrar sesión
                 </span>
               </NavLink>
@@ -206,8 +203,7 @@ export default function SideBar({ open, setOpen }) {
           <div className="mx-auto my-4 w-full h-full">
             <h3>¿Seguro que deseas cerrar sesión?</h3>
             <p className="text-sm text-gray-500 mt-2">
-              Deberás ingresar tus datos nuevamente la siguiente vez que desees
-              entrar.
+              Deberás ingresar tus datos nuevamente la siguiente vez que desees entrar.
             </p>
           </div>
 
