@@ -18,6 +18,10 @@ import ApplicationsInfoPage from "./pages/Applications/ApplicationsInfoPage"
 
 import RequireAuth from "./components/RequireAuth"
 import ApplicationsDetailsPage from "./pages/Applications/ApplicationsDetailsPage"
+import StudentsCoursePage from "./pages/Students/StudentsCoursePage"
+
+import ConfigurationPage from "./pages/Configuration/ConfigurationPage"
+import ApplicationsGraphPage from "./pages/Applications/ApplicationsGraphPage"
 
 // Variable de entorno
 axios.defaults.baseURL = import.meta.env.VITE_API_URL
@@ -44,6 +48,9 @@ function App() {
            * Tutores, alumnos, profesores y administradores */}
           <Route path="/portal" element={<PortalPage />} />
           <Route path="/portal/cursos" element={<CoursesPage />} />
+          <Route path="/portal/cursos/registrar" element={<StudentsCoursePage />} />
+          <Route path="/portal/cursos/:id" element={<CourseInfoPage />} />
+          <Route path="/configuracion" element={<ConfigurationPage />} />
         </Route>
 
         <Route element={<RequireAuth allowedRoles={[ROLES.Tutor, ROLES.Teacher, ROLES.Admin]} />}>
@@ -66,7 +73,9 @@ function App() {
            * Profesores y administradores */}
           <Route path="/portal/solicitudes" element={<ApplicationsPage />} />
           <Route path="/portal/solicitudes/:id" element={<ApplicationsInfoPage />} />
+          <Route path="/portal/solicitudes/graficos" element={<ApplicationsGraphPage />} />
         </Route>
+        <Route path="/*" element={<IndexPage />} />
       </Route>
     </Routes>
   )

@@ -1,30 +1,35 @@
-import { useState } from "react"
-import SideBar from "../components/SideBar" // Asegúrate de importar correctamente el componente del sidebar
-import { Link, Navigate } from "react-router-dom"
+import SideBar from "../components/Navigation/SideBar"
+import { Link } from "react-router-dom"
 import useAuth from "../hooks/useAuth"
 import { validateRoles } from "../scripts/ValidateRoles"
+import { useSidebarState } from "../hooks/useSidebarState"
+import { useEffect } from "react"
+import { Toaster, toast } from "sonner"
 
 export default function PortalPage() {
-  const { ready, auth } = useAuth()
-  const [open, setOpen] = useState(true)
+  const { auth } = useAuth()
+  const [open, setOpen] = useSidebarState()
 
-  if (!ready) {
-    return "Cargando..."
-  }
+  const allowedRoles = [2002, 2003, 5001]
+  const ValidateRoles = validateRoles({ allowedRoles })
 
-  if (ready && !auth) {
-    return <Navigate to={"/login"} />
-  }
+  useEffect(() => {
+    if (sessionStorage.getItem("showloginmsg") == "1") {
+      toast.success(`Bienvenido ${auth.userName}!`)
+      sessionStorage.removeItem("showloginmsg")
+    }
 
-  const allowedRoles = [2003, 5001]
-  const ValidateResult = validateRoles({ allowedRoles })
+    document.title = "TutorConect | Portal"
+  }, [])
 
   return (
     <div className="grid grid-cols-[auto,1fr]">
       <SideBar open={open} setOpen={setOpen} />
 
+      <Toaster position="top-center" />
+      
       <section className={`${open ? "ml-72" : "ml-20"} p-7 font-semibold`}>
-        {!ValidateResult && (
+        {!ValidateRoles && (
           <section className="m-10">
             <Link
               className="inline-block py-16 px-20 rounded-lg text-lg border hover:bg-gray-100"

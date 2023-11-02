@@ -9,14 +9,16 @@ const FileSchema = new Schema({
 const StudentInfo = new Schema({
   studentId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
   studentName: { type: mongoose.Schema.Types.String, ref: "User" },
-  // studentDateofBirth: { type: mongoose.Schema.Types.Date, ref: "User" },
+  studentEmail: { type: mongoose.Schema.Types.String, ref: "User" },
+  studentDateofBirth: { type: mongoose.Schema.Types.Date, ref: "User" },
   // studentSpecialities: [String],
 })
 
 const ReviewerInfo = new Schema({
   reviewerId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-  reviewerName: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+  reviewerName: { type: mongoose.Schema.Types.String, ref: "User" },
   reviewerDate: { type: Date },
+  reviewerComment: { type: String },
 })
 
 const ApplicationSchema = new Schema({
@@ -24,9 +26,10 @@ const ApplicationSchema = new Schema({
   applicationDate: { type: Date, default: Date.now },
   applicationDescription: String,
   applicationExtraInfo: String,
-  applicationFiles: FileSchema, // PDF file.
+  applicationGradesFile: FileSchema, // PDF file.
+  applicationRegularFile: FileSchema, // PDF file.
   applicationState: String, // En proceso, aceptada, rechazada.
-  applicationReviewer: [ReviewerInfo],
+  applicationReviewer: ReviewerInfo,
 })
 
 const ApplicationModel = mongoose.model("Applications", ApplicationSchema)

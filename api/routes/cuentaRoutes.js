@@ -25,22 +25,88 @@ const Course = require("../models/Course") // Model for Courses
  *   This is needed to execute a certain job at an specific time */
 const schedule = require("node-schedule") // import
 
-/*   Scheduled function 
+/*  Function to count the users and courses
+ *  courseCount: Amount of courses registered
+ *  tutorCount: Amount of Tutors registered
+ *  studentCount: Amount of students registered
+ */
+async function countUsersAndCourses() {
+  try {
+    const courseCount = await Course.countDocuments({})
+    const tutorCount = await User.countDocuments({ "userRoles.Tutor": 2002 })
+    const studentCount = await User.countDocuments({
+      "userRoles.User": 2001,
+      $and: [
+        { "userRoles.Admin": { $ne: 5001 } },
+        { "userRoles.Tutor": { $ne: 2002 } },
+        { "userRoles.Teacher": { $ne: 2003 } },
+      ],
+    })
+    return { tutorCount, studentCount, totalCursos: courseCount }
+  } catch (err) {
+    throw err
+  }
+}
+
+/*  Function to give format to the date in chilean timezone  
+ */
+function formatChileanDateTime() {
+  const months = [
+    "Enero",
+    "Febrero",
+    "Marzo",
+    "Abril",
+    "Mayo",
+    "Junio",
+    "Julio",
+    "Agosto",
+    "Septiembre",
+    "Octubre",
+    "Noviembre",
+    "Diciembre",
+  ]
+
+  const daysOfWeek = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"]
+
+  const now = new Date()
+  const dayOfWeek = daysOfWeek[now.getUTCDay()]
+  const day = now.getUTCDate()
+  const month = now.getUTCMonth()
+  const year = now.getUTCFullYear()
+  const hours = now.getUTCHours().toString().padStart(2, "0")
+  const minutes = now.getUTCMinutes().toString().padStart(2, "0")
+
+  return `${dayOfWeek}, ${day}/${month}/${year} ${hours}:${minutes}`
+}
+
+/*   Scheduled function
  *   Used to count the number of registered users and courses
  *   This job is executed every 12 hours */
-const job = schedule.scheduleJob("* 12 * * *", async function () {
-  // We send to the server console that the job is executing
+let counts = { tutorCount: 0, studentCount: 0, totalCursos: 0 }
+const job = schedule.scheduleJob("1 * * * * *", async function () {
   console.log("Contando usuarios y cursos...")
 
   try {
-    //const tutorCount = await User.countDocuments({ role: "tutor" });
-    const userCount = await User.countDocuments({}) // We count the registered users in the User model
-    const cursosCount = await Course.countDocuments({}) // We count the registered courses in the Course model
-    // We send to the server console the numbers
-    console.log("Usuarios totales:", userCount)
-    console.log("Cursos totales:", cursosCount)
+    counts = await countUsersAndCourses()
+    const formattedDate = formatChileanDateTime()
+    console.log(
+      "[" +
+        formattedDate +
+        " (UTC)] " +
+        "Tutores " +
+        "[" +
+        counts.tutorCount +
+        "]" +
+        ", alumnos " +
+        "[" +
+        counts.studentCount +
+        "] " +
+        "y cursos " +
+        "[" +
+        counts.totalCursos +
+        "]"
+    )
   } catch (err) {
-    // if there's an error we send it
     console.error(err)
   }
 })
@@ -54,19 +120,8 @@ const job = schedule.scheduleJob("* 12 * * *", async function () {
 
 /*     /cuenta-datos
  *     This endpoint handles the count of users and courses with the id, when it succeeded, validates the information and uses get to send the information */
-router.get("/", async (req, res) => {
-  // We listen to /cuenta-datos with an async get function
-  try {
-    //const tutorCount = await User.countDocuments({ role: "tutor" });
-    const userCount = await User.countDocuments({}) // We count the registered users in the User model
-    const cursoCount = await Course.countDocuments({}) // We count the registered courses in the Course model
-
-    res.json({ totalUsers: userCount, totalCursos: cursoCount }) // We send a response with the data
-  } catch (err) {
-    // if there's an error we send it
-    console.error(err)
-    res.status(500).json({ error: "Internal server error" })
-  }
+router.get("/", (req, res) => {
+  res.json(counts)
 })
 
 module.exports = router

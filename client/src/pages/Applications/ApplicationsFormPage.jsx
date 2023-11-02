@@ -1,11 +1,13 @@
 import axios from "axios"
 import { useEffect, useState } from "react"
 import { Link, Navigate, useParams } from "react-router-dom"
-import { Icon_Cancel, Icon_UploadCloud } from "../../assets/Icons"
-import SideBar from "../../components/SideBar"
+import { Icon_Cancel } from "../../assets/Icons"
+import SideBar from "../../components/Navigation/SideBar"
+import { useSidebarState } from "../../hooks/useSidebarState"
+import ApplicationForm from "../../components/Applications/ApplicationForm"
 
 export default function ApplicationsFormPage() {
-  const [open, setOpen] = useState(true)
+  const [open, setOpen] = useSidebarState()
 
   /* ----------------------------------- 
     Form section */
@@ -14,8 +16,11 @@ export default function ApplicationsFormPage() {
   const [applicationDescription, setApplicationDescription] = useState("")
   const [applicationExtraInfo, setCourseExtrainfo] = useState("")
 
-  const [addedFiles, setAddedFiles] = useState([])
-  const [fileName, setFileName] = useState("")
+  const [addedGradesFile, setAddedGradesFile] = useState([])
+  const [gradesFileName, setGradesFileName] = useState("")
+
+  const [addedRegularFile, setAddedRegularFile] = useState([])
+  const [regularFileName, setRegularFileName] = useState("")
 
   // Redirection
   const [redirect, setRedirect] = useState(false)
@@ -35,7 +40,8 @@ export default function ApplicationsFormPage() {
       const { data } = response
       setApplicationDescription(data.applicationDescription)
       setCourseExtrainfo(data.applicationExtraInfo)
-      setAddedFiles(data.applicationFiles)
+      setAddedGradesFile(data.applicationGradesFile)
+      setAddedRegularFile(data.applicationRegualarFile)
     })
   }, [id])
 
@@ -44,12 +50,13 @@ export default function ApplicationsFormPage() {
     ev.preventDefault()
 
     const applicationData = new FormData()
-    const applicationDataFile = new FormData()
+    // const applicationDataFile = new FormData()
 
-    // applicationData.append('addedFiles', addedFiles)
-    applicationData.append('file', addedFiles)
-    applicationData.append('applicationExtraInfo', applicationExtraInfo)
-    applicationData.append('applicationDescription', applicationDescription)
+    // applicationData.append('addedGradesFile', addedGradesFile)
+    applicationData.append("applicationGradesFile", addedGradesFile)
+    applicationData.append("applicationRegularFile", addedRegularFile)
+    applicationData.append("applicationExtraInfo", applicationExtraInfo)
+    applicationData.append("applicationDescription", applicationDescription)
 
     try {
       if (id) {
@@ -63,11 +70,11 @@ export default function ApplicationsFormPage() {
         // new application
         setRedirect(true)
         await axios.post("/applications", applicationData, {
-            headers: {'Content-Type': 'multipart/form-data'}
+          headers: { "Content-Type": "multipart/form-data" },
         })
-        await axios.post("/applications/file", applicationDataFile, {
-            headers: {'Content-Type': 'multipart/form-data'}
-        })
+        // await axios.post("/applications/file", applicationDataFile, {
+        //   headers: { "Content-Type": "multipart/form-data" },
+        // })
       }
     } catch (error) {
       alert("Ha ocurrido un error, por favor intente nuevamente. " + error)
@@ -78,9 +85,7 @@ export default function ApplicationsFormPage() {
   async function deleteApplication() {
     try {
       if (id) {
-        var result = window.confirm(
-          "¿Seguro que desea eliminar la solicitud?"
-        )
+        var result = window.confirm("¿Seguro que desea eliminar la solicitud?")
         if (result === true) {
           await axios.delete("/cursos/" + id)
           setRedirect(true)
@@ -91,10 +96,17 @@ export default function ApplicationsFormPage() {
     }
   }
 
-  function uploadFileChange(e) {
-    setAddedFiles(e.target.files[0])
-    if (addedFiles) {
-      setFileName(e.target.files[0].name)
+  function uploadGradesFileChange(e) {
+    setAddedGradesFile(e.target.files[0])
+    if (addedGradesFile) {
+      setGradesFileName(e.target.files[0].name)
+      // console.log(e.target.files[0].name)
+    }
+  }
+  function uploadRegularFileChange(e) {
+    setAddedRegularFile(e.target.files[0])
+    if (addedRegularFile) {
+      setRegularFileName(e.target.files[0].name)
       // console.log(e.target.files[0].name)
     }
   }
@@ -122,92 +134,19 @@ export default function ApplicationsFormPage() {
             </Link>
           </div>
 
-          <form
-            onSubmit={saveApplication}
-            className="max-w-7xl px-10 justify-center"
-          >
-            <div className="relative z-0 w-full mb-6 group">
-              <label
-                htmlFor="applicationDescription"
-                className="block mb-2 text-sm font-medium text-gray-500 dark:text-white"
-              >
-                Descripción de tí
-              </label>
-              <textarea
-                id="applicationDescription"
-                rows="4"
-                className="block p-2.5 w-full text-sm text-gray-500 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                placeholder="Haz una descripción de tí, háblanos de tus motivaciones, tu historia, o lo que desees."
-                required
-                value={applicationDescription}
-                onChange={(ev) => setApplicationDescription(ev.target.value)}
-              ></textarea>
-            </div>
-            <div className="relative z-0 w-full mb-6 group">
-              <div className="mx-auto my-4 w-full h-full">
-                <label className="flex flex-col justify-center items-center w-full h-full px-4 transition bg-white border-2 border-gray-300 border-dashed rounded-md appearance-none cursor-pointer hover:border-gray-400 focus:outline-none">
-                  <div className="flex items-center space-x-2">
-                    <Icon_UploadCloud />
-                    <span className="font-medium text-gray-600">
-                      Presiona para subir tus reporte de notas.
-                    </span>
-                  </div>
-                  <p className="text-xs leading-5 text-gray-600">
-                    PDF de hasta 1MB
-                  </p>
-                  <input
-                    type="file"
-                    name="file"
-                    className="hidden"
-                    accept=".pdf"
-                    onChange={uploadFileChange}
-                  />
-                </label>
-
-                {fileName && (
-                  <>
-                    <p className="text-sm text-gray-500 mt-2">
-                      Se está subiendo el archivo {fileName}.
-                    </p>
-                  </>
-                )}
-              </div>
-            </div>
-
-            <div className="relative z-0 w-full mb-6 group">
-              <label
-                htmlFor="applicationExtraInfo"
-                className="block mb-2 text-sm font-medium text-gray-500 dark:text-white"
-              >
-                Información extra (opcional)
-              </label>
-              <textarea
-                id="applicationExtraInfo"
-                rows="4"
-                className="block p-2.5 w-full text-sm text-gray-500 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                placeholder="Deja un comentario..."
-                value={applicationExtraInfo}
-                onChange={(ev) => setCourseExtrainfo(ev.target.value)}
-              ></textarea>
-            </div>
-
-            <button
-              type="submit"
-              className="mx-2 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center"
-            >
-              Enviar
-            </button>
-
-            {id && (
-              <button
-                type="button"
-                onClick={deleteApplication}
-                className="mx-2 text-white bg-red-400 hover:bg-red-500 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center"
-              >
-                <span className="pl-2">Eliminar Curso</span>
-              </button>
-            )}
-          </form>
+          <ApplicationForm
+            saveApplication={saveApplication}
+            applicationDescription={applicationDescription}
+            setApplicationDescription={setApplicationDescription}
+            uploadGradesFileChange={uploadGradesFileChange}
+            uploadRegularFileChange={uploadRegularFileChange}
+            gradesFileName={gradesFileName}
+            regularFileName={regularFileName}
+            applicationExtraInfo={applicationExtraInfo}
+            setCourseExtrainfo={setCourseExtrainfo}
+            id={id}
+            deleteApplication={deleteApplication}
+          />
         </section>
       </div>
     </>

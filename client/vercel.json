@@ -29,6 +29,10 @@
             "dest": "/"
         },
         {
+            "src": "/portal/cursos/registrar",
+            "dest": "/"
+        },
+        {
             "src": "/portal/cursos/editar/([^/]+)",
             "dest": "/"
         },
@@ -46,6 +50,10 @@
         },
         {
             "src": "/portal/solicitudes/([^/]+)",
+            "dest": "/"
+        },
+        {
+            "src": "/configuracion",
             "dest": "/"
         }
     ]

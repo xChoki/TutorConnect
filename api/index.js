@@ -13,9 +13,6 @@ const port = process.env.PORT || 4000 // Specify desired port
 app.use(express.json()) // This is used to parse every JSON for express usage
 app.use(express.urlencoded({ extended: true }))
 
-app.use(express.static('uploads'))
-// app.use(express.static(path.join(__dirname, "uploads")))
-
 /* CORS: Cross-Origin Resource Sharing
  * Used to give security and control access to our app*/
 const cors = require("cors") // import
@@ -25,6 +22,9 @@ app.use(
     origin: process.env.URL_CORS, // This is the origin that we are allowing access
   })
 )
+
+// app.use(express.static(path.join(__dirname, "uploads")))
+app.use(express.static("uploads"))
 
 /* Multer
  * Handles and helps with file uploading  */
@@ -36,11 +36,7 @@ const storage = multer.diskStorage({
   },
   filename: (req, file, cb) => {
     const courseId = req.body.id || req.query.id
-    if (courseId)
-      cb(
-        null,
-        "prueba " + courseId + "_" + Date.now() + "_" + file.originalname
-      )
+    if (courseId) cb(null, "prueba " + courseId + "_" + Date.now() + "_" + file.originalname)
   },
 })
 
@@ -61,10 +57,12 @@ const registerRoutes = require("./routes/registerRoutes")
 const loginRoutes = require("./routes/loginRoutes")
 const profileRoutes = require("./routes/profileRoutes")
 const logoutRoutes = require("./routes/logoutRoutes")
-const cursosRoutes = require("./routes/cursosRoutes")
+const coursesRoutes = require("./routes/coursesRoutes")
 const cuentaRoutes = require("./routes/cuentaRoutes")
 const uploadRoutes = require("./routes/uploadRoutes")
 const applicationRoutes = require("./routes/applicationRoutes")
+const studentRoutes = require("./routes/studentRoutes")
+const userRoutes = require("./routes/userRoutes")
 
 /*     /test
  *     This endpoint is to test the connection, if it is up it shows "test ok" */
@@ -94,17 +92,17 @@ app.use("/api/logout", logoutRoutes)
  *      - GET(id): When it is called and it succeeded, validates the information and uses get to obtain the detailed information by id
  *      - PUT: When it is called and it succeeded, validates the information and uses put to update the information
  *      - DELETE(id): When it is called and it succeeded, validates the information and uses delete to erase from database the information */
-app.use("/api/cursos", cursosRoutes)
+app.use("/api/courses", coursesRoutes)
 
 /*    /cuenta
-*     This endpoint handles the count of users and courses with the id, when it succeeded, validates the information and uses get to send the information */
+ *     This endpoint handles the count of users and courses with the id, when it succeeded, validates the information and uses get to send the information */
 app.use("/api/cuenta", cuentaRoutes)
 
 /*    /upload
-*     This endpoint handles the upload of files to the course
-*     /videos: manages the video files
-*     /homework: manages the homework files
-*     /material: manages the extra material files*/
+ *     This endpoint handles the upload of files to the course
+ *     /videos: manages the video files
+ *     /homework: manages the homework files
+ *     /material: manages the extra material files*/
 app.use("/api/upload", uploadRoutes)
 
 /*     /applications
@@ -112,12 +110,16 @@ app.use("/api/upload", uploadRoutes)
  *     There are multiple endpoints inside:
  *      - POST: When it is called and it succeeded, validates the information and uses post to register a new Application
  *      - GET: When it is called and it succeeded, validates the information and uses get to obtain the Applications data
- *      
+ *
  *      TODO:
  *      - GET(id): When it is called and it succeeded, validates the information and uses get to obtain the detailed information by id
  *      - PUT: When it is called and it succeeded, validates the information and uses put to update the information
  *      - DELETE(id): When it is called and it succeeded, validates the information and uses delete to erase from database the information */
 app.use("/api/applications", applicationRoutes)
+
+app.use("/api/student", studentRoutes)
+
+app.use("/api/user", userRoutes)
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`)

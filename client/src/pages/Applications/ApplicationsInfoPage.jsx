@@ -1,12 +1,22 @@
 import axios from "axios"
 import { useEffect, useState } from "react"
 import { useParams } from "react-router-dom"
-import SideBar from "../../components/SideBar"
+import SideBar from "../../components/Navigation/SideBar"
+import { useSidebarState } from "../../hooks/useSidebarState"
+import ApplicationStateAlert from "../../components/Applications/ApplicationStateAlert"
 import { Icon_Download } from "../../assets/Icons"
+import ApplicationButtons from "../../components/Applications/ApplicationButtons"
+import Modal from "../../components/Modal"
+import FileViewer from "../../components/FileViewer"
 
 export default function ApplicationsInfoPage() {
-  const [open, setOpen] = useState(true)
+  const [open, setOpen] = useSidebarState()
   const [applicationData, setAplicationData] = useState([])
+  const [applicationComment, setApplicationComment] = useState([])
+
+  const [openFileModal, setOpenFileModal] = useState(false)
+  const [openCommentModal, setOpenCommentModal] = useState(false)
+  const [fileUrl, setFileUrl] = useState(false)
 
   const { id } = useParams()
 
@@ -21,35 +31,51 @@ export default function ApplicationsInfoPage() {
     })
   }, [id])
 
-  console.log(applicationData.applicationStudentInfo?.studentId)
+  function handleReject() {}
 
-  async function handleApplication(applicationState, applicationId, applicationStudentId) {
+  async function handleApplication(
+    applicationState,
+    applicationId,
+    applicationStudentId,
+    applicationComment
+  ) {
     try {
-      const data = { applicationState, applicationId, applicationStudentId }
+      const data = { applicationState, applicationId, applicationStudentId, applicationComment }
       await axios.put("/applications/", data)
+      window.location.reload()
     } catch (error) {
       console.error("Error actualizando la solicitud: ", error)
       throw error
     }
   }
 
-  async function downloadFile(fileName) {
-    try {
-      const endpoint = `/upload/${fileName}`
+  function downloadFile(fileName, fileDirectory) {
+    const url = `${import.meta.env.VITE_API_FILE_URL}/${fileDirectory}/${fileName}`
 
-      // Create a hidden anchor element for download
-      const link = document.createElement("a")
-      link.href = endpoint
-      link.download = fileName
+    fetch(url)
+      .then((response) => response.blob())
+      .then((blob) => {
+        const blobURL = window.URL.createObjectURL(blob)
+        const a = document.createElement("a")
+        a.href = blobURL
+        a.download = fileName
+        a.style.display = "none"
 
-      // Trigger a click event on the anchor element
-      link.click()
+        document.body.appendChild(a)
+        a.click()
 
-      // You can add additional logic here after successfully triggering the download
-    } catch (error) {
-      console.error("Error downloading the file:", error)
-      // You can handle the error as needed
-    }
+        document.body.removeChild(a)
+        window.URL.revokeObjectURL(blobURL)
+      })
+      .catch((error) => {
+        console.error("Error downloading file:", error)
+      })
+  }
+
+  function showFileModal(fileUrlParam) {
+    setFileUrl(fileUrlParam)
+    // console.log(fileUrl)
+    setOpenFileModal(true)
   }
 
   return (
@@ -57,17 +83,42 @@ export default function ApplicationsInfoPage() {
       <div className="grid grid-cols-[auto,1fr]">
         <SideBar open={open} setOpen={setOpen} />
 
-        <div className={`${open ? "ml-72" : "ml-20"} p-10`}>
+        <div className={`${open ? "ml-72" : "ml-20"} p-6`}>
           <section className="block max-w-full p-6 bg-white border border-gray-200 rounded-lg shadow">
             <h2 className="mb-2 text-3xl font-bold tracking-tight text-gray-900">
-              <span>{applicationData.studentInfo?.studentName}</span>
+              <span>{applicationData.applicationStudentInfo?.studentName}</span>
             </h2>
             <hr className="h-px my-8 bg-gray-200 border-0" />
 
             <h2 className="mb-2 text-lg font-bold tracking-tight text-gray-900">
               Información de la solicitud
             </h2>
-            <p className="font-normal text-gray-700">{applicationData.applicationDescription}</p>
+            <dl className="divide-y divide-gray-100">
+              <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                <dt className="text-lg font-medium leading-6 text-gray-900">
+                  <p>Descripción de la aplicación:</p>
+                </dt>
+                <dd className="mt-1 text-base leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
+                  {applicationData.applicationDescription}
+                </dd>
+              </div>
+              <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                <dt className="text-lg font-medium leading-6 text-gray-900">
+                  <p>Correo estudiante:</p>
+                </dt>
+                <dd className="mt-1 text-base leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
+                  {applicationData.applicationStudentInfo?.studentEmail}
+                </dd>
+              </div>
+              <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                <dt className="text-lg font-medium leading-6 text-gray-900">
+                  <p>Fecha de nacimiento del estudiante:</p>
+                </dt>
+                <dd className="mt-1 text-base leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
+                  {applicationData.applicationStudentInfo?.studentDateofBirth}
+                </dd>
+              </div>
+            </dl>
 
             <hr className="h-px my-8 bg-gray-200 border-0" />
             <h2 className="mb-2 text-lg font-bold tracking-tight text-gray-900">
@@ -76,21 +127,58 @@ export default function ApplicationsInfoPage() {
             <p className="font-normal text-gray-700">{applicationData.applicationExtraInfo}</p>
 
             <hr className="h-px my-8 bg-gray-200 border-0" />
-            <h2 className="mb-2 text-lg font-bold tracking-tight text-gray-900">Documento notas</h2>
+            <h2 className="mb-2 text-lg font-bold tracking-tight text-gray-900">Documentos</h2>
             <div className="flex items-center p-5 text-gray-500 hover:bg-gray-200 hover:cursor-pointer">
               <div
                 onClick={() => {
-                  downloadFile(applicationData.applicationFiles?.fileName)
+                  showFileModal(
+                    import.meta.env.VITE_API_FILE_URL +
+                      "/" +
+                      "applications" +
+                      "/" +
+                      applicationData.applicationGradesFile?.fileName
+                  )
                 }}
                 className="flex-grow"
               >
-                <span>{applicationData.applicationFiles?.fileName}</span>
+                <span>
+                  Notas: {applicationData.applicationGradesFile?.fileName.split("____").pop()}
+                </span>
               </div>
               <div className="flex">
                 <div
                   className="hover:bg-gray-400 hover:text-white rounded-lg"
                   onClick={() => {
-                    downloadFile(applicationData.applicationFiles?.fileName)
+                    downloadFile(applicationData.applicationGradesFile?.fileName)
+                  }}
+                >
+                  <Icon_Download margin="2" />
+                </div>
+              </div>
+            </div>
+            <div className="flex items-center p-5 text-gray-500 hover:bg-gray-200 hover:cursor-pointer">
+              <div
+                onClick={() => {
+                  showFileModal(
+                    import.meta.env.VITE_API_FILE_URL +
+                      "/" +
+                      "applications" +
+                      "/" +
+                      applicationData.applicationRegularFile?.fileName
+                  )
+                }}
+                className="flex-grow"
+              >
+                <span>
+                  Alumno regular:{" "}
+                  {applicationData.applicationRegularFile?.fileName.split("____").pop()}
+                </span>
+              </div>
+              <div className="flex">
+                <div
+                  className="hover:bg-gray-400 hover:text-white rounded-lg"
+                  onClick={() => {
+                    downloadFile(applicationData.applicationRegularFile?.fileName, "applications")
                   }}
                 >
                   <Icon_Download margin="2" />
@@ -98,83 +186,97 @@ export default function ApplicationsInfoPage() {
               </div>
             </div>
 
-            {applicationData.applicationState === "Aceptada" ? (
-              <div
-                className="flex items-center p-4 mb-4 text-sm text-green-800 border border-green-300 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400 dark:border-green-800"
-                role="alert"
-              >
-                <svg
-                  className="flex-shrink-0 inline w-4 h-4 mr-3"
-                  aria-hidden="true"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
-                  <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
-                </svg>
-                <span className="sr-only">Info</span>
-                <div>
-                  La solicitud actualmente se encuentra{" "}
-                  <span className="font-medium">Aceptada</span>.
-                </div>
-              </div>
-            ) : applicationData.applicationState === "Rechazada" && (
-              <div
-                className="flex items-center p-4 mb-4 text-sm text-red-800 border border-red-300 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400 dark:border-red-800"
-                role="alert"
-              >
-                <svg
-                  className="flex-shrink-0 inline w-4 h-4 mr-3"
-                  aria-hidden="true"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
-                  <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
-                </svg>
-                <span className="sr-only">Info</span>
-                <div>
-                  La solicitud actualmente se encuentra{" "}
-                  <span className="font-medium">rechazada.</span>
-                </div>
-              </div>
-            )}
+            <ApplicationStateAlert applicationData={applicationData} />
 
-            <div className="flex mt-20">
-              {applicationData.applicationState === "En proceso" ||
-                (applicationData.applicationState === "Rechazada" && (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      handleApplication(
-                        "Aceptada",
-                        applicationData._id,
-                        applicationData.applicationStudentInfo.studentId
-                      )
-                    }}
-                    className="mx-2 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center"
-                  >
-                    Aceptar
-                  </button>
-                ))}
+            <ApplicationButtons
+              applicationData={applicationData}
+              handleApplication={handleApplication}
+              handleReject={handleReject}
+              setOpenCommentModal={setOpenCommentModal}
+            />
+          </section>
+        </div>
+      </div>
 
+      <Modal
+        open={openCommentModal}
+        onClose={() => setOpenCommentModal(false)}
+        cancel={true}
+        modalMargin={open ? "72" : "20"}
+      >
+        <div className="flex flex-col items-center justify-center text-center h-full">
+          <div className="relative z-0 w-full mb-6 group">
+            <label
+              htmlFor="applicationComment"
+              className="block mb-2 text-sm font-medium text-gray-500 dark:text-white"
+            >
+              Razones de rechazo
+            </label>
+            <textarea
+              id="applicationComment"
+              rows="4"
+              className="block p-2.5 w-full text-sm text-gray-500 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              placeholder="Explica el por qué rechazas esta solicitud."
+              required
+              value={applicationComment}
+              onChange={(ev) => setApplicationComment(ev.target.value)}
+            ></textarea>
+          </div>
+
+          <div className="flex">
+            <div className="gap-4 mt-7">
               <button
-                type="button"
+                className="focus:outline-none text-white bg-gray-400 hover:bg-gray-600 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2"
+                onClick={() => {
+                  setOpenCommentModal(false)
+                }}
+              >
+                Cancelar
+              </button>
+            </div>
+            <div className="gap-4 mt-7">
+              <button
+                className="mx-2 text-white bg-red-400 hover:bg-red-500 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center"
                 onClick={() => {
                   handleApplication(
                     "Rechazada",
                     applicationData._id,
-                    applicationData.applicationStudentInfo.studentId
+                    applicationData.applicationStudentInfo.studentId,
+                    applicationComment
                   )
                 }}
-                className="mx-2 text-white bg-red-400 hover:bg-red-500 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center"
               >
-                <span className="pl-2">Rechazar</span>
+                Rechazar
               </button>
             </div>
-          </section>
+          </div>
         </div>
-      </div>
+      </Modal>
+
+      <Modal
+        open={openFileModal}
+        onClose={() => setOpenFileModal(false)}
+        cancel={true}
+        modalMargin={open ? "72" : "20"}
+      >
+        <div className="flex flex-col items-center justify-center text-center h-full">
+          <div className="mx-auto my-4 w-full h-full">
+            <h3>Archivo de postulación</h3>
+            <FileViewer fileUrl={fileUrl ? fileUrl : null} />
+          </div>
+
+          <div className="gap-4 mt-7">
+            <button
+              className="focus:outline-none text-white bg-gray-400 hover:bg-gray-600 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2"
+              onClick={() => {
+                setOpenFileModal(false)
+              }}
+            >
+              Cerrar
+            </button>
+          </div>
+        </div>
+      </Modal>
     </>
   )
 }

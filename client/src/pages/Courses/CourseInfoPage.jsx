@@ -1,24 +1,24 @@
 import axios from "axios"
-import React, { useEffect, useState } from "react"
-import { Link, useParams } from "react-router-dom"
-import SideBar from "../../components/SideBar"
+import { useEffect, useState } from "react"
+import { Link, useNavigate, useParams } from "react-router-dom"
+import SideBar from "../../components/Navigation/SideBar"
 
 import ReactPlayer from "react-player"
 
 import { validateRoles } from "../../scripts/ValidateRoles"
 
-import { Accordion } from "flowbite-react"
-import {
-  Icon_Download,
-  Icon_PlayButton,
-  Icon_Trashcan,
-  Icon_Upload,
-  Icon_UploadCloud,
-} from "../../assets/Icons"
+import { Icon_UploadCloud } from "../../assets/Icons"
 import Modal from "../../components/Modal"
+import CourseInfo from "../../components/Courses/CourseInfo"
+import CourseFilesAccordion from "../../components/Courses/CourseFilesAccordion"
+import { useSidebarState } from "../../hooks/useSidebarState"
+import useAuth from "../../hooks/useAuth"
+import StudentCourseButtons from "../../components/Students/StudentCourseButtons"
 
 export default function CourseInfoPage() {
-  const [open, setOpen] = useState(true)
+  const [open, setOpen] = useSidebarState()
+
+  const { auth } = useAuth()
 
   const { id } = useParams()
 
@@ -29,6 +29,8 @@ export default function CourseInfoPage() {
   const [videoFiles, setVideoFiles] = useState([])
   const [homeworkFiles, setHomeworkFiles] = useState([])
   const [materialFiles, setMaterialFiles] = useState([])
+  const [tutorId, setTutorId] = useState([])
+  const [students, setStudents] = useState([])
 
   const [openModalUpload, setOpenModalUpload] = useState(false)
   const [openModalVideo, setOpenModalVideo] = useState(false)
@@ -41,12 +43,14 @@ export default function CourseInfoPage() {
 
   const [selectedVideo, setSelectedVideo] = useState("")
 
+  const navigate = useNavigate()
+
   useEffect(() => {
     if (!id) {
       return
     }
 
-    axios.get("/cursos/" + id).then((response) => {
+    axios.get("/courses/" + id).then((response) => {
       const { data } = response
       setCourseName(data.courseName)
       setCourseDescription(data.courseDescription)
@@ -55,13 +59,15 @@ export default function CourseInfoPage() {
       setVideoFiles(data.videoFiles)
       setMaterialFiles(data.materialFiles)
       setHomeworkFiles(data.homeworkFiles)
+      setStudents(data.courseStudents)
+      setTutorId(data.courseTutorId)
     })
   }, [id])
 
   const allowedRoles = [2002, 2003, 5001]
 
-  const ValidateResult = validateRoles({ allowedRoles })
-  //console.log("resultado: " + ValidateResult)
+  const ValidateRoles = validateRoles({ allowedRoles })
+  //console.log("resultado: " + ValidateRoles)
 
   function uploadFileChange(e) {
     setAddedFiles(e.target.files[0])
@@ -111,9 +117,7 @@ export default function CourseInfoPage() {
 
   function selectedVideoInfo(selectedFileName) {
     if (selectedFileName != "") {
-      setSelectedVideo(
-        import.meta.env.VITE_API_URL_VIDEOFILES + selectedFileName
-      )
+      setSelectedVideo(import.meta.env.VITE_API_URL_VIDEOFILES + selectedFileName)
     } else {
       setSelectedVideo("")
     }
@@ -137,31 +141,29 @@ export default function CourseInfoPage() {
       const endpoint = `upload/file/${fileType}/${id}/${fileName}`
       console.log(endpoint)
       await axios.delete(endpoint)
-      // You can add additional logic here after successfully deleting the file
+
+      window.location.reload()
     } catch (error) {
       console.error("Error deleting the file:", error)
       // You can handle the error as needed
     }
   }
 
-  async function downloadFile(fileName, fileType) {
+  async function registerStudent() {
     try {
-      const endpoint = `/upload/download/${fileType}/${fileName}`
-
-      // Create a hidden anchor element for download
-      const link = document.createElement("a")
-      link.href = endpoint
-      link.download = fileName
-
-      // Trigger a click event on the anchor element
-      link.click()
-
-      // You can add additional logic here after successfully triggering the download
+      sessionStorage.setItem("showregistercoursemsg", "1")
+      navigate("/portal/cursos")
+      await axios.put("/student/course/register/" + id)
     } catch (error) {
-      console.error("Error downloading the file:", error)
-      // You can handle the error as needed
+      console.error(`Error registering user into course ${id}`)
     }
   }
+
+  // Check if student is registered in the course or not
+  // const isUserInCourse = students && students.includes(auth.id)
+  const isUserInCourse = students.some(student => student.student_id === auth.id);
+
+  const isUserCourseTutor = auth && tutorId.includes(auth.id)
 
   return (
     <>
@@ -170,7 +172,7 @@ export default function CourseInfoPage() {
 
         <div className={`${open ? "ml-72" : "ml-20"} p-10`}>
           <section className="block max-w-full p-6 bg-white border border-gray-200 rounded-lg shadow">
-            {ValidateResult && (
+            {ValidateRoles && (
               <aside className="float-right">
                 <Link
                   to={"/portal/cursos/editar/" + id}
@@ -181,224 +183,30 @@ export default function CourseInfoPage() {
               </aside>
             )}
 
-            <h2 className="mb-2 text-3xl font-bold tracking-tight text-gray-900">
-              {courseName}
-            </h2>
-            <hr className="h-px my-8 bg-gray-200 border-0" />
-            <h2 className="mb-2 text-lg font-bold tracking-tight text-gray-900">
-              Información del curso
-            </h2>
-            <p className="font-normal text-gray-700">{courseDescription}</p>
+            <CourseInfo
+              courseName={courseName}
+              courseDescription={courseDescription}
+              courseExtrainfo={courseExtrainfo}
+              courseNeurodiv={courseNeurodiv}
+            />
 
-            <hr className="w-48 h-1 mx-auto my-4 bg-gray-200 border-0 rounded md:my-10" />
-
-            {courseExtrainfo && (
-              <div className="">
-                <h2 className="mb-2 text-lg font-bold tracking-tight text-gray-900">
-                  Información extra del curso
-                </h2>
-                <p> {courseExtrainfo} </p>
-                <hr className="w-48 h-1 mx-auto my-4 bg-gray-200 border-0 rounded md:my-10" />
-              </div>
+            {(isUserInCourse || isUserCourseTutor) ? (
+              <CourseFilesAccordion
+                ValidateRoles={ValidateRoles}
+                videoFiles={videoFiles}
+                homeworkFiles={homeworkFiles}
+                materialFiles={materialFiles}
+                setOpenModalUpload={setOpenModalUpload}
+                setOpenModalVideo={setOpenModalVideo}
+                setOpenModalDelete={setOpenModalDelete}
+                setFileDiff={setFileDiff}
+                fileDiff={fileDiff}
+                setFileName={setFileName}
+                selectedVideoInfo={selectedVideoInfo}
+              />
+            ) : (
+              <StudentCourseButtons registerStudent={registerStudent} />
             )}
-
-            <p>
-              Este curso {courseNeurodiv ? "" : "no"} cuenta con disponibilidad
-              para tratar con personas neurodivergentes.{" "}
-              <Link to={"/"} className="text-blue-500">
-                Saber más.
-              </Link>
-            </p>
-
-            <Accordion className="mt-20">
-              <Accordion.Panel>
-                <Accordion.Title className="flex items-center">
-                  <span className="text-lg">Grabaciones</span>
-                </Accordion.Title>
-                <Accordion.Content>
-                  {ValidateResult && (
-                    <>
-                      <div
-                        onClick={() => {
-                          // console.log("Subiendo grabación")
-                          setOpenModalUpload(true)
-                          setFileDiff("vid")
-                        }}
-                        className="p-5 text-gray-500 flex justify-between hover:bg-gray-200 hover:cursor-pointer"
-                      >
-                        Subir grabación <Icon_Upload />
-                      </div>
-                      <hr className="h-px bg-gray-200 border-0" />
-                    </>
-                  )}
-
-                  {videoFiles.length > 0 &&
-                    videoFiles.map((file) => (
-                      <React.Fragment key={file.fileName}>
-                        <div className="flex items-center p-5 text-gray-500 hover:bg-gray-200 hover:cursor-pointer">
-                          <div
-                            onClick={() => {
-                              selectedVideoInfo(file.fileName)
-                              setOpenModalVideo(true)
-                            }}
-                            className="flex-grow"
-                          >
-                            <span>{file.fileName}</span>
-                          </div>
-                          <div className="flex">
-                            <div
-                              className="hover:bg-gray-400 hover:text-white rounded-lg"
-                              onClick={() => {
-                                selectedVideoInfo(file.fileName)
-                                setOpenModalVideo(true)
-                              }}
-                            >
-                              <Icon_PlayButton margin="2" />
-                            </div>
-
-                            <div
-                              className="hover:bg-gray-400 hover:text-white rounded-lg"
-                              onClick={() => {
-                                // alert("borrar " + file.fileName)
-                                setOpenModalDelete(true)
-                                setFileDiff("videos")
-                                setFileName(file.fileName)
-                              }}
-                            >
-                              <Icon_Trashcan margin="2" color="text-red-400" />
-                            </div>
-                          </div>
-                        </div>
-                        <hr className="h-px bg-gray-200 border-0" />
-                      </React.Fragment>
-                    ))}
-                </Accordion.Content>
-              </Accordion.Panel>
-
-              <Accordion.Panel>
-                <Accordion.Title className="flex items-center">
-                  <span className="text-lg">Tareas</span>
-                </Accordion.Title>
-                <Accordion.Content>
-                  {ValidateResult && (
-                    <>
-                      <div
-                        onClick={() => {
-                          // console.log("Subiendo tarea")
-                          setOpenModalUpload(true)
-                          setFileDiff("hom")
-                        }}
-                        className="p-5 text-gray-500 flex justify-between hover:bg-gray-200 hover:cursor-pointer"
-                      >
-                        Subir tarea <Icon_Upload />
-                      </div>
-                      <hr className="h-px bg-gray-200 border-0" />
-                    </>
-                  )}
-
-                  {homeworkFiles.length > 0 &&
-                    homeworkFiles.map((file) => (
-                      <React.Fragment key={file.fileName}>
-                        <div className="flex items-center p-5 text-gray-500 hover:bg-gray-200 hover:cursor-pointer">
-                          <div
-                            onClick={() => {
-                              downloadFile(file.fileName, "homework")
-                            }}
-                            className="flex-grow"
-                          >
-                            <span>{file.fileName}</span>
-                          </div>
-                          <div className="flex">
-                            <div
-                              className="hover:bg-gray-400 hover:text-white rounded-lg"
-                              onClick={() => {
-                                downloadFile(file.fileName, "homework")
-                              }}
-                            >
-                              <Icon_Download margin="2" />
-                            </div>
-
-                            <div
-                              className="hover:bg-gray-400 hover:text-white rounded-lg"
-                              onClick={() => {
-                                // alert("borrar " + file.fileName)
-                                setOpenModalDelete(true)
-                                setFileDiff("homework")
-                                setFileName(file.fileName)
-                              }}
-                            >
-                              <Icon_Trashcan margin="2" color="text-red-400" />
-                            </div>
-                          </div>
-                        </div>
-                        <hr className="h-px bg-gray-200 border-0" />
-                      </React.Fragment>
-                    ))}
-                </Accordion.Content>
-              </Accordion.Panel>
-
-              <Accordion.Panel>
-                <Accordion.Title className="flex items-center">
-                  <span className="text-lg">Material</span>
-                </Accordion.Title>
-                <Accordion.Content>
-                  {ValidateResult && (
-                    <>
-                      <div
-                        onClick={() => {
-                          // console.log("Subiendo material")
-                          setOpenModalUpload(true)
-                          setFileDiff("mat")
-                        }}
-                        className="p-5 text-gray-500 flex justify-between hover:bg-gray-200 hover:cursor-pointer"
-                      >
-                        Subir material <Icon_Upload />
-                      </div>
-                      <hr className="h-px bg-gray-200 border-0" />
-                    </>
-                  )}
-
-                  {materialFiles.length > 0 &&
-                    materialFiles.map((file) => (
-                      <React.Fragment key={file.fileName}>
-                        <div className="flex items-center p-5 text-gray-500 hover:bg-gray-200 hover:cursor-pointer">
-                          <div
-                            onClick={() => {
-                              downloadFile(file.fileName, "material")
-                            }}
-                            className="flex-grow"
-                          >
-                            <span>{file.fileName}</span>
-                          </div>
-                          <div className="flex">
-                            <div
-                              className="hover:bg-gray-400 hover:text-white rounded-lg"
-                              onClick={() => {
-                                downloadFile(file.fileName, "material")
-                              }}
-                            >
-                              <Icon_Download margin="2" />
-                            </div>
-
-                            <div
-                              className="hover:bg-gray-400 hover:text-white rounded-lg"
-                              onClick={() => {
-                                // alert("borrar " + file.fileName)
-                                setOpenModalDelete(true)
-                                setFileDiff("material")
-                                setFileName(file.fileName)
-                              }}
-                            >
-                              <Icon_Trashcan margin="2" color="text-red-400" />
-                            </div>
-                          </div>
-                        </div>
-                        <hr className="h-px bg-gray-200 border-0" />
-                      </React.Fragment>
-                    ))}
-                </Accordion.Content>
-              </Accordion.Panel>
-            </Accordion>
           </section>
         </div>
       </div>
@@ -407,7 +215,9 @@ export default function CourseInfoPage() {
         open={openModalUpload}
         onClose={() => {
           setOpenModalUpload(false)
-          window.location.reload()
+          if (fileName !== "") {
+            window.location.reload()
+          }
         }}
         cancel={true}
         modalMargin={open ? "72" : "20"}
@@ -442,9 +252,7 @@ export default function CourseInfoPage() {
               <label className="flex flex-col justify-center items-center w-full h-full px-4 transition bg-white border-2 border-gray-300 border-dashed rounded-md appearance-none cursor-pointer hover:border-gray-400 focus:outline-none">
                 <div className="flex items-center space-x-2">
                   <Icon_UploadCloud />
-                  <span className="font-medium text-gray-600">
-                    Presiona para subir tu archivo
-                  </span>
+                  <span className="font-medium text-gray-600">Presiona para subir tu archivo</span>
                 </div>
                 <input
                   type="file"
@@ -518,7 +326,6 @@ export default function CourseInfoPage() {
               onClick={() => {
                 setOpenModalDelete(false)
                 deleteFile(fileName, fileDiff)
-                window.location.reload()
               }}
             >
               Eliminar

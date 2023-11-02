@@ -1,48 +1,64 @@
 import { useEffect, useState } from "react"
-import { Link, Navigate } from "react-router-dom"
+import { Link } from "react-router-dom"
 import { Icon_Plus } from "../../assets/Icons/"
-import SideBar from "../../components/SideBar"
+import SideBar from "../../components/Navigation/SideBar"
 import axios from "axios"
 
-import useAuth from "../../hooks/useAuth"
+import { Toaster, toast } from "sonner"
+
 import useWindowDimensions from "../../hooks/useWindowDimensions"
 
-import PencilsImage from "../../assets/Pencils.png"
 import { validateRoles } from "../../scripts/ValidateRoles"
+
+import CoursesCard from "../../components/Cards/CoursesCard"
+import { useSidebarState } from "../../hooks/useSidebarState"
 
 export default function CoursesPage() {
   const [courses, setCourses] = useState([])
-  const [open, setOpen] = useState(true)
-  const { ready, auth } = useAuth()
+
+  const [open, setOpen] = useSidebarState()
+
   const { width } = useWindowDimensions()
 
   useEffect(() => {
-    axios.get("/cursos").then(({ data }) => {
+    axios.get("/courses").then(({ data }) => {
       setCourses(data)
       // console.log(courses)
     })
   }, [])
 
-  // console.log(courses)
+  useEffect(() => {
+    if (sessionStorage.getItem("showeditmsg") == "1") {
+      toast.success("El curso ha sido editado correctamente.")
+      sessionStorage.removeItem("showeditmsg")
+    }
+  }, [])
 
-  if (!ready) {
-    return "Cargando..."
-  }
-
-  if (ready && !auth) {
-    return <Navigate to={"/login"} />
-  }
+  useEffect(() => {
+    if (sessionStorage.getItem("showcreatemsg") == "1") {
+      toast.success("El curso ha sido creado correctamente.")
+      sessionStorage.removeItem("showcreatemsg")
+    }
+  }, [])
+  useEffect(() => {
+    if (sessionStorage.getItem("showregistercoursemsg") == "1") {
+      toast.success("Te registraste correctamente en el curso.")
+      sessionStorage.removeItem("showregistercoursemsg")
+    }
+  }, [])
 
   const allowedRoles = [2002, 2003, 5001]
 
-  const ValidateResult = validateRoles({ allowedRoles })
-  //console.log("resultado: " + ValidateResult)
+  const ValidateRoles = validateRoles({ allowedRoles })
+  //console.log("resultado: " + ValidateRoles)
 
   return (
-    <div className={`${open ? "ml-72" : "ml-20"} pt-6`}>
+    <div className={`${open ? "ml-72" : "ml-20"}`}>
       <SideBar open={open} setOpen={setOpen} />
 
-      {ValidateResult && (
+      <Toaster position="top-center" />
+
+      {ValidateRoles && (
         <section className="m-10">
           <Link
             className="inline-block py-16 px-20 rounded-lg text-lg border hover:bg-gray-100"
@@ -57,55 +73,27 @@ export default function CoursesPage() {
         </section>
       )}
 
-      <section className="flex flex-wrap lg-mx-1">
+      {!ValidateRoles && (
+        <section className="m-10">
+          <Link
+            className="inline-block py-16 px-20 rounded-lg text-lg border hover:bg-gray-100"
+            to="/portal/cursos/registrar"
+            style={{ display: "flex", justifyContent: "center" }}
+          >
+            <div className="text-center">
+              <span className="pl-2">¿Deseas entrar a un curso?</span>
+              <p>Presiona aquí para registrarte en una tutoría.</p>
+            </div>
+          </Link>
+        </section>
+      )}
+
+      {/* {console.log(courses)} */}
+      <section className="flex flex-wrap lg-mx-1 ml-5">
         {courses?.length > 0 &&
-          courses.map((course) => (
-            <div key={course._id} className="w-96 h-60 p-4 mb-20 mx-5">
-              <Link to={"/portal/cursos/" + course._id}>
-                <div className="max-w-xl rounded overflow-hidden shadow-lg relative">
-                  <img
-                    className="w-full h-1/2"
-                    src={PencilsImage}
-                    alt="Background image of some pencils with a yellow background"
-                  />
-
-                  {course.courseNeurodiv ? (
-                    <div className="absolute left-0 top-0 h-16 w-16">
-                      <p className="absolute transform -rotate-45 bg-gray-600 text-center text-white font-semibold py-1 left-[-34px] top-[32px] w-[170px]">
-                        Neurodivergente
-                      </p>
-                    </div>
-                  ) : (
-                    false
-                  )}
-
-                  <section className="px-6 py-4">
-                    <span className="font-bold text-xl mb-2">
-                      {course.courseName?.length < 28
-                        ? course.courseName
-                        : width > 500
-                        ? course.courseName.slice(0, 28) + "..."
-                        : course.courseName.slice(0, 15) + "..."}
-                    </span>
-                    <p className="text-gray-700 text-base">
-                      {course.courseDescription?.length < 28
-                        ? course.courseDescription
-                        : width > 500
-                        ? course.courseDescription.slice(0, 28) + "..."
-                        : course.courseDescription.slice(0, 15) + "..."}
-                    </p>
-                  </section>
-
-                  <section className="px-6 pt-4 pb-2">
-                    <span
-                      to={"/portal/cursos/" + course._id}
-                      className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2"
-                    >
-                      Ver detalles
-                    </span>
-                  </section>
-                </div>
-              </Link>
+          courses?.map((course) => (
+            <div key={course._id} className="w-96 h-60 mb-20 mx-5">
+              <CoursesCard width={width} course={course} />
             </div>
           ))}
       </section>

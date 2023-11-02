@@ -22,13 +22,16 @@ const User = require("../models/User") // Model for Users
 
 /* JSONWebToken
  * Self-contained way for securely transmitting information between parties as a JSON object*/
-const jwt = require("jsonwebtoken") // import
-const jwtSecret = "AOi3ejk34io" // jwt secret token, it is randomly typed
+//const jwt = require("jsonwebtoken") // import
+//const jwtSecret = "AOi3ejk34io" // jwt secret token, it is randomly typed
 
 /* Cookieparser
  * Parse and handle HTTP cookies that are sent between the client and the server.  */
 const cookieParser = require("cookie-parser") // import
 router.use(cookieParser()) // This is to create an instance of the cookieparser
+
+//verify
+const {verifyToken} = require('./../middleware/authHandler')
 
 /*     ENDPOINTS TO API
  *     These correspond to every endpoint that is going to be accessed later in front-end
@@ -38,31 +41,24 @@ router.use(cookieParser()) // This is to create an instance of the cookieparser
  *       - delete to delete data */
 
 /*    /profile
-*     This endpoint handles profile redirection from the login when it succeeded, validates the information and uses get*/
-router.get("/", (req, res) => {
-  // We listen to /profile with a get function
-  const { token } = req.cookies // We require from the session the cookies
-  if (token) {
-    // If the token is retreived correctly we go through
-    jwt.verify(
-      // We verify the jwt
-      token, //token: string
-      jwtSecret, // secretOrPublicKey: Secret | GetPublicKeyOrSecret
-      {}, // options?: VerifyOptions & { complete?: false }
-      async (err, userData) => {
-        // callback?: VerifyCallback<JwtPayload | string>
-        // We catch error and the user data
-        if (err) throw err // If there's an error we send it
-        const { userName, userEmail, id, userRoles } = await User.findById(
-          userData.id
-        ) // We retrive the name, email and id from the database by finding it by id
-        res.json({ userName, userEmail, id, userRoles }) // We give as a response the name, email and id
-      }
-    )
-  } else {
-    // If not we send an error
-    res.json(null)
+ *     This endpoint handles profile redirection from the login when it succeeded, validates the information and uses get*/
+router.get("/", async (req, res) => {
+  try {
+    const { token } = req.cookies;
+
+    if (token) {
+      const userData = await verifyToken(token); // Verifica el token JWT
+
+      const { userName, userEmail, id, userRoles, userDate, userAvailable } = await User.findById(userData.id);
+      res.json({ userName, userEmail, id, userRoles, userDate, userAvailable });
+    } else {
+      res.json(null);
+    }
+  } catch (err) {
+    console.error("Error:", err);
+    res.status(500).send("Error en la obtención del perfil del usuario.");
   }
-})
+});
+
 
 module.exports = router
