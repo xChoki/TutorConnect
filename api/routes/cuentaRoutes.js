@@ -83,7 +83,7 @@ function formatChileanDateTime() {
  *   Used to count the number of registered users and courses
  *   This job is executed every 12 hours */
 let counts = { tutorCount: 0, studentCount: 0, totalCursos: 0 }
-const job = schedule.scheduleJob("12 * * * *", async function () {
+const job = schedule.scheduleJob("0 */6 * * *", async function () {
   console.log("Contando usuarios y cursos...")
 
   try {
