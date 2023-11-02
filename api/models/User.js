@@ -25,14 +25,20 @@ const UserSchema = new Schema({
 
   userRoles: {
     User: {
-        type: Number,
-        default: 2001
+      type: Number,
+      default: 2001,
     },
     Tutor: Number,
     Teacher: Number,
-    Admin: Number
+    Admin: Number,
   },
-  refreshToken: String
+
+  userAvailable: {
+    type: Boolean,
+    default: true,
+  },
+  
+  refreshToken: String,
 })
 
 const UserModel = mongoose.model("User", UserSchema)

@@ -12,6 +12,7 @@ import {
   Icon_Mensajes,
   Icon_Arrow,
   Icon_Letter,
+  Icon_Config,
 } from "../../assets/Icons"
 
 import axios from "axios"
@@ -72,6 +73,11 @@ export default function SideBar({ open, setOpen }) {
         break
       case "mensajes":
         if (window.location.pathname === "/portal/mensajes") {
+          classes += " bg-gray-200"
+        }
+        break
+      case "configuracion":
+        if (window.location.pathname === "/configuracion") {
           classes += " bg-gray-200"
         }
         break
@@ -178,6 +184,14 @@ export default function SideBar({ open, setOpen }) {
                 <Icon_Mensajes />
                 <span className={`${!open && "hidden"} origin-left duration-200 flex-1 ml-3 `}>
                   Mensajes
+                </span>
+              </NavLink>
+            </li>
+            <li>
+              <NavLink to={"/configuracion"} className={link_Classes("configuracion")}>
+                <Icon_Config />
+                <span className={`${!open && "hidden"} origin-left duration-200 flex-1 ml-3 `}>
+                  Configuración
                 </span>
               </NavLink>
             </li>

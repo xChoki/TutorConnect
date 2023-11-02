@@ -20,6 +20,8 @@ import RequireAuth from "./components/RequireAuth"
 import ApplicationsDetailsPage from "./pages/Applications/ApplicationsDetailsPage"
 import StudentsCoursePage from "./pages/Students/StudentsCoursePage"
 
+import ConfigurationPage from "./pages/Configuration/ConfigurationPage"
+
 // Variable de entorno
 axios.defaults.baseURL = import.meta.env.VITE_API_URL
 axios.defaults.withCredentials = true
@@ -47,6 +49,7 @@ function App() {
           <Route path="/portal/cursos" element={<CoursesPage />} />
           <Route path="/portal/cursos/registrar" element={<StudentsCoursePage />} />
           <Route path="/portal/cursos/:id" element={<CourseInfoPage />} />
+          <Route path="/configuracion" element={<ConfigurationPage />} />
         </Route>
 
         <Route element={<RequireAuth allowedRoles={[ROLES.Tutor, ROLES.Teacher, ROLES.Admin]} />}>
