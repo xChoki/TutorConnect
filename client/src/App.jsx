@@ -21,6 +21,7 @@ import ApplicationsDetailsPage from "./pages/Applications/ApplicationsDetailsPag
 import StudentsCoursePage from "./pages/Students/StudentsCoursePage"
 
 import ConfigurationPage from "./pages/Configuration/ConfigurationPage"
+import ApplicationsGraphPage from "./pages/Applications/ApplicationsGraphPage"
 
 // Variable de entorno
 axios.defaults.baseURL = import.meta.env.VITE_API_URL
@@ -72,6 +73,7 @@ function App() {
            * Profesores y administradores */}
           <Route path="/portal/solicitudes" element={<ApplicationsPage />} />
           <Route path="/portal/solicitudes/:id" element={<ApplicationsInfoPage />} />
+          <Route path="/portal/solicitudes/graficos" element={<ApplicationsGraphPage />} />
         </Route>
         <Route path="/*" element={<IndexPage />} />
       </Route>
