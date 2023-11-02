@@ -1,0 +1,20 @@
+version: "3.9"
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile_api.dev
+    ports:
+      - "4000:4000"
+    volumes:
+      - "./api:/home/api"
+      - "./api/node_modules:/home/api/node_modules"
+  tutorconnect:
+    build:
+      context: .
+      dockerfile: Dockerfile_client.dev
+    ports:
+      - "5173:5173"
+    volumes:
+      - "./client:/home/client"
+      - "./client/node_modules:/home/client/node_modules"

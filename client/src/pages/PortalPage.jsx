@@ -1,104 +1,50 @@
-import { useContext, useState } from "react"
-import { UserContext } from "../UserContext"
-import { Link, Navigate, useParams } from "react-router-dom"
-
-import { Icon_Alumnos, Icon_Cursos, Icon_Home, Icon_Logout, Icon_Mensajes } from "../assets/Icons";
-import axios from "axios";
-import CoursesPage from "./CoursesPage";
+import SideBar from "../components/Navigation/SideBar"
+import { Link } from "react-router-dom"
+import useAuth from "../hooks/useAuth"
+import { validateRoles } from "../scripts/ValidateRoles"
+import { useSidebarState } from "../hooks/useSidebarState"
+import { useEffect } from "react"
+import { Toaster, toast } from "sonner"
 
 export default function PortalPage() {
-    const [redirect, setRedirect] = useState(null)
-    const { ready, user, setUser } = useContext(UserContext)
+  const { auth } = useAuth()
+  const [open, setOpen] = useSidebarState()
 
-    let { subpage } = useParams()
+  const allowedRoles = [2002, 2003, 5001]
+  const ValidateRoles = validateRoles({ allowedRoles })
 
-    if (subpage === undefined) {
-        subpage = 'portal'
+  useEffect(() => {
+    if (sessionStorage.getItem("showloginmsg") == "1") {
+      toast.success(`Bienvenido ${auth.userName}!`)
+      sessionStorage.removeItem("showloginmsg")
     }
 
-    if (!ready) {
-        return 'Cargando...'
-    }
+    document.title = "TutorConect | Portal"
+  }, [])
 
-    if (ready && !user) {
-        return <Navigate to={'/login'} />
-    }
+  return (
+    <div className="grid grid-cols-[auto,1fr]">
+      <SideBar open={open} setOpen={setOpen} />
 
-    function linkClasses(type = null) {
-        let classes = 'flex items-center p-2 py-5 my-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-300 dark:hover:bg-gray-700 group'
-        if (type === subpage) {
-            classes += ' bg-gray-200'
-        }
-        return classes
-    }
-
-    async function logout() {
-        var result = confirm("¿Seguro que desea cerrar sesión?");
-        if (result == true) {
-            await axios.post('/logout')
-            setRedirect('/')
-            setUser(null)
-        } else {
-            return
-        }
-    }
-
-    if (redirect) {
-        return <Navigate to={redirect} />
-    }
-
-    //const {subpage} = useParams()
-
-
-    return (
-        <>
-            <aside id="default-sidebar" className="fixed top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full sm:translate-x-0" aria-label="Sidebar">
-                <div className="h-full px-3 py-4 pt-32 overflow-y-auto bg-gray-50 dark:bg-gray-800">
-                    <ul className="space-y-2 font-medium">
-                        <li>
-                            <Link to={'/portal'} className={linkClasses('portal')}>
-                                <Icon_Home />
-                                <span className="flex-1 ml-3 whitespace-nowrap">Inicio</span>
-                            </Link>
-                        </li>
-                        <li>
-                            <Link to={'/portal/alumnos'} className={linkClasses('alumnos')}>
-                                <Icon_Alumnos />
-                                <span className="flex-1 ml-3 whitespace-nowrap">Alumnos</span>
-                            </Link>
-                        </li>
-                        <li>
-                            <Link to={'/portal/cursos'} className={linkClasses('cursos')}>
-                                <Icon_Cursos />
-                                <span className="flex-1 ml-3 whitespace-nowrap">Cursos</span>
-                            </Link>
-                        </li>
-                        <li>
-                            <Link to={'/portal/mensajes'} className={linkClasses('mensajes')}>
-                                <Icon_Mensajes />
-                                <span className="flex-1 ml-3 whitespace-nowrap">Mensajes</span>
-                            </Link>
-                        </li>
-                        <li>
-                            <Link onClick={logout} className={linkClasses('logout')}>
-                                <Icon_Logout />
-                                <span className="flex-1 ml-3 whitespace-nowrap">Cerrar sesión</span>
-                            </Link>
-                        </li>
-                    </ul>
-                </div>
-            </aside>
-
-            <section className="p-4 sm:ml-64">
-                {subpage === 'portal' && (
-                    <div className="text-center max-w-lg mx-auto">
-                        <span> Hola {user.name}!</span>
-                    </div>
-                )}
-                {subpage === 'cursos' && (
-                    <CoursesPage/>
-                )}
-            </section>
-        </>
-    )
+      <Toaster position="top-center" />
+      
+      <section className={`${open ? "ml-72" : "ml-20"} p-7 font-semibold`}>
+        {!ValidateRoles && (
+          <section className="m-10">
+            <Link
+              className="inline-block py-16 px-20 rounded-lg text-lg border hover:bg-gray-100"
+              to="/portal/solicitudes/detalles"
+              style={{ display: "flex", justifyContent: "center" }}
+            >
+              <div className="text-center">
+                <span className="pl-2">¿Deseas ser tutor?</span>
+                <p>Presiona aquí para saber más y postular.</p>
+              </div>
+            </Link>
+          </section>
+        )}
+        <span> Hola {auth.userName}!</span>
+      </section>
+    </div>
+  )
 }

@@ -1,144 +1,126 @@
-/* --------------------------------------------
-            IMPORTS AND DECLARATIONS */
+/*    IMPORTS AND DECLARATIONS
+ *    These are the imports and declaration in this file */
 
-// ExpressJS
-const express = require('express')
-const app = express()
-// Parse json
-app.use(express.json())
+/* Dotenv
+ * Dependency used to read .env files, in NODE v20.6.0 it is integrated, but we are using v18.17.1LTS and it is not */
+require("dotenv").config()
 
-// CORS
-const cors = require('cors')
-app.use(cors({
+/* EXPRESSJS
+ * This is what we are using to code the API */
+const express = require("express") // import
+const app = express() // This is to create an instance of the express app
+const port = process.env.PORT || 4000 // Specify desired port
+app.use(express.json()) // This is used to parse every JSON for express usage
+app.use(express.urlencoded({ extended: true }))
+
+/* CORS: Cross-Origin Resource Sharing
+ * Used to give security and control access to our app*/
+const cors = require("cors") // import
+app.use(
+  cors({
     credentials: true,
-    origin: 'http://localhost:5173',
-}))
+    origin: process.env.URL_CORS, // This is the origin that we are allowing access
+  })
+)
 
-// Mongo connection
-// WdiVlejzjG8dwuBt
-const { default: mongoose } = require('mongoose')
-require('dotenv').config()
-mongoose.connect(process.env.MONGO_URL)
-// Mongoose models
-const User = require('./models/User')
-const Course = require('./models/Course')
+// app.use(express.static(path.join(__dirname, "uploads")))
+app.use(express.static("uploads"))
 
-// BCRYPTJS
-const bcrypt = require('bcryptjs')
-const bcryptSalt = bcrypt.genSaltSync(10)
-const jwtSecret = 'AOi3ejk34io'
+/* Multer
+ * Handles and helps with file uploading  */
+const multer = require("multer")
 
-// Jsonwebtoken
-const jwt = require('jsonwebtoken')
-
-// cookieparser
-const cookieParser = require('cookie-parser')
-app.use(cookieParser())
-
-/* --------------------------------------------
-                ENDPOINTS TO API */
-
-
-/* *************************
-            Test */
-app.get('/test', (req, res) => {
-    res.json('test ok')
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "uploads/default/") // Default destination for uploads
+  },
+  filename: (req, file, cb) => {
+    const courseId = req.body.id || req.query.id
+    if (courseId) cb(null, "prueba " + courseId + "_" + Date.now() + "_" + file.originalname)
+  },
 })
 
-/* *************************
-            Register */
-app.post('/register', async (req, res) => {
-    const { name, email, password } = req.body
-
-    try {
-        const userDoc = await User.create({
-            name,
-            email,
-            password: bcrypt.hashSync(password, bcryptSalt),
-        })
-
-        res.json(userDoc)
-    } catch (e) {
-        res.status(422).json(e)
-    }
+const upload = multer({
+  storage: storage, // Use the default storage configuration
 })
 
-/* *************************
-            Login */
-app.post('/login', async (req, res) => {
-    // Variables
-    const { email, password } = req.body
-    // Look for email in DB
-    const userDoc = await User.findOne({ email })
+/*     ENDPOINTS TO API
+ *     These correspond to every endpoint that is going to be accessed later in front-end
+ *       - get to obtain data
+ *       - post to insert or send data
+ *       - put to update data
+ *       - delete to delete data */
 
-    if (userDoc) {
-        // if email exists it checks password
-        const passOk = bcrypt.compareSync(password, userDoc.password)
-        if (passOk) {
-            // if password is correct it creates cookie, etc
-            jwt.sign({
-                email: userDoc.email,
-                id: userDoc._id,
-                name: userDoc.name
-            }, jwtSecret, {}, (err, token) => {
-                if (err) throw err
-                res.cookie('token', token).json(userDoc)
-            })
-        } else {
-            // if password is correct it shows message
-            res.status(422).json('Contraseña incorrecta')
-        }
-    } else {
-        // if email doesn't exists it shows message
-        res.json('Correo no existe')
-    }
+// Import route files
+const testRoutes = require("./routes/testRoutes")
+const registerRoutes = require("./routes/registerRoutes")
+const loginRoutes = require("./routes/loginRoutes")
+const profileRoutes = require("./routes/profileRoutes")
+const logoutRoutes = require("./routes/logoutRoutes")
+const coursesRoutes = require("./routes/coursesRoutes")
+const cuentaRoutes = require("./routes/cuentaRoutes")
+const uploadRoutes = require("./routes/uploadRoutes")
+const applicationRoutes = require("./routes/applicationRoutes")
+const studentRoutes = require("./routes/studentRoutes")
+const userRoutes = require("./routes/userRoutes")
+
+/*     /test
+ *     This endpoint is to test the connection, if it is up it shows "test ok" */
+app.use("/api/test", testRoutes)
+
+/*     /register
+ *     This endpoint handles register form, validates the information and uses post */
+app.use("/api/register", registerRoutes)
+
+/*     /login
+ *     This endpoint handles login form, validates the information and uses post*/
+app.use("/api/login", loginRoutes)
+
+/*     /profile
+ *     This endpoint handles profile redirection from the login when it succeeded, validates the information and uses get*/
+app.use("/api/profile", profileRoutes)
+
+/*     /logout
+ *     This endpoint handles logout from the sidebar, when it succeeded, validates the information and uses post*/
+app.use("/api/logout", logoutRoutes)
+
+/*     /cursos
+ *     This endpoint handles cursos from the form, and others
+ *     There are multiple endpoints inside:
+ *      - POST: When it is called and it succeeded, validates the information and uses post to register a new Course
+ *      - GET: When it is called and it succeeded, validates the information and uses get to obtain the Courses data
+ *      - GET(id): When it is called and it succeeded, validates the information and uses get to obtain the detailed information by id
+ *      - PUT: When it is called and it succeeded, validates the information and uses put to update the information
+ *      - DELETE(id): When it is called and it succeeded, validates the information and uses delete to erase from database the information */
+app.use("/api/courses", coursesRoutes)
+
+/*    /cuenta
+ *     This endpoint handles the count of users and courses with the id, when it succeeded, validates the information and uses get to send the information */
+app.use("/api/cuenta", cuentaRoutes)
+
+/*    /upload
+ *     This endpoint handles the upload of files to the course
+ *     /videos: manages the video files
+ *     /homework: manages the homework files
+ *     /material: manages the extra material files*/
+app.use("/api/upload", uploadRoutes)
+
+/*     /applications
+ *     This endpoint handles applications from the form, and others
+ *     There are multiple endpoints inside:
+ *      - POST: When it is called and it succeeded, validates the information and uses post to register a new Application
+ *      - GET: When it is called and it succeeded, validates the information and uses get to obtain the Applications data
+ *
+ *      TODO:
+ *      - GET(id): When it is called and it succeeded, validates the information and uses get to obtain the detailed information by id
+ *      - PUT: When it is called and it succeeded, validates the information and uses put to update the information
+ *      - DELETE(id): When it is called and it succeeded, validates the information and uses delete to erase from database the information */
+app.use("/api/applications", applicationRoutes)
+
+app.use("/api/student", studentRoutes)
+
+app.use("/api/user", userRoutes)
+
+app.listen(port, () => {
+  console.log(`Server is running on port ${port}`)
 })
-
-/* *************************
-            Profile */
-app.get('/profile', (req, res) => {
-    const { token } = req.cookies
-    if (token) {
-        jwt.verify(token, jwtSecret, {}, async (err, userData) => {
-            if (err) throw err
-            const { name, email, id } = await User.findById(userData.id)
-            res.json({ name, email, id })
-        })
-    } else {
-        res.json(null)
-    }
-})
-
-app.post('/logout', (req, res) => {
-    res.cookie('token', '').json(true)
-})
-
-app.post('/cursos', (req, res) => {
-    const { token } = req.cookies
-    const { course_name, course_description, course_category, course_extrainfo, course_neurodiv } = req.body
-
-    /*
-    course_tutor_id: {type:mongoose.Schema.Types.ObjectId, ref:'User'},
-    course_tutor_name: {type:mongoose.Schema.Types.ObjectId, ref:'User'},
-    course_name: String,
-    course_students: [String],
-    course_description: String,
-    course_category: String,
-    course_extrainfo: String,
-    course_neurodiv: String, */
-    jwt.verify(token, jwtSecret, {}, async (err, userData) => {
-        if (err) throw err
-        await Course.create({
-            course_tutor_id: userData.id,
-            course_tutor_name: userData.name,
-            course_name,
-            course_description,
-            course_category,
-            course_extrainfo,
-            course_neurodiv,
-        })
-    })
-
-})
-
-app.listen(4000)
