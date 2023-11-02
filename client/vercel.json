@@ -45,6 +45,10 @@
             "dest": "/"
         },
         {
+            "src": "/portal/solicitudes/graficos",
+            "dest": "/"
+        },
+        {
             "src": "/portal/solicitudes/nuevo",
             "dest": "/"
         },
