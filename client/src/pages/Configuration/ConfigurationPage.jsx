@@ -34,9 +34,11 @@ export default function ConfigurationPage() {
     <div className={`${open ? "ml-72" : "ml-20"} pt-6`}>
       <SideBar open={open} setOpen={setOpen} />
 
-      <h1 className="text-2xl md:text-4xl p-4">Configuración</h1>
+      <h1 className="text-2xl md:text-4xl p-4 mb-4 text-center">Configuración</h1>
 
-      <section className="grid lg-mx-1 divide-y gap-y-10">
+      <hr />
+
+      <section className="grid lg-mx-1 divide-y gap-y-10 mt-4 container mx-auto">
         <ConfigInput
           type={"text"}
           name={"userName"}
