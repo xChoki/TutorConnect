@@ -109,12 +109,12 @@ export default function PortalPage() {
   }
 
   return (
-    <div className="grid grid-cols-[auto,1fr]">
+    <div className="grid grid-cols-[auto,1fr] container mx-auto">
       <SideBar open={open} setOpen={setOpen} />
 
       <Toaster position="top-center" />
 
-      <section className={`${open ? "ml-72" : "ml-20"} p-7 container mx-auto`}>
+      <section className={`${open ? "ml-72" : "ml-20"} p-7`}>
         {!ValidateRoles && (
           <section className="m-10">
             <Link
@@ -155,7 +155,7 @@ export default function PortalPage() {
           <h2 className="font-semibold text-3xl"> Tus cursos </h2>
         </div>
 
-        <section className="flex flex-wrap lg-mx-1 ml-5">
+        <section className="flex flex-wrap lg-mx-1 ml-5 justify-center">
           {courses?.length > 0 &&
             courses
               .filter((course) => !coursesStudentIsIn.includes(course._id))

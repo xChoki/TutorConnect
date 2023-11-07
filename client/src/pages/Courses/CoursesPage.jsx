@@ -53,7 +53,7 @@ export default function CoursesPage() {
   //console.log("resultado: " + ValidateRoles)
 
   return (
-    <div className={`${open ? "ml-72" : "ml-20"}`}>
+    <div className={`${open ? "ml-72" : "ml-20"} container mx-auto`}>
       <SideBar open={open} setOpen={setOpen} />
 
       <Toaster position="top-center" />
@@ -89,7 +89,7 @@ export default function CoursesPage() {
       )}
 
       {/* {console.log(courses)} */}
-      <section className="flex flex-wrap lg-mx-1 ml-5">
+      <section className="flex flex-wrap lg-mx-1 ml-5 justify-center">
         {courses?.length > 0 &&
           courses?.map((course) => (
             <div key={course._id} className="w-96 h-60 mb-20 mx-5">
