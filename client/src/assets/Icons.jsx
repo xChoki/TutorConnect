@@ -269,7 +269,8 @@ export function Icon_Check() {
   )
 }
 
-export function Icon_Upload() {
+export function Icon_Upload(props) {
+  const { margin } = props
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -277,7 +278,7 @@ export function Icon_Upload() {
       viewBox="0 0 24 24"
       strokeWidth="1.5"
       stroke="currentColor"
-      className="w-6 h-6"
+      className={margin ? `w-6 h-6 m-${margin}` : `w-6 h-6`}
     >
       <path
         strokeLinecap="round"
@@ -417,7 +418,8 @@ export function Icon_Config() {
   )
 }
 
-export function Icon_Edit() {
+export function Icon_Edit(props) {
+  const { margin } = props
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -425,7 +427,7 @@ export function Icon_Edit() {
       viewBox="0 0 24 24"
       strokeWidth="1.5"
       stroke="currentColor"
-      className={`w-6 h-6`}
+      className={margin ? `w-6 h-6 m-${margin}` : `w-6 h-6`}
     >
       <path
         strokeLinecap="round"

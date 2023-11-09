@@ -4,7 +4,6 @@ import axios from "axios"
 
 import ApplicationsCard from "../../components/Cards/ApplicationsCard"
 import { useSidebarState } from "../../hooks/useSidebarState"
-import { Link } from "react-router-dom"
 
 export default function ApplicationsPage() {
   const [applications, setApplications] = useState([])
@@ -26,18 +25,6 @@ export default function ApplicationsPage() {
   return (
     <div className={`${open ? "ml-72" : "ml-20"} pt-6`}>
       <SideBar open={open} setOpen={setOpen} />
-
-      <section className="m-10">
-        <Link
-          className="inline-block py-16 px-20 rounded-lg text-lg border hover:bg-gray-100"
-          to="/portal/solicitudes/graficos"
-          style={{ display: "flex", justifyContent: "center" }}
-        >
-          <div className="text-center flex">
-            <span className="pl-2">Ver gráficos</span>
-          </div>
-        </Link>
-      </section>
 
       <h1 className="text-5xl p-4 text-center">Postulaciones</h1>
 

@@ -203,6 +203,7 @@ export default function CourseInfoPage() {
                 fileDiff={fileDiff}
                 setFileName={setFileName}
                 selectedVideoInfo={selectedVideoInfo}
+                isUserCourseTutor={isUserCourseTutor}
               />
             ) : (
               <StudentCourseButtons registerStudent={registerStudent} />

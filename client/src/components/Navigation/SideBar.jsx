@@ -165,14 +165,17 @@ export default function SideBar({ open, setOpen }) {
               </li>
             )}
 
-            <li>
-              <NavLink to={"/portal/graficos"} className={link_Classes("graficos")}>
-                <Icon_Chart />
-                <span className={`${!open && "hidden"} origin-left duration-200 flex-1 ml-3 `}>
-                  Gráficos
-                </span>
-              </NavLink>
-            </li>
+            {ValidateRolesTeaAdm && (
+              <li>
+                <NavLink to={"/portal/graficos"} className={link_Classes("graficos")}>
+                  <Icon_Chart />
+                  <span className={`${!open && "hidden"} origin-left duration-200 flex-1 ml-3 `}>
+                    Gráficos
+                  </span>
+                </NavLink>
+              </li>
+            )}
+
             <li>
               <NavLink to={"/portal/cursos"} className={link_Classes("cursos")}>
                 <Icon_Cursos />
