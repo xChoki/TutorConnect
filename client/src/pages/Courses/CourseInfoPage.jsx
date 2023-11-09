@@ -203,6 +203,7 @@ export default function CourseInfoPage() {
                 fileDiff={fileDiff}
                 setFileName={setFileName}
                 selectedVideoInfo={selectedVideoInfo}
+                isUserCourseTutor={isUserCourseTutor}
               />
             ) : (
               <StudentCourseButtons registerStudent={registerStudent} />
@@ -295,8 +296,8 @@ export default function CourseInfoPage() {
           <ReactPlayer
             url={selectedVideo}
             controls
-            width="50%" // Set the width to 100% to fill the modal
-            height="50%" // Set the height to 100% to fill the modal
+            width="100%" // Set the width to 100% to fill the modal
+            height="100%" // Set the height to 100% to fill the modal
             playing // AutoPlay
             onEnded={() => setOpenModalVideo(false)}
           />
