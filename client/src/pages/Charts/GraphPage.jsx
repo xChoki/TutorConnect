@@ -4,7 +4,7 @@ import { useSidebarState } from "../../hooks/useSidebarState"
 import ReactEcharts from "echarts-for-react"
 import axios from "axios"
 
-export default function ApplicationsGraphPage() {
+export default function GraphPage() {
   const [open, setOpen] = useSidebarState()
 
   const [totalTutores, setTotalTutores] = useState(0)

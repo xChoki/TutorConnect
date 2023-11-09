@@ -24,7 +24,7 @@ export default function ApplicationsPage() {
   )
 
   return (
-    <div className={`${open ? "ml-72" : "ml-20"} pt-6 container mx-auto`}>
+    <div className={`${open ? "ml-72" : "ml-20"} pt-6`}>
       <SideBar open={open} setOpen={setOpen} />
 
       <section className="m-10">
