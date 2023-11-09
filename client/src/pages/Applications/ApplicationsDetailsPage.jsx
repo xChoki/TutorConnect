@@ -54,7 +54,7 @@ export default function ApplicationsDetailsPage() {
   ]
 
   return (
-    <div className="grid grid-cols-[auto,1fr]">
+    <div className="grid grid-cols-[auto,1fr] container mx-auto">
       <SideBar open={open} setOpen={setOpen} />
 
       <section className={`${open ? "ml-72" : "ml-20"} p-7 font-semibold`}>

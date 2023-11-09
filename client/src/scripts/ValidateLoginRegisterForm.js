@@ -3,7 +3,7 @@ export function validateName(userName) {
     return false
   }
 
-  const regex = /^[a-zA-Z\s]+$/
+  const regex = /^[A-Za-zÀ-ÖØ-öø-ÿ\s]+$/
   return regex.test(userName)
 }
 
@@ -15,21 +15,21 @@ export function validateEmail(userEmail) {
 export function validatePassword(userPassword) {
   // Minimum length of 6 characters
   if (userPassword.length < 6) {
-    return false
+    return false;
   }
 
   // At least one uppercase letter
-  if (!/[A-Z]/.test(userPassword)) {
-    return false
+  if (!/[A-ZÁÉÍÓÚÜÑ]/.test(userPassword)) {
+    return false;
   }
 
   // At least one special character (you can customize this character set)
-  if (!/[-!@#$%^&*()_+|~=`{}[\]:";'<>?,.\\]/.test(userPassword)) {
-    return false
+  if (!/[-!@#$%^&*()_+|~=`{}[\]:";'<>?,.\\/ÁÉÍÓÚÜÑ]/.test(userPassword)) {
+    return false;
   }
 
   // If all conditions pass, the password is valid
-  return true
+  return true;
 }
 
 export function validateDate(userDate) {

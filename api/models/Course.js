@@ -1,10 +1,15 @@
 const mongoose = require('mongoose')
 const { Schema } = mongoose
 
+const ProgressSchema = new Schema({
+    progressFileId: { type: mongoose.Schema.Types.ObjectId, ref: 'Course' },
+    progressScore: Number,
+})
+
 const StudentSchema = new Schema({
     student_id: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     student_name: { type: mongoose.Schema.Types.String, ref: 'User' },
-    student_progress: Number,
+    student_progress: [ProgressSchema],
 })
 
 const FileSchema = new Schema({

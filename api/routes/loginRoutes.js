@@ -97,7 +97,7 @@ router.post("/", async (req, res) => {// We listen to /login with an async post 
   // This searches for an existing User using findOne function by their email
   const userDoc = await User.findOne({ userEmail });
 
-  if (userDoc) {
+  if (userDoc && userDoc.userAvailable === true) {
     // If email is found it checks for a password
     const passOk = bcrypt.compareSync(userPassword, userDoc.userPassword);
 
