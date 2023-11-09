@@ -53,7 +53,7 @@ export default function CoursesPage() {
   //console.log("resultado: " + ValidateRoles)
 
   return (
-    <div className={`${open ? "ml-72" : "ml-20"} container mx-auto`}>
+    <div className={`${open ? "ml-72" : "ml-20"}`}>
       <SideBar open={open} setOpen={setOpen} />
 
       <Toaster position="top-center" />

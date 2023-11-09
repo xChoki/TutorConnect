@@ -5,14 +5,15 @@ import useAuth from "../../hooks/useAuth"
 import { validateRoles } from "../../scripts/ValidateRoles"
 
 import {
-  Icon_Alumnos,
+  // Icon_Alumnos,
   Icon_Cursos,
   Icon_Home,
   Icon_Logout,
-  Icon_Mensajes,
+  // Icon_Mensajes,
   Icon_Arrow,
   Icon_Letter,
   Icon_Config,
+  Icon_Chart,
 } from "../../assets/Icons"
 
 import axios from "axios"
@@ -25,18 +26,6 @@ export default function SideBar({ open, setOpen }) {
   const [openModal, setOpenModal] = useState(false)
 
   let { subpage } = useParams()
-
-  // useEffect(() => {
-  //   function handleResize() {
-  //     setOpen(window.innerWidth >= 1000)
-  //   }
-
-  //   window.addEventListener("resize", handleResize)
-
-  //   return () => {
-  //     window.removeEventListener("resize", handleResize)
-  //   }
-  // }, [])
 
   if (subpage === undefined) {
     subpage = "portal"
@@ -81,6 +70,11 @@ export default function SideBar({ open, setOpen }) {
           classes += " bg-gray-200"
         }
         break
+      case "graficos":
+        if (window.location.pathname === "/portal/graficos") {
+          classes += " bg-gray-200"
+        }
+        break
       case "solicitudes":
         if (
           window.location.pathname === "/portal/solicitudes" ||
@@ -113,7 +107,7 @@ export default function SideBar({ open, setOpen }) {
   }
 
   let allowedRoles = [2002, 2003, 5001]
-  const ValidateRolesTeaAdmTut = validateRoles({ allowedRoles })
+  // const ValidateRolesTeaAdmTut = validateRoles({ allowedRoles })
   allowedRoles = [2003, 5001]
   const ValidateRolesTeaAdm = validateRoles({ allowedRoles })
 
@@ -149,7 +143,7 @@ export default function SideBar({ open, setOpen }) {
               </NavLink>
             </li>
 
-            {ValidateRolesTeaAdmTut && (
+            {/* {ValidateRolesTeaAdmTut && (
               <li>
                 <NavLink to={"/portal/alumnos"} className={link_Classes("alumnos")}>
                   <Icon_Alumnos />
@@ -158,7 +152,7 @@ export default function SideBar({ open, setOpen }) {
                   </span>
                 </NavLink>
               </li>
-            )}
+            )} */}
 
             {ValidateRolesTeaAdm && (
               <li>
@@ -166,6 +160,17 @@ export default function SideBar({ open, setOpen }) {
                   <Icon_Letter />
                   <span className={`${!open && "hidden"} origin-left duration-200 flex-1 ml-3`}>
                     Solicitudes
+                  </span>
+                </NavLink>
+              </li>
+            )}
+
+            {ValidateRolesTeaAdm && (
+              <li>
+                <NavLink to={"/portal/graficos"} className={link_Classes("graficos")}>
+                  <Icon_Chart />
+                  <span className={`${!open && "hidden"} origin-left duration-200 flex-1 ml-3 `}>
+                    Gráficos
                   </span>
                 </NavLink>
               </li>
@@ -179,14 +184,14 @@ export default function SideBar({ open, setOpen }) {
                 </span>
               </NavLink>
             </li>
-            <li>
+            {/* <li>
               <NavLink to={"/portal/mensajes"} className={link_Classes("mensajes")}>
                 <Icon_Mensajes />
                 <span className={`${!open && "hidden"} origin-left duration-200 flex-1 ml-3 `}>
                   Mensajes
                 </span>
               </NavLink>
-            </li>
+            </li> */}
             <li>
               <NavLink to={"/configuracion"} className={link_Classes("configuracion")}>
                 <Icon_Config />
