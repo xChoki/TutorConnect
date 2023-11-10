@@ -59,15 +59,14 @@ export default function IndexPage() {
         <div className="bg-white rounded-lg p-6 my-10 w-11/12 flex flex-col items-center justify-center max-w-screen-md  border shadow-md">
           <h2 className="text-2xl md:text-3xl font-semibold mb-4">Sobre nosotros</h2>
           <p className="text-base md:text-lg">
-            Lorem ipsum, dolor sit amet consectetur adipisicing elit. Quidem cum inventore obcaecati
-            facere! Non optio ullam labore delectus minima dolorem atque suscipit nihil? Impedit
-            minima, debitis recusandae harum explicabo ipsum. Libero, iusto, consequatur rerum,
-            quidem eum nam veniam omnis placeat voluptas itaque at dolor? Debitis temporibus quas
-            repellat adipisci. Exercitationem pariatur fugiat minima praesentium earum delectus
-            dicta animi quos laborum incidunt necessitatibus, voluptate deleniti et eaque quo
-            reiciendis unde itaque modi! Iusto natus fugit odio expedita aut eligendi ullam corporis
-            incidunt temporibus saepe ratione pariatur consectetur, at perferendis, rem velit esse,
-            debitis nihil iste aperiam vero dolorem? Adipisci, error voluptatem?
+            Tutor Connect nace en las aulas de Duoc UC - Sede Antonio Varas por un grupo de
+            estudiantes conformado el 2022 por Marcelo Rendón de Melo, Javier Quinteros Maldonado y
+            Tomás Henríquez Pereira. Los intereses comunes sobre el área de educación de este equipo
+            fueron el precursor Tutor Connect, plasmando estos intereses en una App-web de apoyo al
+            estudiante y al tutor que apunta a mejorar los aspectos educacionales del perfil
+            estudiante como la excelencia académica como tal. Nuestra meta es ser la principal
+            plataforma de ayuda estudiantil personalizada dentro de las instituciones de educación
+            superior como básica.
           </p>
         </div>
       </section>
