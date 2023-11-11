@@ -161,9 +161,23 @@ export default function CourseInfoPage() {
 
   // Check if student is registered in the course or not
   // const isUserInCourse = students && students.includes(auth.id)
-  const isUserInCourse = students.some(student => student.student_id === auth.id);
+  const isUserInCourse = students.some((student) => student.student_id === auth.id)
 
   const isUserCourseTutor = auth && tutorId.includes(auth.id)
+
+  const [shouldRenderStudentButtons, setShouldRenderStudentButtons] = useState(false);
+
+  useEffect(() => {
+    const delay = 1000; // 1000 milliseconds = 1 second
+
+    // Set a timeout to wait for the specified delay before rendering the student buttons
+    const timeoutId = setTimeout(() => {
+      setShouldRenderStudentButtons(true);
+    }, delay);
+
+    // Clean up the timeout if the component unmounts or if the condition changes
+    return () => clearTimeout(timeoutId);
+  }, []); // Empty dependency array to run the effect only once
 
   return (
     <>
@@ -190,7 +204,7 @@ export default function CourseInfoPage() {
               courseNeurodiv={courseNeurodiv}
             />
 
-            {(isUserInCourse || isUserCourseTutor) ? (
+            {isUserInCourse || isUserCourseTutor ? (
               <CourseFilesAccordion
                 ValidateRoles={ValidateRoles}
                 videoFiles={videoFiles}
@@ -206,7 +220,7 @@ export default function CourseInfoPage() {
                 isUserCourseTutor={isUserCourseTutor}
               />
             ) : (
-              <StudentCourseButtons registerStudent={registerStudent} />
+              shouldRenderStudentButtons && (<StudentCourseButtons registerStudent={registerStudent} />)
             )}
           </section>
         </div>
