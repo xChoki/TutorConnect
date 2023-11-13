@@ -16,6 +16,8 @@ export default function HomeworkFilesContent({
   file,
   setFileUri,
   downloadFile,
+  setOpenModalUpload,
+  setAddedFileId,
 }) {
   return (
     <>
@@ -100,7 +102,10 @@ export default function HomeworkFilesContent({
                 className="hover:bg-gray-400 hover:text-white rounded-lg"
                 onClick={(e) => {
                   e.stopPropagation()
-                  alert("subiendo")
+                  setAddedFileId(file._id)
+                  setOpenModalUpload(true)
+                  setFileDiff("response")
+                  // alert("subiendo")
                 }}
               >
                 <Icon_Upload margin="2" />

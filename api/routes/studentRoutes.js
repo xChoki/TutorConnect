@@ -67,8 +67,8 @@ router.put("/course/register/:id", async (req, res) => {
 
     const courseStudents = [
       {
-        student_id: userData.id,
-        student_name: userData.userName,
+        studentId: userData.id,
+        studentName: userData.userName,
       },
     ];
 

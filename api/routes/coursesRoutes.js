@@ -69,7 +69,7 @@ router.get("/", async (req, res) => {
     const courses = await Course.find({
       $or: [
         { courseTutorId: id }, // Tutor is the logged-in user
-        { "courseStudents.student_id": id }, // Student with matching ID
+        { "courseStudents.studentId": id }, // Student with matching ID
       ],
     })
 
