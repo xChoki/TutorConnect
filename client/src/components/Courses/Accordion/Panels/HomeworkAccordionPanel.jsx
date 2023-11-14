@@ -15,6 +15,7 @@ export default function HomeworkAccordionPanel({
   setFileUri,
   downloadFile,
   setAddedFileId,
+  id,
 }) {
   return (
     <>
@@ -52,6 +53,7 @@ export default function HomeworkAccordionPanel({
                 downloadFile={downloadFile}
                 setOpenModalUpload={setOpenModalUpload}
                 setAddedFileId={setAddedFileId}
+                id={id}
               />
             </React.Fragment>
           ))}

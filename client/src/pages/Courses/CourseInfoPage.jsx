@@ -225,6 +225,7 @@ export default function CourseInfoPage() {
                 selectedVideoInfo={selectedVideoInfo}
                 isUserCourseTutor={isUserCourseTutor}
                 setAddedFileId={setAddedFileId}
+                id={id}
               />
             ) : (
               shouldRenderStudentButtons && (<StudentCourseButtons registerStudent={registerStudent} />)

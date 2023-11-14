@@ -22,6 +22,7 @@ export default function CourseFilesAccordion({
   selectedVideoInfo,
   isUserCourseTutor,
   setAddedFileId,
+  id,
 }) {
   const [openHomeworkModal, setOpenHomeworkModal] = useState()
   const [fileUri, setFileUri] = useState("")
@@ -56,6 +57,7 @@ export default function CourseFilesAccordion({
             setFileUri={setFileUri}
             downloadFile={downloadFile}
             setAddedFileId={setAddedFileId}
+            id={id}
           />
         </Accordion.Panel>
 

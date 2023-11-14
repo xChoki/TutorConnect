@@ -164,19 +164,31 @@ async function updateMongoFileFieldStudent(file_name, file_url, course_id, stude
     )
 
     if (student) {
-      // Update the student's progress
-      const fileData = {
-        fileName: file_name,
-        fileUrl: file_url,
-      }
+      // Check if the file_id already exists in student's progress
+      const existingFileIndex = student.studentProgress.findIndex(
+        (progress) => progress.progressFileId.equals(file_id)
+      );
 
-      const studentProgress = {
-        progressFileId: file_id,
-        progressFile: fileData,
-      }
+      if (existingFileIndex !== -1) {
+        // Update the existing file's data
+        student.studentProgress[existingFileIndex].progressFile = {
+          fileName: file_name,
+          fileUrl: file_url,
+        };
+      } else {
+        // Add a new file to the student's progress
+        const fileData = {
+          fileName: file_name,
+          fileUrl: file_url,
+        };
 
-      // Update the existing student's progress in the course
-      student.studentProgress.push(studentProgress)
+        const studentProgress = {
+          progressFileId: file_id,
+          progressFile: fileData,
+        };
+
+        student.studentProgress.push(studentProgress);
+      }
 
       // Save the updated course document
       await courseDoc.save()
