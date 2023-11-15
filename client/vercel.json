@@ -45,11 +45,19 @@
             "dest": "/"
         },
         {
+            "src": "/portal/graficos",
+            "dest": "/"
+        },
+        {
             "src": "/portal/solicitudes/nuevo",
             "dest": "/"
         },
         {
             "src": "/portal/solicitudes/([^/]+)",
+            "dest": "/"
+        },
+        {
+            "src": "/configuracion",
             "dest": "/"
         }
     ]

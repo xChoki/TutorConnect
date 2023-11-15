@@ -26,7 +26,7 @@ export default function ApplicationsPage() {
     <div className={`${open ? "ml-72" : "ml-20"} pt-6`}>
       <SideBar open={open} setOpen={setOpen} />
 
-      <h1 className="text-5xl p-4">Postulaciones</h1>
+      <h1 className="text-5xl p-4 text-center">Postulaciones</h1>
 
       <h2 className="text-4xl p-4">Pendientes</h2>
 

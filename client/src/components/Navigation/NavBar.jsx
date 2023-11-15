@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom"
 import Icon_User from "../../assets/Icons"
 import useAuth from "../../hooks/useAuth"
+import logo1 from "../../assets/logo1.png"
 
 export default function NavBar() {
   const { auth } = useAuth()
@@ -12,7 +13,7 @@ export default function NavBar() {
           <div className="flex justify-between items-center p-2">
             <Link to="/" className="items-center">
               <span className="self-center text-2xl font-semibold whitespace-nowrap">
-                TutorConnect
+                <img src={logo1} width={150} height={150}/>
               </span>
             </Link>
   

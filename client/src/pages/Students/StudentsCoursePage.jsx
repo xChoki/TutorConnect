@@ -32,7 +32,7 @@ export default function StudentsCoursePage() {
   })
 
   return (
-    <div className={`${open ? "ml-72" : "ml-20"}`}>
+    <div className={`${open ? "ml-72" : "ml-20"} container mx-auto`}>
       <SideBar open={open} setOpen={setOpen} />
       <section className="m-10">
         <section className="flex flex-wrap lg-mx-1">
