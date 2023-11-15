@@ -9,6 +9,7 @@ const FileSchema = new Schema({
 const ProgressSchema = new Schema({
   progressFileId: { type: mongoose.Schema.Types.ObjectId, ref: "Course" },
   progressScore: Number,
+  progressComment: String,
   progressFile: FileSchema,
 })
 

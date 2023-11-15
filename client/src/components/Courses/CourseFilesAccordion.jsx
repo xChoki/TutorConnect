@@ -2,12 +2,11 @@ import { Accordion } from "flowbite-react"
 import { useState } from "react"
 
 import downloadFile from "../../Services/CoursesServices"
-import Modal from "../Modal"
 
-import FilesViewer from "../Files/FilesViewer"
 import VideoAccordionPanel from "./Accordion/Panels/VideoAccordionPanel"
 import HomeworkAccordionPanel from "./Accordion/Panels/HomeworkAccordionPanel"
 import MaterialAccordionPanel from "./Accordion/Panels/MaterialAccordionPanel"
+import ModalFileViewer from "../Modals/ModalFileViewer"
 
 export default function CourseFilesAccordion({
   ValidateRoles,
@@ -75,20 +74,11 @@ export default function CourseFilesAccordion({
         </Accordion.Panel>
       </Accordion>
 
-      <Modal
-        open={openHomeworkModal}
-        onClose={() => {
-          setOpenHomeworkModal(false)
-        }}
-        cancel={true}
-      >
-        <div className="flex flex-col items-center justify-center text-center h-full">
-          <div className="mx-auto my-4 w-full h-full">
-            <h3>Viendo archivo</h3>
-            <FilesViewer fileUri={fileUri} />
-          </div>
-        </div>
-      </Modal>
+      <ModalFileViewer 
+        openFileModal={openHomeworkModal}
+        setOpenFileModal={setOpenHomeworkModal}
+        fileUri={fileUri}
+      />
     </>
   )
 }

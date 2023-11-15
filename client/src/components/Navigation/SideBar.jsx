@@ -127,8 +127,8 @@ export default function SideBar({ open, setOpen }) {
           }}
         >
           <div className="flex gap-x-4 items-center">
-            <NavLink className={link_Classes()}>
-              <Icon_Arrow open={open} onClick={() => setOpen(!open)} />
+            <NavLink className={link_Classes()} onClick={() => setOpen(!open)}>
+              <Icon_Arrow open={open} />
             </NavLink>
           </div>
 

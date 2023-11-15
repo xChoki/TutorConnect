@@ -32,7 +32,7 @@ const cookieParser = require("cookie-parser") // import
 router.use(cookieParser()) // This is to create an instance of the cookieparser
 
 //verify
-const {verifyToken} = require('./../middleware/authHandler')
+const { verifyToken } = require("./../middleware/authHandler")
 
 /*     ENDPOINTS TO API
  *     These correspond to every endpoint that is going to be accessed later in front-end
@@ -44,45 +44,84 @@ const {verifyToken} = require('./../middleware/authHandler')
 /*     /student/cursos
  *     This endpoint handles cursos, when it succeeded, validates the information and uses get to receive the courses data*/
 router.get("/courses", async (req, res) => {
-  const { token } = req.cookies;
+  const { token } = req.cookies
 
   try {
-    const userData = await verifyToken(token);
-    const courses = await Course.find();
-    res.json(courses);
+    const userData = await verifyToken(token)
+    const courses = await Course.find()
+    res.json(courses)
   } catch (err) {
-    console.error("Error:", err);
-    res.status(401).json({ message: 'Access denied' });
+    console.error("Error:", err)
+    res.status(401).json({ message: "Access denied" })
   }
-});
+})
 
 router.put("/course/register/:id", async (req, res) => {
   try {
-    const { token } = req.cookies;
-    const { id } = req.params;
+    const { token } = req.cookies
+    const { id } = req.params
 
-    const userData = await verifyToken(token); // Verifica el token JWT
+    const userData = await verifyToken(token) // Verifica el token JWT
 
-    const courseDoc = await Course.findById(id); // Encuentra el curso por ID en el modelo Course
+    const courseDoc = await Course.findById(id) // Encuentra el curso por ID en el modelo Course
 
     const courseStudents = [
       {
         studentId: userData.id,
         studentName: userData.userName,
       },
-    ];
+    ]
 
     courseDoc.set({
       courseStudents,
-    });
+    })
 
-    await courseDoc.save(); // Guarda los nuevos datos
+    await courseDoc.save() // Guarda los nuevos datos
 
-    res.json("Registro en el curso completado"); // Envía una respuesta
+    res.json("Registro en el curso completado") // Envía una respuesta
   } catch (err) {
-    console.error("Error:", err);
-    res.status(500).send("Error en el registro en el curso.");
+    console.error("Error:", err)
+    res.status(500).send("Error en el registro en el curso.")
   }
-});
+})
+
+router.patch("/course/calificate/:idCourse/:idStudent/:idFileProgress", async (req, res) => {
+  try {
+    console.log("Llamado endpoint")
+    const { idCourse, idStudent, idFileProgress } = req.params
+    const { progressScore, progressComment } = req.body
+
+    const courseDoc = await Course.findById(idCourse)
+
+    const studentIndex = courseDoc.courseStudents.findIndex(
+      (student) => student.studentId.toString() === idStudent
+    )
+
+    if (studentIndex === -1) {
+      return res.status(404).json("Student not found in the course")
+    }
+
+    const progressIndex = courseDoc.courseStudents[studentIndex].studentProgress.findIndex(
+      (progress) => progress.progressFileId.toString() === idFileProgress
+    )
+
+    if (progressIndex !== -1) {
+      // Update progressScore and progressComment
+      courseDoc.courseStudents[studentIndex].studentProgress[progressIndex].progressScore =
+        progressScore
+      courseDoc.courseStudents[studentIndex].studentProgress[progressIndex].progressComment =
+        progressComment
+    } else {
+      return res.status(404).json("Progress not found for the given idFileProgress")
+    }
+
+    await courseDoc.save() // Guarda los nuevos datos
+
+    res.json("Registro en el curso completado") // Envía una respuesta
+  } catch (error) {
+    console.error("Error:", err)
+    res.status(500).send("Error en la calificación del estudiante.")
+  }
+})
 
 module.exports = router
