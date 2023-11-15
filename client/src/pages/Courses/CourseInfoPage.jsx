@@ -36,6 +36,7 @@ export default function CourseInfoPage() {
   const [openModalVideo, setOpenModalVideo] = useState(false)
   const [openModalDelete, setOpenModalDelete] = useState(false)
 
+  const [addedFileId, setAddedFileId] = useState([])
   const [addedFiles, setAddedFiles] = useState([])
   const [uploadedFile, setUploadedFile] = useState(false)
   const [fileName, setFileName] = useState("")
@@ -77,7 +78,7 @@ export default function CourseInfoPage() {
     }
   }
 
-  async function uploadFile() {
+  async function uploadFile(addedFileId) {
     try {
       if (!addedFiles) {
         alert("Por favor, seleccione un archivo para subir")
@@ -97,6 +98,9 @@ export default function CourseInfoPage() {
           break
         case "hom":
           endpoint = "/upload/homework/" + id
+          break
+        case "response":
+          endpoint = `/upload/homework/response/${id}/${auth.id}/${addedFileId}`
           break
       }
 
@@ -132,6 +136,8 @@ export default function CourseInfoPage() {
         return ".doc, .docx, .xls, .xlsx, .txt, .pdf"
       case "hom":
         return ".doc, .docx, .xls, .xlsx, .txt"
+      case "response":
+        return ".doc, .docx, .xls, .xlsx, .txt"
     }
   }
 
@@ -161,9 +167,23 @@ export default function CourseInfoPage() {
 
   // Check if student is registered in the course or not
   // const isUserInCourse = students && students.includes(auth.id)
-  const isUserInCourse = students.some(student => student.student_id === auth.id);
+  const isUserInCourse = students.some((student) => student.studentId === auth.id)
 
   const isUserCourseTutor = auth && tutorId.includes(auth.id)
+
+  const [shouldRenderStudentButtons, setShouldRenderStudentButtons] = useState(false);
+
+  useEffect(() => {
+    const delay = 1000; // 1000 milliseconds = 1 second
+
+    // Set a timeout to wait for the specified delay before rendering the student buttons
+    const timeoutId = setTimeout(() => {
+      setShouldRenderStudentButtons(true);
+    }, delay);
+
+    // Clean up the timeout if the component unmounts or if the condition changes
+    return () => clearTimeout(timeoutId);
+  }, []); // Empty dependency array to run the effect only once
 
   return (
     <>
@@ -190,7 +210,7 @@ export default function CourseInfoPage() {
               courseNeurodiv={courseNeurodiv}
             />
 
-            {(isUserInCourse || isUserCourseTutor) ? (
+            {isUserInCourse || isUserCourseTutor ? (
               <CourseFilesAccordion
                 ValidateRoles={ValidateRoles}
                 videoFiles={videoFiles}
@@ -204,9 +224,11 @@ export default function CourseInfoPage() {
                 setFileName={setFileName}
                 selectedVideoInfo={selectedVideoInfo}
                 isUserCourseTutor={isUserCourseTutor}
+                setAddedFileId={setAddedFileId}
+                id={id}
               />
             ) : (
-              <StudentCourseButtons registerStudent={registerStudent} />
+              shouldRenderStudentButtons && (<StudentCourseButtons registerStudent={registerStudent} />)
             )}
           </section>
         </div>
@@ -274,7 +296,7 @@ export default function CourseInfoPage() {
 
               <button
                 className="mx-2 mt-5 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center"
-                onClick={uploadFile}
+                onClick={() => uploadFile(addedFileId)}
               >
                 Subir
               </button>

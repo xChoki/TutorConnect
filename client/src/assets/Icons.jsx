@@ -152,14 +152,13 @@ export function Icon_Plus() {
   )
 }
 
-export function Icon_Arrow({ onClick, open }) {
+export function Icon_Arrow({ open }) {
   return (
     <svg
       fill="currentColor"
       viewBox="0 0 16 16"
       height="1em"
       width="1em"
-      onClick={onClick}
       className={`w-6 h-6 ${open ? "" : "rotate-180"}`}
     >
       <path
@@ -171,7 +170,6 @@ export function Icon_Arrow({ onClick, open }) {
 }
 
 Icon_Arrow.propTypes = {
-  onClick: PropTypes.func.isRequired,
   open: PropTypes.bool.isRequired,
 }
 

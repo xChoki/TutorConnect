@@ -19,6 +19,7 @@ const { default: mongoose } = require("mongoose") // import
 mongoose.connect(process.env.MONGO_URL) // .env file that has access token to MongoDB Atlas
 // Mongoose models
 const Course = require("../models/Course") // Model for Courses
+const User = require("../models/User") // Model for Courses
 
 /* JSONWebToken
  * Self-contained way for securely transmitting information between parties as a JSON object*/
@@ -78,7 +79,24 @@ function fileNameChange(path, name, id, fileType) {
   return { uploadedFiles, newName }
 }
 
-function updateMongoFileField(file_name, file_url, user_token, course_id, type) {
+function studentFileNameChange(path, name, idCourse, idStudent) {
+  const uploadedFiles = []
+
+  const newName = idCourse + "____" + idStudent + "____" + Date.now() + "____" + name
+  // console.log("Nuevo nombre de archivo: " + newName)
+
+  // Construct the new path using the newName
+  const newPath = "uploads/homework/response/" + newName
+
+  // console.log("Nuevo path de archivo: " + newPath)
+
+  fs.renameSync(path, newPath)
+  uploadedFiles.push(newName)
+
+  return { uploadedFiles, newName }
+}
+
+function updateMongoFileFieldTutor(file_name, file_url, user_token, course_id, type) {
   jwt.verify(
     // We verify the jwt
     user_token, // token: string,
@@ -127,6 +145,63 @@ function updateMongoFileField(file_name, file_url, user_token, course_id, type) 
   return
 }
 
+async function updateMongoFileFieldStudent(file_name, file_url, course_id, student_id, file_id) {
+  try {
+    // Convert student_id to ObjectId
+    const studentObjectId = new mongoose.Types.ObjectId(student_id)
+
+    // Find the course by id
+    const courseDoc = await Course.findById(course_id)
+
+    if (!courseDoc) {
+      console.error("Course not found")
+      return
+    }
+
+    // Find the student in the courseStudents array by studentId
+    const student = courseDoc.courseStudents.find((student) =>
+      student.studentId.equals(studentObjectId)
+    )
+
+    if (student) {
+      // Check if the file_id already exists in student's progress
+      const existingFileIndex = student.studentProgress.findIndex((progress) =>
+        progress.progressFileId.equals(file_id)
+      )
+
+      if (existingFileIndex !== -1) {
+        // Update the existing file's data
+        student.studentProgress[existingFileIndex].progressFile = {
+          fileName: file_name,
+          fileUrl: file_url,
+        }
+      } else {
+        // Add a new file to the student's progress
+        const fileData = {
+          fileName: file_name,
+          fileUrl: file_url,
+        }
+
+        const studentProgress = {
+          progressFileId: file_id,
+          progressFile: fileData,
+        }
+
+        student.studentProgress.push(studentProgress)
+      }
+
+      // Save the updated course document
+      await courseDoc.save()
+
+      console.log("Student progress updated successfully")
+    } else {
+      console.log("Student not found in the course")
+    }
+  } catch (error) {
+    console.error("Error updating student progress:", error)
+  }
+}
+
 /*     ENDPOINTS TO API
  *     These correspond to every endpoint that is going to be accessed later in front-end
  *       - get to obtain data
@@ -151,7 +226,7 @@ router.post("/video/:id", uploadVideo.single("file"), (req, res) => {
     // console.log("Nombre return funcion: " + filesReturn.newName)
 
     const { token } = req.cookies // We require from the session the token cookie
-    updateMongoFileField(filesReturn.newName, "uploads/videos", token, id, "video")
+    updateMongoFileFieldTutor(filesReturn.newName, "uploads/videos", token, id, "video")
 
     // console.log("Archivo subido")
     res.json({ message: "File uploaded successfully.", filesReturn })
@@ -175,7 +250,7 @@ router.post("/homework/:id", uploadHomework.single("file"), (req, res) => {
     const filesReturn = fileNameChange(path, originalname, id, "homework")
 
     const { token } = req.cookies // We require from the session the token cookie
-    updateMongoFileField(filesReturn.newName, "uploads/homework", token, id, "homework")
+    updateMongoFileFieldTutor(filesReturn.newName, "uploads/homework", token, id, "homework")
 
     // console.log("Archivo subido")
     res.json({ message: "File uploaded successfully.", filesReturn })
@@ -185,6 +260,46 @@ router.post("/homework/:id", uploadHomework.single("file"), (req, res) => {
     res.status(500).json({ error: "Internal server error" })
   }
 })
+
+const uploadHomeworkResponse = multer({ dest: "uploads/homework/response" })
+router.post(
+  "/homework/response/:idCourse/:idStudent/:idFile",
+  uploadHomeworkResponse.single("file"),
+  (req, res) => {
+    console.log("llamado endpoint")
+    const { idCourse, idStudent, idFile } = req.params
+
+    console.log("Datos:")
+    console.log("id curso: ", idCourse)
+    console.log("id estudiante: ", idStudent)
+    console.log("id archivo al que responde: ", idFile)
+
+    try {
+      if (!req.file) {
+        return res.status(400).send("No file uploaded.")
+      }
+
+      const { path, originalname } = req.file
+      const filesReturn = studentFileNameChange(path, originalname, idCourse, idStudent)
+
+      //file_name, file_url, course_id, student_id, file_id
+      updateMongoFileFieldStudent(
+        filesReturn.newName,
+        "uploads/homework/response",
+        idCourse,
+        idStudent,
+        idFile
+      )
+
+      // console.log("Archivo subido")
+      res.json({ message: "File uploaded successfully.", filesReturn })
+    } catch (err) {
+      // Handle errors gracefully
+      console.error(err)
+      res.status(500).json({ error: "Internal server error" })
+    }
+  }
+)
 
 const uploadMaterial = multer({ dest: "uploads/material/" })
 router.post("/material/:id", uploadMaterial.single("file"), (req, res) => {
@@ -199,7 +314,7 @@ router.post("/material/:id", uploadMaterial.single("file"), (req, res) => {
     const filesReturn = fileNameChange(path, originalname, id, "material")
 
     const { token } = req.cookies // We require from the session the token cookie
-    updateMongoFileField(filesReturn.newName, "uploads/material", token, id, "material")
+    updateMongoFileFieldTutor(filesReturn.newName, "uploads/material", token, id, "material")
 
     // console.log("Archivo subido")
     res.json({ message: "File uploaded successfully.", filesReturn })
