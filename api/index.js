@@ -62,6 +62,7 @@ const cuentaRoutes = require("./routes/cuentaRoutes")
 const uploadRoutes = require("./routes/uploadRoutes")
 const applicationRoutes = require("./routes/applicationRoutes")
 const studentRoutes = require("./routes/studentRoutes")
+const userRoutes = require("./routes/userRoutes")
 
 /*     /test
  *     This endpoint is to test the connection, if it is up it shows "test ok" */
@@ -117,6 +118,8 @@ app.use("/api/upload", uploadRoutes)
 app.use("/api/applications", applicationRoutes)
 
 app.use("/api/student", studentRoutes)
+
+app.use("/api/user", userRoutes)
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`)

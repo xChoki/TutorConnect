@@ -1,5 +1,3 @@
-import { Link } from "react-router-dom"
-
 export default function CourseInfo(props) {
   const { courseName, courseDescription, courseExtrainfo, courseNeurodiv } = props
 
@@ -24,10 +22,7 @@ export default function CourseInfo(props) {
 
       <p>
         Este curso {courseNeurodiv ? "" : "no"} cuenta con disponibilidad para tratar con personas
-        neurodivergentes.{" "}
-        <Link to={"/"} className="text-blue-500">
-          Saber más.
-        </Link>
+        neurodivergentes.
       </p>
     </>
   )
