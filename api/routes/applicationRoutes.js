@@ -209,9 +209,9 @@ router.post(
       applicationGrades.fileName = gradesFileData.newFileName // Update the fileName property
       applicationGrades.fileUrl = "uploads/applications" // Update the fileUrl property
 
-      console.log("Notas")
-      console.log(applicationGrades.fileName)
-      console.log(applicationGrades.fileUrl)
+      // console.log("Notas")
+      // console.log(applicationGrades.fileName)
+      // console.log(applicationGrades.fileUrl)
     }
 
     if (applicationRegularFile) {
@@ -220,9 +220,9 @@ router.post(
 
       applicationRegular.fileName = regularFileData.newFileName // Update the fileName property
       applicationRegular.fileUrl = "uploads/applications" // Update the fileUrl property
-      console.log("regular")
-      console.log(applicationRegular.fileName)
-      console.log(applicationRegular.fileUrl)
+      // console.log("regular")
+      // console.log(applicationRegular.fileName)
+      // console.log(applicationRegular.fileUrl)
     }
 
     createApplication(
