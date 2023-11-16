@@ -24,7 +24,7 @@ app.use(
 )
 
 // app.use(express.static(path.join(__dirname, "uploads")))
-app.use(express.static("uploads"))
+app.use(express.static(__dirname + "uploads"))
 
 /* Multer
  * Handles and helps with file uploading  */
