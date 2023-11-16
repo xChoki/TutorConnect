@@ -35,6 +35,7 @@ router.use(cookieParser()) // This is to create an instance of the cookieparser
  * Handles and helps with file uploading  */
 const multer = require("multer")
 const fs = require("fs")
+const path = require("path")
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -237,7 +238,7 @@ router.post("/video/:id", uploadVideo.single("file"), (req, res) => {
   }
 })
 
-const uploadHomework = multer({ dest: "uploads/homework/" })
+const uploadHomework = multer({ dest: path.join(__dirname, "uploads/homework/") })
 router.post("/homework/:id", uploadHomework.single("file"), (req, res) => {
   const { id } = req.params
 
