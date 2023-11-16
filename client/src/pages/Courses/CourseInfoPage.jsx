@@ -174,7 +174,7 @@ export default function CourseInfoPage() {
   const [shouldRenderStudentButtons, setShouldRenderStudentButtons] = useState(false);
 
   useEffect(() => {
-    const delay = 1000; // 1000 milliseconds = 1 second
+    const delay = 500; // 1000 milliseconds = 1 second
 
     // Set a timeout to wait for the specified delay before rendering the student buttons
     const timeoutId = setTimeout(() => {
