@@ -35,6 +35,13 @@ export default function PortalPage() {
     })
   }, [])
 
+  useEffect(() => {
+    if (sessionStorage.getItem("showapplicationsmsg") == "1") {
+      toast.success("Aplicación enviada exitosamente")
+      sessionStorage.removeItem("showapplicationsmsg")
+    }
+  }, [])
+
   const coursesStudentIsIn = []
 
   // Check if the student is in any of the courses

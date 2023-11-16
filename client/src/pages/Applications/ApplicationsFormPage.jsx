@@ -68,6 +68,7 @@ export default function ApplicationsFormPage() {
         })
       } else {
         // new application
+        sessionStorage.setItem("showapplicationsmsg", "1")
         setRedirect(true)
         await axios.post("/applications", applicationData, {
           headers: { "Content-Type": "multipart/form-data" },
@@ -112,7 +113,7 @@ export default function ApplicationsFormPage() {
   }
 
   if (redirect) {
-    return <Navigate to={"/portal/solicitudes/detalles"} />
+    return <Navigate to={"/portal/"} />
   }
 
   return (

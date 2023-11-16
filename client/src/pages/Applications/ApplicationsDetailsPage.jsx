@@ -7,6 +7,8 @@ import useAuth from "../../hooks/useAuth"
 import ApplicationStateAlert from "../../components/Applications/ApplicationStateAlert"
 // import ApplicationsCard from "../../components/Cards/ApplicationsCard"
 
+import { Toaster, toast } from "sonner"
+
 export default function ApplicationsDetailsPage() {
   const [open, setOpen] = useSidebarState()
   const [applications, setApplications] = useState([])
@@ -15,7 +17,7 @@ export default function ApplicationsDetailsPage() {
   // console.log(auth)
 
   useEffect(() => {
-    axios.get("/student/" + auth.id).then(({ data }) => {
+    axios.get("/student/applications/" + auth.id).then(({ data }) => {
       setApplications(data)
     })
   }, [auth.id])
@@ -56,7 +58,7 @@ export default function ApplicationsDetailsPage() {
   return (
     <div className="grid grid-cols-[auto,1fr] container mx-auto">
       <SideBar open={open} setOpen={setOpen} />
-
+      <Toaster position="top-center" />
       <section className={`${open ? "ml-72" : "ml-20"} p-7 font-semibold`}>
         <div className="mb-16">
           <div className="px-4 sm:px-0">
@@ -93,7 +95,27 @@ export default function ApplicationsDetailsPage() {
 
         {/* {console.log(applications)} */}
 
-        {!applications ? (
+        {applications && applications.length > 0 ? (
+          <>
+            <hr />
+            {applications?.length > 0 &&
+              applications?.map((application) => (
+                <div key={application._id} className="mt-4">
+                  {application.applicationState === "En proceso" ? (
+                    <>
+                      <p className="pt-5">
+                        Ya tienes una postulación pendiente, te contactaremos a la brevedad.
+                      </p>
+                    </>
+                  ) : (
+                    <>
+                      <ApplicationStateAlert applicationData={application} />
+                    </>
+                  )}
+                </div>
+              ))}
+          </>
+        ) : (
           <Link
             className="inline-block py-16 px-20 rounded-lg text-lg border hover:bg-gray-100"
             to="/portal/solicitudes/nuevo"
@@ -104,23 +126,6 @@ export default function ApplicationsDetailsPage() {
               <p>Presiona aquí para generar tu solicitud.</p>
             </div>
           </Link>
-        ) : (
-          <>
-            <hr />
-            {applications.applicationState === "En proceso" && (
-              <>
-                <p className="pt-5">
-                  Ya tienes una postulación pendiente, te contactaremos a la brevedad.
-                </p>
-              </>
-            )}
-
-            {applications.applicationState === "Rechazada" && (
-              <>
-                <ApplicationStateAlert applicationData={applications} />
-              </>
-            )}
-          </>
         )}
       </section>
     </div>
