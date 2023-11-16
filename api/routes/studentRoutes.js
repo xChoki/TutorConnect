@@ -124,4 +124,22 @@ router.patch("/course/calificate/:idCourse/:idStudent/:idFileProgress", async (r
   }
 })
 
+router.get("/applications/:id", async (req, res) => {
+  try {
+    const { token } = req.cookies
+
+    const userData = await verifyToken(token) // Verifica el token JWT
+
+    // Find applications where applicationStudentInfo.studentId is equal to userDoc.id
+    const applications = await Application.find({
+      "applicationStudentInfo.studentId": userData.id,
+    })
+
+    res.json(applications)
+  } catch (error) {
+    console.error(error)
+    res.status(500).json({ error: "Internal Server Error" })
+  }
+})
+
 module.exports = router

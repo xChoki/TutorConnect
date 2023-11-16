@@ -74,7 +74,8 @@ export default function HomeworkFilesContent({
                 <div className="flex">
                   <div
                     className="hover:bg-gray-400 hover:text-white rounded-lg"
-                    onClick={() => {
+                    onClick={(ev) => {
+                      ev.stopPropagation()
                       downloadFile(file.fileName, "homework")
                     }}
                   >

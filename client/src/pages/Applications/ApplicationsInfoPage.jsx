@@ -31,7 +31,7 @@ export default function ApplicationsInfoPage() {
     })
   }, [id])
 
-  function handleReject() {}
+  console.log(applicationData)
 
   async function handleApplication(
     applicationState,
@@ -110,21 +110,25 @@ export default function ApplicationsInfoPage() {
                   {applicationData.applicationStudentInfo?.studentEmail}
                 </dd>
               </div>
-              <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+              {/* <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                 <dt className="text-lg font-medium leading-6 text-gray-900">
                   <p>Fecha de nacimiento del estudiante:</p>
                 </dt>
                 <dd className="mt-1 text-base leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
                   {applicationData.applicationStudentInfo?.studentDateofBirth}
                 </dd>
-              </div>
+              </div> */}
             </dl>
 
-            <hr className="h-px my-8 bg-gray-200 border-0" />
-            <h2 className="mb-2 text-lg font-bold tracking-tight text-gray-900">
-              Información extra de la solicitud
-            </h2>
-            <p className="font-normal text-gray-700">{applicationData.applicationExtraInfo}</p>
+            {applicationData.applicationExtraInfo && (
+              <>
+                <hr className="h-px my-8 bg-gray-200 border-0" />
+                <h2 className="mb-2 text-lg font-bold tracking-tight text-gray-900">
+                  Información extra de la solicitud
+                </h2>
+                <p className="font-normal text-gray-700">{applicationData.applicationExtraInfo}</p>
+              </>
+            )}
 
             <hr className="h-px my-8 bg-gray-200 border-0" />
             <h2 className="mb-2 text-lg font-bold tracking-tight text-gray-900">Documentos</h2>
@@ -191,7 +195,6 @@ export default function ApplicationsInfoPage() {
             <ApplicationButtons
               applicationData={applicationData}
               handleApplication={handleApplication}
-              handleReject={handleReject}
               setOpenCommentModal={setOpenCommentModal}
             />
           </section>
@@ -214,7 +217,8 @@ export default function ApplicationsInfoPage() {
             </label>
             <textarea
               id="applicationComment"
-              rows="4"
+              rows={5}
+              cols={20}
               className="block p-2.5 w-full text-sm text-gray-500 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="Explica el por qué rechazas esta solicitud."
               required
