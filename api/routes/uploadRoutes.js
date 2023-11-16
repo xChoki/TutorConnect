@@ -212,7 +212,7 @@ async function updateMongoFileFieldStudent(file_name, file_url, course_id, stude
 
 /*     /upload
  *     This endpoint handles the count of users and courses with the id, when it succeeded, validates the information and uses get to send the information */
-const uploadVideo = multer({ dest: "uploads/videos/" })
+const uploadVideo = multer({ dest: path.join(__dirname, "uploads/videos/") })
 router.post("/video/:id", uploadVideo.single("file"), (req, res) => {
   const { id } = req.params
 
@@ -302,7 +302,7 @@ router.post(
   }
 )
 
-const uploadMaterial = multer({ dest: "uploads/material/" })
+const uploadMaterial = multer({ dest: path.join(__dirname, "uploads/material/") })
 router.post("/material/:id", uploadMaterial.single("file"), (req, res) => {
   const { id } = req.params
 

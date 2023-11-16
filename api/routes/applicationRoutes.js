@@ -162,7 +162,7 @@ async function removeRoleFromUser(applicationStudentId, roleToRemove) {
 
 /*     /applications
  *     This endpoint handles applications from the form, when it succeeded, validates the information and uses post*/
-const uploadApplicationFile = multer({ dest: "uploads/applications/" })
+const uploadApplicationFile = multer({ dest: path.join(__dirname, "uploads/applications/") })
 router.post(
   "/",
   uploadApplicationFile.fields([
