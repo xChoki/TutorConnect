@@ -1,125 +1,127 @@
-import { useEffect, useState } from "react"
-import SideBar from "../../components/Navigation/SideBar"
-import { useSidebarState } from "../../hooks/useSidebarState"
-import ReactEcharts from "echarts-for-react"
-import axios from "axios"
+import { useEffect, useState } from 'react'
+import SideBar from '../../components/Navigation/SideBar'
+import { useSidebarState } from '../../hooks/useSidebarState'
+import ReactECharts from 'echarts-for-react'
+import axios from 'axios'
+import useAuth from '../../hooks/useAuth'
 
 export default function GraphPage() {
   const [open, setOpen] = useSidebarState()
 
-  const [totalTutores, setTotalTutores] = useState(0)
-  const [totalAlumnos, setTotalAlumnos] = useState(0)
+  const { auth } = useAuth()
+
+  const [cantAlumnosPorCurso, setCantAlumnosPorCurso] = useState(0)
+  
+  /**
+   * Count of students per course
+   */
 
   useEffect(() => {
     axios
-      .get("/cuenta")
+      .get('/cuenta/tutor/studentcountpercourse/' + auth.id)
       .then((response) => {
-        setTotalTutores(response.data.tutorCount)
-        setTotalAlumnos(response.data.studentCount)
+        setCantAlumnosPorCurso(response.data)
       })
       .catch((error) => {
-        console.error("Error fetching counts:", error)
+        console.error('Error fetching counts:', error)
       })
 
-    document.title = "TutorConnect"
-  }, [])
+    document.title = 'TutorConnect | Gráficos'
+  }, [auth])
 
-  const option_solicitudes = {
+  const [chartCantAlumnosOptions, setChartCantAlumnosOptions] = useState({
+    // Initial options for the chart
+    title: {
+      text: 'Cantidad de alumnos por curso',
+      subtext: '',
+      x: 'center',
+    },
     xAxis: {
-      type: "category",
-      data: ["En proceso", "Aceptadas", "Rechazadas"],
+      type: 'category',
+      data: [],
     },
     yAxis: {
-      type: "value",
+      type: 'value',
     },
     series: [
       {
-        data: [3, 5, 2],
-        type: "bar",
-      },
-    ],
-  }
-
-  const option_cursos = {
-    grid: { top: 8, right: 8, bottom: 24, left: 36 },
-    xAxis: {
-      type: "category",
-      data: ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"],
-    },
-    yAxis: {
-      type: "value",
-    },
-    series: [
-      {
-        data: [1, 2, 0, 0, 5, 3, 0],
-        type: "line",
-        smooth: true,
+        name: 'Progress Score',
+        type: 'line',
+        data: [],
       },
     ],
     tooltip: {
-      trigger: "axis",
+      trigger: 'axis',
     },
-  }
+  })
 
-  const option_usuarios = {
-    tooltip: {
-      trigger: "item",
-    },
-    legend: {
-      top: "5%",
-      left: "center",
-    },
-    series: [
-      {
-        name: "Distribución de roles",
-        type: "pie",
-        radius: ["40%", "70%"],
-        avoidLabelOverlap: false,
-        itemStyle: {
-          borderRadius: 10,
-          borderColor: "#fff",
-          borderWidth: 2,
+  useEffect(() => {
+    // Find the selected course progress data
+
+    if (cantAlumnosPorCurso) {
+      // Extract progress data for the selected course
+      const cuentaData = cantAlumnosPorCurso?.map((cuenta) => ({
+        name: cuenta.courseName,
+        value: cuenta.studentCount || 0, // Use progress score as the Y-axis value
+      }))
+
+      // Update the chart options with the new data
+      setChartCantAlumnosOptions((prevOptions) => ({
+        ...prevOptions,
+        xAxis: {
+          type: 'category',
+          data: cuentaData.map((item) => item.name),
         },
-        label: {
-          show: false,
-          position: "center",
-        },
-        emphasis: {
-          label: {
-            show: true,
-            fontSize: 40,
-            fontWeight: "bold",
+        series: [
+          {
+            name: 'Cantidad de alumnos',
+            type: 'line',
+            data: cuentaData,
+          },
+        ],
+        toolbox: {
+          feature: {
+            dataView: { readOnly: true },
+            saveAsImage: {},
           },
         },
-        labelLine: {
-          show: false,
-        },
-        data: [
-          { value: totalTutores, name: "Tutores" },
-          { value: totalAlumnos, name: "Alumnos" },
-        ],
-      },
-    ],
+      }))
+    }
+  }, [cantAlumnosPorCurso])
+
+  let timer
+
+  useEffect(() => {
+    return () => clearTimeout(timer)
+  })
+
+  const loadingOptionCantAlumnos = {
+    text: 'Cargando datos...',
+    color: '#4413c2',
+    textColor: '#270240',
+    maskColor: 'rgba(194, 88, 86, 0.3)',
+    zlevel: 0,
+  }
+
+  function onChartReadyCantAlumnos(echarts) {
+    timer = setTimeout(function () {
+      echarts.hideLoading()
+    }, 3000)
   }
 
   return (
-    <div className={`${open ? "ml-72" : "ml-20"} pt-6`}>
+    <div className={`${open ? 'ml-72' : 'ml-20'} pt-6`}>
       <SideBar open={open} setOpen={setOpen} />
 
-      <section className="m-10 container mx-auto">
-        <h1 className="text-4xl md:text-5xl">Gráficos</h1>
-
-        <div className="max-w-7xl my-5">
-          <h2 className="text-2xl mb-2"> Cantidad de solicitudes </h2>
-          <ReactEcharts option={option_solicitudes} />
-        </div>
-        <div className="max-w-7xl my-5">
-          <h2 className="text-2xl mb-2"> Cantidad de cursos inscritos semanalmente </h2>
-          <ReactEcharts option={option_cursos} />
-        </div>
-        <div className="max-w-7xl my-5">
-          <h2 className="text-2xl mb-2"> Distribución de usuarios </h2>
-          <ReactEcharts option={option_usuarios} />
+      <section className='m-10 container mx-auto'>
+        <h1 className='text-4xl md:text-4xl text-center'>Gráficos</h1>
+        <div className='border rounded-md my-10 shadow-md'>
+          <ReactECharts
+            option={chartCantAlumnosOptions}
+            onChartReady={onChartReadyCantAlumnos}
+            loadingOption={loadingOptionCantAlumnos}
+            className='p-5'
+          />
         </div>
       </section>
     </div>
