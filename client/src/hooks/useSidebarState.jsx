@@ -22,7 +22,7 @@ export function useSidebarState() {
   useEffect(() => {
     // Function to check the screen width and update the sidebar state
     const checkScreenWidth = () => {
-      if (window.innerWidth < 1000) {
+      if (window.innerWidth < 1100) {
         setSidebarStateWithRef(false);
       } else {
         setSidebarStateWithRef(true);

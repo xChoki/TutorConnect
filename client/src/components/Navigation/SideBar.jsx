@@ -110,6 +110,8 @@ export default function SideBar({ open, setOpen }) {
   // const ValidateRolesTeaAdmTut = validateRoles({ allowedRoles })
   allowedRoles = [2003, 5001]
   const ValidateRolesTeaAdm = validateRoles({ allowedRoles })
+  allowedRoles = [2002]
+  const ValidateRolesTutor = validateRoles({ allowedRoles })
 
   return (
     <>
@@ -165,7 +167,7 @@ export default function SideBar({ open, setOpen }) {
               </li>
             )}
 
-            {ValidateRolesTeaAdm && (
+            {ValidateRolesTutor && (
               <li>
                 <NavLink to={"/portal/graficos"} className={link_Classes("graficos")}>
                   <Icon_Chart />
