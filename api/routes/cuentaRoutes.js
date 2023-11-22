@@ -128,38 +128,41 @@ router.get('/tutor/gradesmean/:id', async (req, res) => {
   try {
     const { id } = req.params
 
-    const courseId = new mongoose.Types.ObjectId(id)
+    const courseTutorId = new mongoose.Types.ObjectId(id)
 
-    Course.findOne({ _id: courseId })
-      .then((course) => {
-        if (!course) {
-          res.status(204).send('No posees cursos registrados')
-        } else {
-          // id is valid
-          // continue with your programming logic
-
-          Course.aggregate([
-            { $unwind: '$courseStudents' },
-            { $unwind: '$courseStudents.studentProgress' },
-            {
-              $group: {
-                _id: '$courseStudents.studentProgress.progressFileId',
-                fileName: { $first: '$courseStudents.studentProgress.progressFile.fileName' },
-                averageScore: { $avg: '$courseStudents.studentProgress.progressScore' },
-              },
+    Course.aggregate([
+      { $match: { 'courseTutorId': courseTutorId } }, // Match courses with the specified tutor ID
+      { $unwind: '$courseStudents' },
+      { $unwind: '$courseStudents.studentProgress' },
+      {
+        $group: {
+          _id: {
+            courseId: '$_id',
+            progressFileId: '$courseStudents.studentProgress.progressFileId',
+          },
+          fileName: { $first: '$courseStudents.studentProgress.progressFile.fileName' },
+          averageScore: { $avg: '$courseStudents.studentProgress.progressScore' },
+          courseName: { $first: '$courseName' },
+        },
+      },
+      {
+        $group: {
+          _id: '$_id.courseId',
+          courseName: { $first: '$courseName' },
+          homeworks: {
+            $push: {
+              fileName: '$fileName',
+              averageScore: '$averageScore',
             },
-          ])
-            .then((result) => {
-              // console.log(result)
-              res.json(result)
-            })
-            .catch((error) => {
-              res.status(500).send('Internal Server Error')
-              console.error(error)
-            })
-        }
+          },
+        },
+      },
+    ])
+      .then((result) => {
+        res.json(result)
       })
       .catch((error) => {
+        res.status(500).send('Internal Server Error')
         console.error(error)
       })
   } catch (error) {
@@ -167,6 +170,7 @@ router.get('/tutor/gradesmean/:id', async (req, res) => {
     res.status(500).send('Internal Server Error')
   }
 })
+
 
 router.get('/tutor/gradesmeanpercourse/:id', async (req, res) => {
   try {

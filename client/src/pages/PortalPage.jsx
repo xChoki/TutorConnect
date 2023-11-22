@@ -55,12 +55,12 @@ export default function PortalPage() {
   })
 
   return (
-    <div className='grid grid-cols-[auto,1fr] container mx-auto'>
+    <div className={`${open ? 'ml-72' : 'ml-20'}`}>
       <SideBar open={open} setOpen={setOpen} />
 
       <Toaster position='top-center' />
 
-      <section className={`${open ? 'ml-72' : 'ml-20'} p-7`}>
+      <section className={`flex-1`}>
         <div className='text-center my-5'>
           <span className='font-semibold text-3xl'> ¡Hola {auth.userName}!</span>
         </div>
@@ -69,12 +69,15 @@ export default function PortalPage() {
           <h2 className='font-semibold text-3xl'> Tus cursos </h2>
         </div>
 
-        <section className='flex flex-wrap lg-mx-1 ml-5 justify-center'>
+        <section className='flex flex-wrap justify-center'>
           {courses?.length > 0 &&
             courses
               .filter((course) => !coursesStudentIsIn.includes(course._id))
               .map((course) => (
-                <div key={course._id} className='w-96 h-60 mb-20 mx-5'>
+                <div
+                  key={course._id}
+                  className='w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5 mb-4 px-4'
+                >
                   <CoursesCard width={width} course={course} />
                 </div>
               ))}

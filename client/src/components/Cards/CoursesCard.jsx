@@ -7,9 +7,9 @@ export default function CoursesCard(props) {
 
   return (
     <Link to={'/portal/cursos/' + course._id}>
-      <div className='max-w-xl rounded overflow-hidden shadow-lg relative'>
+      <div className='rounded overflow-hidden shadow-lg relative'>
         <img
-          className='w-full h-1/2'
+          className='w-full h-auto'
           src={PencilsImage}
           alt='Background image of some pencils with a yellow background'
         />

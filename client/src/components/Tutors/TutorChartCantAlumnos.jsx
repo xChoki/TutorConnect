@@ -1,21 +1,12 @@
-import { useEffect, useState } from 'react'
-import SideBar from '../../components/Navigation/SideBar'
-import { useSidebarState } from '../../hooks/useSidebarState'
 import ReactECharts from 'echarts-for-react'
-import axios from 'axios'
+import { useEffect, useState } from 'react'
 import useAuth from '../../hooks/useAuth'
+import axios from 'axios'
 
-export default function GraphPage() {
-  const [open, setOpen] = useSidebarState()
-
+export default function TutorChartCantAlumnos() {
   const { auth } = useAuth()
 
   const [cantAlumnosPorCurso, setCantAlumnosPorCurso] = useState(0)
-  
-  /**
-   * Count of students per course
-   */
-
   useEffect(() => {
     axios
       .get('/cuenta/tutor/studentcountpercourse/' + auth.id)
@@ -25,8 +16,6 @@ export default function GraphPage() {
       .catch((error) => {
         console.error('Error fetching counts:', error)
       })
-
-    document.title = 'TutorConnect | Gráficos'
   }, [auth])
 
   const [chartCantAlumnosOptions, setChartCantAlumnosOptions] = useState({
@@ -35,53 +24,52 @@ export default function GraphPage() {
       text: 'Cantidad de alumnos por curso',
       subtext: '',
       x: 'center',
+      y: 'top',
     },
-    xAxis: {
-      type: 'category',
-      data: [],
+    grid: {
+      top: '15%', // Adjust the top margin to make space for the legend
     },
-    yAxis: {
-      type: 'value',
-    },
-    series: [
-      {
-        name: 'Progress Score',
-        type: 'line',
-        data: [],
-      },
-    ],
     tooltip: {
-      trigger: 'axis',
+      trigger: 'item',
     },
   })
 
   useEffect(() => {
     // Find the selected course progress data
-
     if (cantAlumnosPorCurso) {
       // Extract progress data for the selected course
       const cuentaData = cantAlumnosPorCurso?.map((cuenta) => ({
         name: cuenta.courseName,
-        value: cuenta.studentCount || 0, // Use progress score as the Y-axis value
+        value: cuenta.studentCount || 0, // Use student count as the value for pie chart
       }))
 
       // Update the chart options with the new data
       setChartCantAlumnosOptions((prevOptions) => ({
         ...prevOptions,
-        xAxis: {
-          type: 'category',
+        legend: {
+          show: true,
+          orient: 'vertical',
+          left: 'left',
+          top: 'middle',
           data: cuentaData.map((item) => item.name),
+          formatter: function (name) {
+            // Truncate the legend name to a specific length
+            const maxLength = 10 // Adjust this value as needed
+            return name.length > maxLength ? name.substring(0, maxLength) + '...' : name
+          },
         },
         series: [
           {
             name: 'Cantidad de alumnos',
-            type: 'line',
-            data: cuentaData,
+            type: 'pie',
+            data: cuentaData.map((item) => ({
+              name: item.name,
+              value: item.value,
+            })),
           },
         ],
         toolbox: {
           feature: {
-            dataView: { readOnly: true },
             saveAsImage: {},
           },
         },
@@ -110,20 +98,11 @@ export default function GraphPage() {
   }
 
   return (
-    <div className={`${open ? 'ml-72' : 'ml-20'} pt-6`}>
-      <SideBar open={open} setOpen={setOpen} />
-
-      <section className='m-10 container mx-auto'>
-        <h1 className='text-4xl md:text-4xl text-center'>Gráficos</h1>
-        <div className='border rounded-md my-10 shadow-md'>
-          <ReactECharts
-            option={chartCantAlumnosOptions}
-            onChartReady={onChartReadyCantAlumnos}
-            loadingOption={loadingOptionCantAlumnos}
-            className='p-5'
-          />
-        </div>
-      </section>
-    </div>
+    <ReactECharts
+      option={chartCantAlumnosOptions}
+      onChartReady={onChartReadyCantAlumnos}
+      loadingOption={loadingOptionCantAlumnos}
+      className='w-full h-full'
+    />
   )
 }
