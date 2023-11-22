@@ -25,7 +25,7 @@ app.use(
 
 // app.use(express.static(path.join(__dirname, "uploads")))
 app.use(express.static(__dirname + "/uploads"))
-console.log("Static files are served from:", __dirname + "/uploads");
+console.log("Static files are served from:", __dirname + "/routes/uploads");
 
 /* Multer
  * Handles and helps with file uploading  */

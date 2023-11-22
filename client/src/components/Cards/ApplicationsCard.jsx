@@ -55,7 +55,7 @@ export default function ApplicationsCard(props) {
         </div>
 
         <section className="px-6 py-4">
-          <span className="font-bold text-xl mb-2">
+          <span className="font-bold text-xl mb-2 truncate">
             <span>{application.applicationStudentInfo?.studentName}</span>
           </span>
           <p className="text-gray-700 text-base">
