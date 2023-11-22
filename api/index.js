@@ -24,7 +24,7 @@ app.use(
 )
 
 // app.use(express.static(path.join(__dirname, "uploads")))
-app.use(express.static(__dirname + "/uploads"))
+app.use(express.static(__dirname + "/routes/uploads"))
 console.log("Static files are served from:", __dirname + "/routes/uploads");
 
 /* Multer
