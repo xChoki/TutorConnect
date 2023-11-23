@@ -144,7 +144,7 @@ export default function CourseInfoPage() {
   async function deleteFile(fileName, fileType) {
     console.log(fileName + " " + fileType)
     try {
-      const endpoint = `upload/file/${fileType}/${id}/${fileName}`
+      const endpoint = `/upload/file/${fileType}/${id}/${fileName}`
       console.log(endpoint)
       await axios.delete(endpoint)
 

@@ -37,7 +37,7 @@ export default function MaterialAccordionPanel({
 
         {materialFiles?.length > 0 &&
           materialFiles?.map((file) => (
-            <React.Fragment key={file.fileName}>
+            <React.Fragment key={file._id}>
               <MaterialFilesContent
                 downloadFile={downloadFile}
                 setOpenModalDelete={setOpenModalDelete}
