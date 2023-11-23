@@ -17,7 +17,7 @@ export default function MaterialFilesContent({
         }}
         className="flex-grow"
       >
-        <span>{file.fileName.split("____").pop()}</span>
+        <span>{file.fileName?.split("____").pop()}</span>
       </div>
       <div className="flex">
         <div
