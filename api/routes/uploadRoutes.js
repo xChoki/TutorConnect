@@ -340,11 +340,6 @@ router.delete('/file/:type/:id/:fileName', async (req, res) => {
     // Construct the path to the file based on the file type
     let filePath = path.join(__dirname, 'uploads', type, fileName)
 
-    console.log('ID:', id)
-    console.log('Type:', type)
-    console.log('FileName:', fileName)
-    console.log('Constructed FilePath:', filePath)
-
     // Check if the file exists
     if (!fs.existsSync(filePath)) {
       return res.status(404).json({ message: 'File not found' })
