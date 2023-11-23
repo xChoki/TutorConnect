@@ -72,7 +72,7 @@ export default function PortalPage() {
         <section className='flex flex-wrap justify-center'>
           {courses?.length > 0 &&
             courses
-              .filter((course) => !coursesStudentIsIn.includes(course._id))
+              .filter((course) => coursesStudentIsIn.includes(course._id) || auth && course.courseTutorId.includes(auth.id))
               .map((course) => (
                 <div
                   key={course._id}
