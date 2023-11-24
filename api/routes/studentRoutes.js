@@ -56,6 +56,34 @@ router.get('/courses', async (req, res) => {
   }
 })
 
+router.get('/courses/registered', async (req, res) => {
+  const { token } = req.cookies
+
+  try {
+    const userData = await verifyToken(token)
+
+    Course.find({ 'courseStudents.studentId': userData.id })
+      .then((courses) => {
+        if (courses.length > 0) {
+          // Courses with the user ID in courseStudents.studentId were found
+          // console.log('Found courses:', courses);
+          res.json(courses)
+        } else {
+          // No courses found with the specified user ID
+          // console.log('No courses found.');
+          return res.status(404).json('Student not found in the course')
+        }
+      })
+      .catch((err) => {
+        console.error(err)
+        // Handle the error
+      })
+  } catch (err) {
+    console.error('Error:', err)
+    res.status(401).json({ message: 'Access denied' })
+  }
+})
+
 router.put('/course/register/:id', async (req, res) => {
   try {
     const { token } = req.cookies
@@ -87,7 +115,6 @@ router.put('/course/register/:id', async (req, res) => {
 
 router.patch('/course/calificate/:idCourse/:idStudent/:idFileProgress', async (req, res) => {
   try {
-    console.log('Llamado endpoint')
     const { idCourse, idStudent, idFileProgress } = req.params
     const { progressScore, progressComment } = req.body
 
@@ -151,9 +178,7 @@ router.get('/course/progress/:id', async (req, res) => {
     })
 
     const studentData = courses.map((course) => {
-      const student = course.courseStudents.find(
-        (student) => String(student.studentId) === id
-      )
+      const student = course.courseStudents.find((student) => String(student.studentId) === id)
       return {
         courseId: course._id,
         courseName: course.courseName,
