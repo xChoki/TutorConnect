@@ -7,15 +7,13 @@ import { useEffect, useState } from 'react'
 import { Toaster, toast } from 'sonner'
 
 import axios from 'axios'
-import CoursesCard from '../components/Cards/CoursesCard'
-import useWindowDimensions from '../hooks/useWindowDimensions'
 import StudentChartsSection from '../components/Students/StudentChartsSection'
+import { Icon_Eye } from '../assets/Icons'
 
 export default function PortalPage() {
   const { auth } = useAuth()
   const [open, setOpen] = useSidebarState()
   const [courses, setCourses] = useState([])
-  const { width } = useWindowDimensions()
 
   const allowedRoles = [2002, 2003, 5001]
   const ValidateRoles = validateRoles({ allowedRoles })
@@ -30,10 +28,34 @@ export default function PortalPage() {
   }, [])
 
   useEffect(() => {
-    axios.get('/student/courses').then(({ data }) => {
-      setCourses(data)
-    })
-  }, [])
+    // Check if userRoles exist and if Admin, Tutor, or Teacher roles are present
+    let endpoint
+    if (
+      !(
+        auth.userRoles &&
+        (auth.userRoles.Admin === 5001 ||
+          auth.userRoles.Tutor === 2002 ||
+          auth.userRoles.Teacher === 2003)
+      )
+    ) {
+      // Fetch courses for non-Admin, non-Tutor, non-Teacher users
+      endpoint = '/student/courses/registered'
+    } else {
+      endpoint = '/courses'
+    }
+    axios
+      .get(endpoint)
+      .then(({ data }) => {
+        setCourses(data)
+      })
+      .catch((error) => {
+        if (error.response && error.response.status === 404) {
+          setCourses([])
+        } else {
+          console.error('An error occurred:', error)
+        }
+      })
+  }, [auth])
 
   useEffect(() => {
     if (sessionStorage.getItem('showapplicationsmsg') == '1') {
@@ -68,24 +90,49 @@ export default function PortalPage() {
         <div className='text-center my-10'>
           <h2 className='font-semibold text-3xl'> Tus cursos </h2>
         </div>
-
-        <section className='flex flex-wrap justify-center'>
-          {courses?.length > 0 &&
-            courses
-              .filter((course) => coursesStudentIsIn.includes(course._id) || auth && course.courseTutorId.includes(auth.id))
-              .map((course) => (
-                <div
-                  key={course._id}
-                  className='w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5 mb-4 px-4'
+        <section className='flex flex-wrap justify-center mb-20'>
+          {courses?.length > 0 ? (
+            courses.map((course) => (
+              <div key={course._id} className='w-full mb-2 px-4 flex justify-center'>
+                <Link
+                  to={'/portal/cursos/' + course._id}
+                  className='flex jutify-between p-4 border rounded-md w-full justify-between max-w-4xl hover:bg-gray-50 hover:cursor-pointer'
                 >
-                  <CoursesCard width={width} course={course} />
+                  <span className='font-semibold'>{course.courseName}</span>
+                  <Icon_Eye />
+                </Link>
+              </div>
+            ))
+          ) : ValidateRoles ? (
+            <section className='m-10'>
+              <Link
+                className='font-semibold inline-block py-16 px-20 rounded-lg text-lg border hover:bg-gray-100'
+                to='/portal/cursos/nuevo'
+                style={{ display: 'flex', justifyContent: 'center' }}
+              >
+                <div className='text-center'>
+                  <span className='pl-2'>No tienes cursos creados.</span>
+                  <p>Presiona aquí para crear uno.</p>
                 </div>
-              ))}
+              </Link>
+            </section>
+          ) : (
+            <section className='m-10'>
+              <Link
+                className='font-semibold inline-block py-16 px-20 rounded-lg text-lg border hover:bg-gray-100'
+                to='/portal/cursos/registrar'
+                style={{ display: 'flex', justifyContent: 'center' }}
+              >
+                <div className='text-center'>
+                  <span className='pl-2'>No estás registrado en ningún curso.</span>
+                  <p>Presiona aquí para registrarte en uno.</p>
+                </div>
+              </Link>
+            </section>
+          )}
         </section>
 
-        <hr className='my-10' />
-
-        {!validateRoles && <StudentChartsSection />}
+        {!ValidateRoles && <StudentChartsSection />}
 
         {!ValidateRoles && (
           <section className='m-10'>

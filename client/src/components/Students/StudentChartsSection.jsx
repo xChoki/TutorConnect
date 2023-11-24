@@ -78,7 +78,7 @@ export default function StudentChartsSection() {
 
   return (
     <>
-      <section className='w-full mx-auto bg-gray-50 shadow-md rounded-md overflow-hidden'>
+      <section className='w-full mx-auto bg-gray-50 shadow-md overflow-hidden'>
         <div className='p-4'>
           <h2 className='text-3xl font-semibold mb-10 text-center'>Mi rendimiento</h2>
           <hr className='mb-5' />
