@@ -86,18 +86,18 @@ function fileNameChange(originalPath, name, id, fileType) {
   }
 }
 
-function studentFileNameChange(path, name, idCourse, idStudent) {
+function studentFileNameChange(oldPath, name, idCourse, idStudent) {
   const uploadedFiles = []
 
   const newName = idCourse + '____' + idStudent + '____' + Date.now() + '____' + name
   // console.log("Nuevo nombre de archivo: " + newName)
 
   // Construct the new path using the newName
-  const newPath = 'uploads/homework/response/' + newName
+  const newPath = 'routes/uploads/homework/response/' + newName
 
   // console.log("Nuevo path de archivo: " + newPath)
 
-  fs.renameSync(path, newPath)
+  fs.renameSync(oldPath, newPath)
   uploadedFiles.push(newName)
 
   return { uploadedFiles, newName }
@@ -268,19 +268,13 @@ router.post('/homework/:id', uploadHomework.single('file'), (req, res) => {
   }
 })
 
-const uploadHomeworkResponse = multer({ dest: 'uploads/homework/response' })
+const uploadHomeworkResponse = multer({ dest: 'routes/uploads/homework/response/' })
 router.post(
   '/homework/response/:idCourse/:idStudent/:idFile',
   uploadHomeworkResponse.single('file'),
   (req, res) => {
-    console.log('llamado endpoint')
     const { idCourse, idStudent, idFile } = req.params
-
-    console.log('Datos:')
-    console.log('id curso: ', idCourse)
-    console.log('id estudiante: ', idStudent)
-    console.log('id archivo al que responde: ', idFile)
-
+    
     try {
       if (!req.file) {
         return res.status(400).send('No file uploaded.')
@@ -292,7 +286,7 @@ router.post(
       //file_name, file_url, course_id, student_id, file_id
       updateMongoFileFieldStudent(
         filesReturn.newName,
-        'uploads/homework/response',
+        'routes/uploads/homework/response',
         idCourse,
         idStudent,
         idFile
