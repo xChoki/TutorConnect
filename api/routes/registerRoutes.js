@@ -33,10 +33,6 @@ const bcryptSalt = bcrypt.genSaltSync(10) // Generate salt with a length of 10
 router.post("/", async (req, res) => {
   // we listen to /register with an async post function
   const { userName, userEmail, userDate, userPassword } = req.body // We require from the form the name, email and password sent by the user
-  console.log("Received registration request with:")
-  console.log("Name: ", userName)
-  console.log("Email: ", userEmail)
-  console.log("Fecha: ", userDate)
 
   // Validate that userEmail is not null or empty
   if (!userEmail || userEmail.trim() === "") {
