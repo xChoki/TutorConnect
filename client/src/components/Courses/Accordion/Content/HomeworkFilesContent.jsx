@@ -49,8 +49,6 @@ export default function HomeworkFilesContent({
     })
   }, [id])
 
-  console.log(students)
-
   useEffect(() => {
     if (sessionStorage.getItem('showcalifsuccessmsg') == '1') {
       toast.success('Calificación enviada exitosamente')
