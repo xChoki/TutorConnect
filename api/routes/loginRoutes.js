@@ -40,57 +40,6 @@ const {generateAuthToken} = require('./../middleware/authHandler')
 
 /*    /login
 *     This endpoint handles login form, validates the information and uses post*/
-// router.post("/", async (req, res) => {
-//   // We listen to /login with an async post funcion
-//   const { userEmail, userPassword } = req.body // We require from the form the name, email and password sent by the user
-
-//   const userDoc = await User.findOne({ userEmail }) // This searches for an existing User using findOne function by their email
-//   // console.log("userDoc:", userDoc)
-
-//   if (userDoc) {
-//     // If email is found it checks for a password
-//     const passOk = bcrypt.compareSync(userPassword, userDoc.userPassword) // Using bcrypt we decrypt the password stored in order to compare for validity (form_pasword, stored_password)
-//     if (passOk) {
-//       // If password is correct it follows through
-//       jwt.sign(
-//         // we use the sign function from JSONWebToken
-//         {
-//           userEmail: userDoc.userEmail,
-//           id: userDoc._id,
-//           userName: userDoc.userName,
-//           userRoles: userDoc.userRoles,
-//         }, // User payload: string | Buffer | object,
-//         jwtSecret, // secretOrPrivateKey: Secret
-//         {}, // Empty parameters, options: SignOptions
-//         (err, token) => {
-//           // We catch error and the session token
-//           if (err) throw err // If there's an error we send it
-//           res
-//             .cookie("token", token, {
-//               httpOnly: true,
-//               sameSite: "None",
-//               secure: true,
-//             })
-//             .json({
-//               userEmail: userDoc.userEmail,
-//               id: userDoc._id,
-//               userName: userDoc.userName,
-//               userRoles: userDoc.userRoles,
-//             }) // If it goes through we create the session cookie with the corresponding token
-//         } // callback: SignCallback
-//       )
-//     } else {
-//       // If password is correct it shows message
-//       //console.log("Contraseña incorrecta:", userEmail)
-//       res.status(422).json("Contraseña incorrecta")
-//     }
-//   } else {
-//     // If email doesn't exists it shows message
-//     // console.log("Usuario no encontrado para el correo:", userEmail)
-//     return res.status(422).json("Correo no existe")
-//   }
-// })
-
 router.post("/", async (req, res) => {// We listen to /login with an async post funcion
   const { userEmail, userPassword } = req.body; // We require from the form the name, email and password sent by the user
 

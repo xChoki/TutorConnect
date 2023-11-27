@@ -89,24 +89,34 @@ router.put('/course/register/:id', async (req, res) => {
     const { token } = req.cookies
     const { id } = req.params
 
-    const userData = await verifyToken(token) // Verifica el token JWT
+    const userData = await verifyToken(token)
+    const courseDoc = await Course.findById(id)
 
-    const courseDoc = await Course.findById(id) // Encuentra el curso por ID en el modelo Course
+    // Get the current array of students or initialize an empty array if it doesn't exist
+    const courseStudents = courseDoc.courseStudents || []
 
-    const courseStudents = [
-      {
-        studentId: userData.id,
-        studentName: userData.userName,
-      },
-    ]
+    // Check if the current user is already registered
+    const isUserRegistered = courseStudents.some((student) => student.studentId === userData.id)
 
+    if (isUserRegistered) {
+      return res.status(400).json('El estudiante ya está registrado en este curso.')
+    }
+
+    // Add the new student to the array
+    courseStudents.push({
+      studentId: userData.id,
+      studentName: userData.userName,
+    })
+
+    // Update the course document with the new array
     courseDoc.set({
       courseStudents,
     })
 
-    await courseDoc.save() // Guarda los nuevos datos
+    // Save the updated document
+    await courseDoc.save()
 
-    res.json('Registro en el curso completado') // Envía una respuesta
+    res.json('Registro en el curso completado')
   } catch (err) {
     console.error('Error:', err)
     res.status(500).send('Error en el registro en el curso.')
