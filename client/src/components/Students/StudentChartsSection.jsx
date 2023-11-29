@@ -8,6 +8,8 @@ export default function StudentChartsSection() {
   const { auth } = useAuth()
   const [studentProgressData, setStudentProgressData] = useState([])
 
+  const [loading, setLoading] = useState(false)
+
   useEffect(() => {
     axios.get('/student/course/progress/' + auth.id).then((response) => {
       setStudentProgressData(response.data)
@@ -102,6 +104,7 @@ export default function StudentChartsSection() {
                       onClick={() => {
                         setSelectedCourse(course.courseId)
                         setChartCourseName(course.courseName)
+                        setLoading(true)
                       }}
                     >
                       {course.courseName}
@@ -112,10 +115,8 @@ export default function StudentChartsSection() {
             </div>
 
             <div className='md:w-1/2 pl-4'>
-              {/* <h3 className='text-lg font-semibold mb-2'>Datos</h3> */}
               <h3 className='text-center text-xl font-semibold'>{chartCourseName}</h3>
               <ReactECharts option={chartOptions} />
-              {/* Add other content based on the selected course */}
             </div>
           </div>
         </div>

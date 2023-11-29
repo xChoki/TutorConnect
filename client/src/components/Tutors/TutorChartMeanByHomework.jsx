@@ -8,19 +8,11 @@ export default function TutorChartMeanByHomework() {
   const { auth } = useAuth()
 
   const [courseMeanByHomework, setCourseMeanByHomework] = useState('')
+  const [coursesData, setCoursesData] = useState([])
   const [selectedCourse, setSelectedCourse] = useState('')
   const [chartCourseName, setChartCourseName] = useState('Sin seleccionar')
 
-  useEffect(() => {
-    axios
-      .get('/cuenta/tutor/gradesmean/' + auth.id)
-      .then((response) => {
-        setCourseMeanByHomework(response.data)
-      })
-      .catch((error) => {
-        console.error('Error fetching counts:', error)
-      })
-  }, [selectedCourse])
+  const [loading, setLoading] = useState(false)
 
   const [chartCourseMeanByHomework, setChartCourseMeanByHomework] = useState({
     // Initial options for the chart
@@ -43,6 +35,39 @@ export default function TutorChartMeanByHomework() {
     },
   })
 
+  const loadingOption = {
+    text: 'Cargando datos...',
+    color: '#4413c2',
+    textColor: '#270240',
+    maskColor: 'rgba(194, 88, 86, 0.3)',
+    zlevel: 0,
+  }
+
+  useEffect(() => {
+    axios
+      .get('/courses')
+      .then((response) => {
+        setCoursesData(response.data)
+      })
+      .catch((error) => {
+        console.error('Error fetching counts:', error)
+      })
+  }, [])
+
+  useEffect(() => {
+    if (selectedCourse) {
+      axios
+        .get('/cuenta/tutor/gradesmean/' + auth.id)
+        .then((response) => {
+          setCourseMeanByHomework(response.data)
+          setLoading(false)
+        })
+        .catch((error) => {
+          console.error('Error fetching counts:', error)
+        })
+    }
+  }, [selectedCourse])
+
   useEffect(() => {
     // Find the selected course progress data
 
@@ -62,13 +87,13 @@ export default function TutorChartMeanByHomework() {
         ...prevOptions,
         xAxis: {
           type: 'category',
-          data: cuentaData.map((item) => item.name),
+          data: cuentaData.map((item) => item.name).sort().reverse(),
         },
         series: [
           {
             name: 'Promedio de notas',
             type: 'line',
-            data: cuentaData,
+            data: cuentaData.sort((a, b) => a.name.localeCompare(b.name)).reverse(),
           },
         ],
         toolbox: {
@@ -87,18 +112,11 @@ export default function TutorChartMeanByHomework() {
     return () => clearTimeout(timer)
   })
 
-  const loadingOption = {
-    text: 'Cargando datos...',
-    color: '#4413c2',
-    textColor: '#270240',
-    maskColor: 'rgba(194, 88, 86, 0.3)',
-    zlevel: 0,
-  }
-
   function onChartReady(echarts) {
     timer = setTimeout(function () {
       echarts.hideLoading()
-    }, 3000)
+      setLoading(false)
+    }, 500)
   }
 
   return (
@@ -111,7 +129,7 @@ export default function TutorChartMeanByHomework() {
         <div className='md:flex divide-x justify-center'>
           <div className={`md:w-1/2 mb-4 md:mb-0 ${selectedCourse && 'pr-4'} max-w-xs`}>
             <h3 className='text-lg font-semibold mb-2'>Selecciona tu curso:</h3>
-            {courseMeanByHomework && courseMeanByHomework?.length > 0 && (
+            {coursesData && coursesData?.length > 0 && (
               <ul
                 className={`${
                   window.innerWidth < 768
@@ -119,15 +137,16 @@ export default function TutorChartMeanByHomework() {
                     : 'flex-col overflow-y-auto'
                 } text-left`}
               >
-                {courseMeanByHomework.map((course) => (
+                {coursesData.map((course) => (
                   <li
                     key={course.courseName}
                     className={`cursor-pointer hover:bg-gray-200 rounded-md p-2 flex items-center ${
-                      selectedCourse === course.courseId && 'font-bold'
+                      selectedCourse === course._id && 'font-bold'
                     }`}
                     onClick={() => {
-                      setSelectedCourse(course.courseId)
+                      setSelectedCourse(course._id)
                       setChartCourseName(course.courseName)
+                      setLoading(true)
                     }}
                   >
                     {course.courseName}
@@ -143,6 +162,7 @@ export default function TutorChartMeanByHomework() {
               option={chartCourseMeanByHomework}
               onChartReady={onChartReady}
               loadingOption={loadingOption}
+              showLoading={loading}
             />
           </div>
         </div>
