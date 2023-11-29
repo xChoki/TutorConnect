@@ -48,9 +48,9 @@ export default function TutorChartCantAlumnos() {
         ...prevOptions,
         legend: {
           show: true,
-          orient: 'vertical',
-          left: 'left',
-          top: 'middle',
+          orient: 'horizontal',
+          left: 'center',
+          top: 'bottom',
           data: cuentaData.map((item) => item.name),
           formatter: function (name) {
             // Truncate the legend name to a specific length
