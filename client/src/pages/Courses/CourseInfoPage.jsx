@@ -135,9 +135,9 @@ export default function CourseInfoPage() {
       case "mat":
         return ".doc, .docx, .xls, .xlsx, .txt, .pdf"
       case "hom":
-        return ".doc, .docx, .xls, .xlsx, .txt"
+        return ".doc, .docx, .xls, .xlsx, .txt, .pdf"
       case "response":
-        return ".doc, .docx, .xls, .xlsx, .txt"
+        return ".doc, .docx, .xls, .xlsx, .txt, .pdf"
     }
   }
 
