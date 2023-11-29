@@ -16,7 +16,7 @@ export default function TutorGraphPage() {
     <div className={`${open ? 'ml-72' : 'ml-20'} pt-6`}>
       <SideBar open={open} setOpen={setOpen} />
 
-      <section className='px-10 container mx-auto'>
+      <section className='px-10 mb-10 container mx-auto'>
         <h1 className='text-4xl md:text-4xl text-center'>Gráficos</h1>
         <TutorChartMeanByHomework />
 
